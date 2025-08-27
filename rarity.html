@@ -5,123 +5,218 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>MegaPython — Rarity Checker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .pixelated { 
+      image-rendering: pixelated;
+      width: 192px;
+      height: 192px;
+      object-fit: contain;
+    }
+    .trait-card {
+      transition: all 0.2s ease;
+    }
+    .trait-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-b from-black to-slate-900 text-gray-100 min-h-screen">
-  <div class="max-w-3xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-center mb-4">MegaPython — Rarity Checker</h1>
-    <p class="text-center text-gray-400 mb-6">Paste a token ID (1–2222) to view traits and artwork. No blockchain calls required.</p>
+  <div class="max-w-4xl mx-auto p-6">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent">MegaPython — Rarity Checker</h1>
+      <p class="text-lg text-gray-400 mb-6">Enter a token ID (1–2222) to view traits and artwork. No blockchain calls required.</p>
+    </header>
 
-    <div class="flex gap-2 justify-center mb-6">
-      <input id="tokenId" type="number" min="1" max="2222" placeholder="Token ID (e.g. 1)" class="px-3 py-2 rounded bg-slate-800 border border-slate-700" />
-      <button id="btnCheck" class="px-4 py-2 bg-emerald-500 text-black rounded font-bold">Check</button>
+    <div class="flex gap-2 justify-center mb-8">
+      <input id="tokenId" type="number" min="1" max="2222" placeholder="Token ID (e.g. 42)" class="px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 w-48" />
+      <button id="btnCheck" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black rounded-lg font-bold transition-colors">Check Rarity</button>
     </div>
 
-    <div id="result" class="bg-slate-800 p-4 rounded space-y-4">
-      <div id="preview" class="text-center"></div>
-      <div id="traits" class="grid grid-cols-1 md:grid-cols-2 gap-2"></div>
-      <div id="rarityScore" class="text-sm text-gray-400"></div>
+    <div id="result" class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6 shadow-xl hidden">
+      <div id="preview" class="text-center p-4"></div>
+      <div id="traits" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      <div id="rarityScore" class="text-center p-3 bg-slate-900/50 rounded-lg"></div>
     </div>
 
-    <p class="text-xs text-gray-500 mt-4">For automatic rarity ranking, upload <code>rarityData.json</code> to the repo root and this page will compute rarity scores.</p>
-    <p class="text-center mt-6"><a href="/" class="text-emerald-400 underline">← Back to Home</a></p>
+    <div class="mt-10 text-center text-sm text-gray-500">
+      <p>For automatic rarity ranking, upload <code class="px-2 py-1 bg-slate-800 rounded">rarityData.json</code> to the repo root.</p>
+      <p class="mt-6"><a href="/" class="text-emerald-400 hover:text-emerald-300 underline transition-colors">← Back to Home</a></p>
+    </div>
   </div>
 
 <script>
-const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/"; // metadata base url - ends with /
+const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
 const btn = document.getElementById('btnCheck');
 const tokenInput = document.getElementById('tokenId');
 const preview = document.getElementById('preview');
 const traitsEl = document.getElementById('traits');
 const rarityEl = document.getElementById('rarityScore');
+const resultEl = document.getElementById('result');
 
-async function fetchJSON(url){
+// Improved IPFS URL conversion
+function ipfsToHttp(url) {
+  if (!url) return '';
+  if (url.startsWith('ipfs://')) {
+    return 'https://ipfs.io/ipfs/' + url.replace('ipfs://', '');
+  }
+  return url;
+}
+
+async function fetchJSON(url) {
   try {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return await r.json();
-  } catch (e){
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch JSON:', error);
     return null;
   }
 }
 
-async function loadRarityData(){
+async function loadRarityData() {
   const url = "./rarityData.json";
-  const data = await fetchJSON(url);
-  return data; // may be null
+  try {
+    const data = await fetchJSON(url);
+    return data;
+  } catch (e) {
+    return null;
+  }
 }
 
-function showError(msg){
-  preview.innerHTML = `<div class="text-red-400">${msg}</div>`;
+function showError(msg) {
+  preview.innerHTML = `<div class="p-4 bg-red-900/30 border border-red-700/50 rounded-lg text-red-300">${msg}</div>`;
   traitsEl.innerHTML = "";
   rarityEl.textContent = "";
+  resultEl.classList.remove('hidden');
 }
 
-function showMetadata(meta){
+function showMetadata(meta) {
   preview.innerHTML = "";
-  const imgDiv = document.createElement('div');
-  imgDiv.className = "mx-auto w-48 h-48 bg-black rounded mb-2 flex items-center justify-center";
+  
+  // Create image container
+  const imgContainer = document.createElement('div');
+  imgContainer.className = "mx-auto mb-4 bg-black rounded-xl p-4 border border-slate-700 shadow-lg w-56 h-56 flex items-center justify-center";
+  
+  // Create image
   const img = document.createElement('img');
-  img.style.maxWidth = '100%';
-  img.style.maxHeight = '100%';
-  img.style.imageRendering = 'pixelated';
-  img.src = meta.image ? (meta.image.startsWith('ipfs://') ? meta.image.replace('ipfs://','https://ipfs.io/ipfs/') : meta.image) : '';
-  imgDiv.appendChild(img);
-  preview.appendChild(imgDiv);
+  img.className = "pixelated";
+  img.alt = meta.name || "MegaPython NFT";
+  
+  // Set up image loading
+  const imgUrl = ipfsToHttp(meta.image);
+  img.src = imgUrl;
+  
+  img.onload = function() {
+    imgContainer.appendChild(img);
+  };
+  
+  img.onerror = function() {
+    imgContainer.innerHTML = `
+      <div class="text-center text-gray-500">
+        <div class="text-4xl mb-2">🐍</div>
+        <div class="text-sm">Image not available</div>
+      </div>
+    `;
+  };
+  
+  preview.appendChild(imgContainer);
 
+  // Create name element
   const name = document.createElement('div');
-  name.className = 'text-xl font-semibold';
-  name.textContent = meta.name || 'Unknown';
+  name.className = 'text-2xl font-bold mb-2 text-emerald-300';
+  name.textContent = meta.name || `MegaPython #${tokenInput.value}`;
   preview.appendChild(name);
 
+  // Display traits
   traitsEl.innerHTML = "";
   const attrs = meta.attributes || meta.traits || [];
-  if (attrs.length === 0){
-    traitsEl.innerHTML = '<div class="col-span-2 text-gray-400">No attributes found in metadata.</div>';
+  
+  if (attrs.length === 0) {
+    traitsEl.innerHTML = '<div class="col-span-3 text-gray-400 text-center p-4 bg-slate-900/50 rounded-lg">No attributes found in metadata.</div>';
   } else {
-    attrs.forEach(a=>{
-      const t = document.createElement('div');
-      t.className = 'bg-slate-700 p-2 rounded';
-      t.innerHTML = `<div class="font-semibold">${a.trait_type || a.type || 'Trait'}</div><div class="text-sm text-gray-300">${a.value || a}</div>`;
-      traitsEl.appendChild(t);
+    attrs.forEach(a => {
+      const traitCard = document.createElement('div');
+      traitCard.className = 'trait-card bg-slate-700/50 p-3 rounded-lg border border-slate-600';
+      traitCard.innerHTML = `
+        <div class="font-semibold text-emerald-300 mb-1">${a.trait_type || a.type || 'Trait'}</div>
+        <div class="text-lg font-medium">${a.value || a}</div>
+      `;
+      traitsEl.appendChild(traitCard);
     });
   }
 }
 
-btn.addEventListener('click', async ()=>{
+btn.addEventListener('click', async () => {
   const id = tokenInput.value.trim();
-  if (!id || isNaN(id) || Number(id) < 1) { showError('Enter a valid token ID'); return; }
+  if (!id || isNaN(id) || Number(id) < 1 || Number(id) > 2222) { 
+    showError('Please enter a valid token ID between 1 and 2222'); 
+    return; 
+  }
+  
   const idn = Number(id);
-
-  preview.innerHTML = 'Loading...';
+  preview.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div><p class="mt-3 text-gray-400">Loading metadata...</p></div>';
   traitsEl.innerHTML = '';
   rarityEl.textContent = '';
+  resultEl.classList.remove('hidden');
 
-  const metaUrl = `${METADATA_BASE}${idn}.json`;
-  const meta = await fetchJSON(metaUrl);
-
-  if (!meta) {
-    const meta2 = await fetchJSON(`${METADATA_BASE}${idn}`);
-    if (!meta2) { showError('Metadata not found on IPFS base.'); return; }
-    showMetadata(meta2);
-  } else {
-    showMetadata(meta);
-  }
-
-  const rarityData = await loadRarityData();
-  if (rarityData) {
-    let score = 0;
-    const attrs = (meta && (meta.attributes || meta.traits)) || [];
-    for (const a of attrs){
-      const t = a.trait_type || a.type || 'Trait';
-      const v = a.value || a;
-      if (rarityData.attributes && rarityData.attributes[t] && rarityData.attributes[t][v]){
-        const count = rarityData.attributes[t][v];
-        score += 1 / (count / (rarityData.totalSupply || 1));
-      }
+  try {
+    // Try first format
+    const metaUrl = `${METADATA_BASE}${idn}.json`;
+    let meta = await fetchJSON(metaUrl);
+    
+    // Try alternative format if first fails
+    if (!meta) {
+      meta = await fetchJSON(`${METADATA_BASE}${idn}`);
     }
-    rarityEl.textContent = `Rarity score (higher = rarer): ${score.toFixed(3)} — based on uploaded rarityData.json`;
-  } else {
-    rarityEl.textContent = 'Rarity ranking not available. Upload rarityData.json to enable automatic rarity scoring.';
+    
+    if (!meta) {
+      showError('Metadata not found for this token ID.');
+      return;
+    }
+    
+    showMetadata(meta);
+
+    // Load rarity data if available
+    const rarityData = await loadRarityData();
+    if (rarityData) {
+      let score = 0;
+      const attrs = meta.attributes || meta.traits || [];
+      
+      for (const a of attrs) {
+        const t = a.trait_type || a.type || 'Trait';
+        const v = a.value || a;
+        
+        if (rarityData.attributes && rarityData.attributes[t] && rarityData.attributes[t][v]) {
+          const count = rarityData.attributes[t][v];
+          score += 1 / (count / (rarityData.totalSupply || 1));
+        }
+      }
+      
+      rarityEl.innerHTML = `
+        <div class="inline-flex items-center bg-slate-900 px-4 py-2 rounded-full border border-emerald-500/30">
+          <span class="text-emerald-400 font-bold mr-2">Rarity Score:</span> 
+          <span class="text-white">${score.toFixed(3)}</span>
+        </div>
+        <p class="text-gray-400 mt-2 text-sm">Based on uploaded rarityData.json (higher = rarer)</p>
+      `;
+    } else {
+      rarityEl.innerHTML = `
+        <div class="text-gray-400 italic">
+          Rarity ranking not available. Upload rarityData.json to enable automatic rarity scoring.
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showError('An error occurred while fetching data. Please try again.');
+  }
+});
+
+// Allow pressing Enter to submit
+tokenInput.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    btn.click();
   }
 });
 </script>
