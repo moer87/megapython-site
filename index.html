@@ -1,104 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MegaPython — Reptiles Universe</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    img.pixelated { image-rendering: pixelated; }
-  </style>
+  <style>img.pixelated{image-rendering:pixelated}</style>
 </head>
 <body class="bg-gradient-to-b from-black to-gray-900 text-gray-100 font-sans">
-  <!-- Hero -->
   <section class="text-center py-20">
     <h1 class="text-5xl font-bold mb-4">🐍 MegaPython</h1>
     <p class="text-lg text-gray-400 mb-6">Discover the Reptiles Universe on MegaETH</p>
-    <a href="https://megapython.testnet.nfts2.me/" target="_blank"
-       class="px-6 py-3 bg-green-500 text-black rounded-xl font-bold hover:bg-green-400">
-       Mint Now
-    </a>
+    <a href="https://megapython.testnet.nfts2.me/" target="_blank" class="px-6 py-3 bg-green-500 text-black rounded-xl font-bold hover:bg-green-400">Mint Now</a>
   </section>
 
-  <!-- About -->
-  <section class="max-w-3xl mx-auto px-4 py-12 text-center">
-    <h2 class="text-3xl font-semibold mb-4">About MegaPython</h2>
-    <p class="text-gray-300">
-      MegaPython is a collection of <strong>2,222 pixel snakes</strong> on the MegaETH blockchain testnet.
-      This project experiments with art, lore, and memes — building the playful
-      <em>Reptiles Universe</em> one hiss at a time.
-    </p>
-  </section>
-
-  <!-- Roadmap -->
-  <section class="max-w-4xl mx-auto px-4 py-16">
-    <h2 class="text-3xl font-semibold text-center mb-10">Roadmap</h2>
-    <div class="grid md:grid-cols-2 gap-8">
-      <div class="bg-gray-800 rounded-2xl p-6 shadow">
-        <h3 class="text-xl font-bold mb-2">Phase 1 — Slither Out</h3>
-        <p class="text-gray-400">Mint live on testnet, showcase snakes, build lore, and launch rarity checker.</p>
-      </div>
-      <div class="bg-gray-800 rounded-2xl p-6 shadow">
-        <h3 class="text-xl font-bold mb-2">Phase 2 — Growing the Nest</h3>
-        <p class="text-gray-400">Snake rankings, community polls, fun pixel battles, and naming contests.</p>
-      </div>
-      <div class="bg-gray-800 rounded-2xl p-6 shadow">
-        <h3 class="text-xl font-bold mb-2">Phase 3 — Evolution</h3>
-        <p class="text-gray-400">Migration event: snakes shed skin and evolve into Mainnet MegaPythons.</p>
-      </div>
-      <div class="bg-gray-800 rounded-2xl p-6 shadow">
-        <h3 class="text-xl font-bold mb-2">Future — Reptiles Universe</h3>
-        <p class="text-gray-400">Expand into frogs, lizards, and crocodiles with shared pixel lore.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Gallery (auto-loads images from metadata for token IDs 1-6) -->
   <section class="max-w-5xl mx-auto px-4 py-16">
     <h2 class="text-3xl font-semibold text-center mb-10">Gallery Preview</h2>
     <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
   </section>
 
-  <!-- Tools -->
-  <section class="max-w-3xl mx-auto px-4 py-16 text-center">
-    <h2 class="text-3xl font-semibold mb-6">Tools</h2>
-    <div class="flex flex-col md:flex-row gap-4 justify-center">
-      <a href="/rarity.html" class="px-6 py-3 bg-gray-700 rounded-xl hover:bg-gray-600">🔎 Rarity Checker</a>
-      <a href="#" class="px-6 py-3 bg-gray-700 rounded-xl hover:bg-gray-600">⚡ Live Mint Tracker (Experimental)</a>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="py-8 text-center text-gray-500">
-    <p>Follow MegaPython on <a href="https://x.com" target="_blank" class="text-green-400 hover:underline">X (Twitter)</a></p>
-    <p class="mt-2">&copy; 2025 MegaPython</p>
-  </footer>
-
 <script>
-const META_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
-const TOKENS = [1,2,3,4,5,6];
-const gallery = document.getElementById('gallery');
+/* --- CONFIG: do not change unless you know what you're doing --- */
+const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
+const ART_BASE = "https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/";
+const TOKENS = [1,2,3,4,5,6]; // gallery sample
+/* ------------------------------------------------------------- */
 
-function ipfsToHttp(u){
-  return u.startsWith('ipfs://') ? u.replace('ipfs://','https://ipfs.io/ipfs/') : u;
+function safeText(v){ return v === null || v === undefined ? '' : String(v); }
+
+function extractCID(url){
+  // return the first bafy* CID substring if present
+  const m = (url || "").match(/(bafy[a-z0-9]{40,})/i);
+  return m ? m[1] : null;
+}
+
+function ipfsPathFrom(uri){
+  // convert ipfs://... to just the path after ipfs://
+  if(!uri) return null;
+  return uri.startsWith('ipfs://') ? uri.slice(7) : uri;
+}
+
+async function testImage(url){
+  return new Promise(resolve=>{
+    const img = new Image();
+    img.onload = ()=>resolve(true);
+    img.onerror = ()=>resolve(false);
+    // avoid caching a previous 404 by adding no-cache param? not necessary usually
+    img.src = url;
+  });
+}
+
+async function resolveImageURL(metaImage, tokenId){
+  const candidates = [];
+  // Normalize metaImage input
+  if(metaImage){
+    metaImage = safeText(metaImage).trim();
+    // data: URLs or http(s) are valid as-is
+    if(metaImage.startsWith('data:') || metaImage.startsWith('http://') || metaImage.startsWith('https://')){
+      candidates.push(metaImage);
+    }
+    // ipfs://CID/path or ipfs://CID  => convert to gateways
+    if(metaImage.startsWith('ipfs://')){
+      const path = ipfsPathFrom(metaImage);
+      candidates.push(`https://ipfs.io/ipfs/${path}`);
+      candidates.push(`https://dweb.link/ipfs/${path}`);
+      // try subdomain style if path starts with CID
+      const parts = path.split('/');
+      if(parts.length){
+        candidates.push(`https://${parts[0]}.ipfs.w3s.link/${parts.slice(1).join('/')}`);
+      }
+    }
+    // if metaImage is just a CID or contains a CID
+    const cid = extractCID(metaImage);
+    if(cid && !metaImage.startsWith('http')){
+      // try as ipfs.io and w3s subdomain
+      candidates.push(`https://ipfs.io/ipfs/${metaImage}`);
+      candidates.push(`https://${cid}.ipfs.w3s.link/${metaImage.replace(cid+'/','')}`);
+      candidates.push(`https://dweb.link/ipfs/${metaImage}`);
+    }
+    // fallback if it's a relative path (like "images/1.png" or "1.png")
+    if(!metaImage.startsWith('http') && !metaImage.startsWith('ipfs://') && !/bafy/i.test(metaImage)){
+      // try treating it relative to the ART_BASE
+      candidates.push(ART_BASE + metaImage);
+      // also try it as a raw path under METADATA_BASE (some projects store images alongside metadata)
+      candidates.push(METADATA_BASE + metaImage);
+    }
+  }
+
+  // Guaranteed fallbacks (art base with common extensions)
+  candidates.push(ART_BASE + tokenId + ".png");
+  candidates.push(ART_BASE + tokenId + ".webp");
+  candidates.push(ART_BASE + tokenId + ".jpg");
+  candidates.push(ART_BASE + tokenId);
+
+  // Also try ipfs.io with the metadata base CID and token file (if metadata base is a CID-hosted folder)
+  const metaCID = extractCID(METADATA_BASE);
+  if(metaCID){
+    candidates.push(`https://ipfs.io/ipfs/${metaCID}/${tokenId}.png`);
+    candidates.push(`https://dweb.link/ipfs/${metaCID}/${tokenId}.png`);
+  }
+
+  // remove duplicates while preserving order
+  const seen = new Set();
+  const uniq = candidates.filter(u => u && !seen.has(u) && seen.add(u));
+
+  // test sequentially
+  for(const u of uniq){
+    try {
+      // small optimization: testImage
+      const ok = await testImage(u);
+      if(ok) return u;
+    } catch(e){}
+  }
+  return null;
 }
 
 async function fetchJSON(url){
-  const r = await fetch(url);
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  return await r.json();
+  try {
+    const r = await fetch(url);
+    if(!r.ok) return null;
+    return await r.json();
+  } catch(e){ return null; }
 }
 
-async function load(){
+async function loadGallery(){
+  const gallery = document.getElementById('gallery');
   for(const id of TOKENS){
     const card = document.createElement('div');
     card.className = "bg-gray-800 rounded-xl p-3 shadow flex flex-col items-center";
     card.innerHTML = `<div class='w-40 h-40 bg-black rounded mb-2 flex items-center justify-center'><span class='text-xs text-gray-600'>#${id}</span></div><div class='text-sm text-gray-300'>Loading...</div>`;
     gallery.appendChild(card);
 
-    try {
-      const meta = await fetchJSON(META_BASE + id + ".json");
-      const imgUrl = ipfsToHttp(meta.image || "");
+    // fetch metadata
+    const meta = await fetchJSON(METADATA_BASE + id + ".json") || await fetchJSON(METADATA_BASE + id);
+    if(!meta){
+      card.querySelector('div + div').textContent = "Metadata not found";
+      continue;
+    }
+
+    const imgUrl = await resolveImageURL(meta.image || meta.image_url || meta.artwork, id);
+    if(imgUrl){
       const img = document.createElement('img');
       img.className = "pixelated";
       img.style.maxWidth = "100%";
@@ -107,14 +148,14 @@ async function load(){
       const imgWrap = card.querySelector('div');
       imgWrap.innerHTML = "";
       imgWrap.appendChild(img);
-      const label = card.querySelector('div + div');
-      label.textContent = meta.name || ("MegaPython #" + id);
-    } catch(e){
-      const label = card.querySelector('div + div');
-      label.textContent = "Metadata not found";
+      card.querySelector('div + div').textContent = meta.name || ("MegaPython #" + id);
+    } else {
+      card.querySelector('div + div').textContent = "Image not found";
+      console.warn('No image candidate worked for token', id, 'metadata image:', meta.image);
     }
   }
 }
+
 load();
 </script>
 </body>
