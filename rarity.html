@@ -6,25 +6,107 @@
   <title>MegaPython — Rarity Checker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1f2e 100%);
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    
+    .pixel-font {
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .pixel-border {
+      border: 4px solid #4ade80;
+      box-shadow: 0 0 0 2px #0f172a, 0 0 0 6px #4ade80;
+    }
+    
+    .pixel-card {
+      background: #1e293b;
+      border: 4px solid #4ade80;
+      box-shadow: 0 0 0 2px #0f172a, 0 0 0 6px #4ade80, 0 0 15px rgba(74, 222, 128, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .pixel-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 0 2px #0f172a, 0 0 0 6px #4ade80, 0 0 25px rgba(74, 222, 128, 0.8);
+    }
+    
     .pixelated { 
       image-rendering: pixelated;
-      width: 192px;
-      height: 192px;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
     }
+    
+    .placeholder-snake {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #1e293b 25%, #0f172a 25%, #0f172a 50%, #1e293b 50%, #1e293b 75%, #0f172a 75%, #0f172a);
+      background-size: 20px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .placeholder-snake::before {
+      content: "🐍";
+      font-size: 40px;
+      filter: grayscale(1);
+      opacity: 0.5;
+    }
+    
+    .image-container {
+      width: 100%;
+      height: 250px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    
     .trait-card {
       transition: all 0.2s ease;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      padding: 12px;
     }
+    
     .trait-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+      border-color: #4ade80;
+    }
+    
+    .glow {
+      text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
+    }
+    
+    .hero-pattern {
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(74, 222, 128, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(74, 222, 128, 0.1) 0%, transparent 40%);
     }
   </style>
 </head>
-<body class="bg-gradient-to-b from-black to-slate-900 text-gray-100 min-h-screen">
-  <div class="max-w-4xl mx-auto p-6">
+<body class="min-h-screen">
+  <!-- Animated Background Elements -->
+  <div class="fixed inset-0 hero-pattern z-0"></div>
+  <div class="fixed inset-0 z-0 opacity-10">
+    <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-green-500 animate-pulse"></div>
+    <div class="absolute top-1/3 right-1/4 w-24 h-24 rounded-full bg-green-400 animate-bounce"></div>
+    <div class="absolute bottom-1/4 left-1/3 w-28 h-28 rounded-full bg-green-600 animate-pulse delay-1000"></div>
+  </div>
+
+  <div class="relative z-10 max-w-4xl mx-auto p-6">
     <header class="text-center mb-8">
-      <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent">MegaPython — Rarity Checker</h1>
+      <h1 class="text-4xl pixel-font text-green-400 mb-4 glow">MegaPython — Rarity Checker</h1>
       <p class="text-lg text-gray-400 mb-6">Enter a token ID (1–2222) to view traits and artwork. No blockchain calls required.</p>
     </header>
 
@@ -33,8 +115,8 @@
       <button id="btnCheck" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black rounded-lg font-bold transition-colors">Check Rarity</button>
     </div>
 
-    <div id="result" class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6 shadow-xl hidden">
-      <div id="preview" class="text-center p-4"></div>
+    <div id="result" class="pixel-card p-6 space-y-6 hidden">
+      <div id="preview" class="text-center"></div>
       <div id="traits" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
       <div id="rarityScore" class="text-center p-3 bg-slate-900/50 rounded-lg"></div>
     </div>
@@ -46,6 +128,15 @@
   </div>
 
 <script>
+// Try multiple IPFS gateways for better compatibility
+const IPFS_GATEWAYS = [
+  "https://ipfs.io/ipfs/",
+  "https://gateway.ipfs.io/ipfs/",
+  "https://dweb.link/ipfs/",
+  "https://cf-ipfs.com/ipfs/",
+  "https://ipfs.fleek.co/ipfs/"
+];
+
 const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
 const btn = document.getElementById('btnCheck');
 const tokenInput = document.getElementById('tokenId');
@@ -54,11 +145,32 @@ const traitsEl = document.getElementById('traits');
 const rarityEl = document.getElementById('rarityScore');
 const resultEl = document.getElementById('result');
 
+// Function to try loading image with multiple gateways
+function loadImageWithFallbacks(imgElement, cidPath) {
+  let currentGatewayIndex = 0;
+  
+  function tryNextGateway() {
+    if (currentGatewayIndex >= IPFS_GATEWAYS.length) {
+      // All gateways failed, show placeholder
+      if (imgElement.parentNode) {
+        imgElement.parentNode.innerHTML = '<div class="placeholder-snake"></div>';
+      }
+      return;
+    }
+    
+    imgElement.src = IPFS_GATEWAYS[currentGatewayIndex] + cidPath;
+    currentGatewayIndex++;
+  }
+  
+  imgElement.onerror = tryNextGateway;
+  tryNextGateway();
+}
+
 // Improved IPFS URL conversion
 function ipfsToHttp(url) {
   if (!url) return '';
   if (url.startsWith('ipfs://')) {
-    return 'https://ipfs.io/ipfs/' + url.replace('ipfs://', '');
+    return IPFS_GATEWAYS[0] + url.replace('ipfs://', '');
   }
   return url;
 }
@@ -96,7 +208,7 @@ function showMetadata(meta) {
   
   // Create image container
   const imgContainer = document.createElement('div');
-  imgContainer.className = "mx-auto mb-4 bg-black rounded-xl p-4 border border-slate-700 shadow-lg w-56 h-56 flex items-center justify-center";
+  imgContainer.className = "image-container mx-auto mb-4 rounded-xl";
   
   // Create image
   const img = document.createElement('img');
@@ -104,27 +216,32 @@ function showMetadata(meta) {
   img.alt = meta.name || "MegaPython NFT";
   
   // Set up image loading
-  const imgUrl = ipfsToHttp(meta.image);
-  img.src = imgUrl;
-  
-  img.onload = function() {
-    imgContainer.appendChild(img);
-  };
-  
-  img.onerror = function() {
-    imgContainer.innerHTML = `
-      <div class="text-center text-gray-500">
-        <div class="text-4xl mb-2">🐍</div>
-        <div class="text-sm">Image not available</div>
-      </div>
-    `;
-  };
+  if (meta.image) {
+    const imgUrl = ipfsToHttp(meta.image);
+    img.src = imgUrl;
+    
+    img.onload = function() {
+      imgContainer.appendChild(img);
+    };
+    
+    img.onerror = function() {
+      imgContainer.innerHTML = '<div class="placeholder-snake"></div>';
+      
+      // If image is from IPFS, try multiple gateways
+      if (meta.image.startsWith('ipfs://')) {
+        const cidPath = meta.image.replace('ipfs://', '');
+        loadImageWithFallbacks(img, cidPath);
+      }
+    };
+  } else {
+    imgContainer.innerHTML = '<div class="placeholder-snake"></div>';
+  }
   
   preview.appendChild(imgContainer);
 
   // Create name element
   const name = document.createElement('div');
-  name.className = 'text-2xl font-bold mb-2 text-emerald-300';
+  name.className = 'text-2xl font-bold mb-2 text-emerald-300 pixel-font';
   name.textContent = meta.name || `MegaPython #${tokenInput.value}`;
   preview.appendChild(name);
 
@@ -137,9 +254,9 @@ function showMetadata(meta) {
   } else {
     attrs.forEach(a => {
       const traitCard = document.createElement('div');
-      traitCard.className = 'trait-card bg-slate-700/50 p-3 rounded-lg border border-slate-600';
+      traitCard.className = 'trait-card';
       traitCard.innerHTML = `
-        <div class="font-semibold text-emerald-300 mb-1">${a.trait_type || a.type || 'Trait'}</div>
+        <div class="font-semibold text-emerald-300 mb-1 pixel-font" style="font-size: 0.7rem;">${a.trait_type || a.type || 'Trait'}</div>
         <div class="text-lg font-medium">${a.value || a}</div>
       `;
       traitsEl.appendChild(traitCard);
