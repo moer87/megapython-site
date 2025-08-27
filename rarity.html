@@ -27,102 +27,101 @@
   </div>
 
 <script>
-const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
-const ART_BASE = "https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/";
+const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/"; // metadata base url - ends with /
+const btn = document.getElementById('btnCheck');
+const tokenInput = document.getElementById('tokenId');
+const preview = document.getElementById('preview');
+const traitsEl = document.getElementById('traits');
+const rarityEl = document.getElementById('rarityScore');
 
-function safeText(v){ return v === null || v === undefined ? '' : String(v); }
-function extractCID(url){ const m = (url || "").match(/(bafy[a-z0-9]{40,})/i); return m ? m[1] : null; }
-function ipfsPathFrom(uri){ if(!uri) return null; return uri.startsWith('ipfs://') ? uri.slice(7) : uri; }
-async function testImage(url){ return new Promise(resolve=>{ const img=new Image(); img.onload=()=>resolve(true); img.onerror=()=>resolve(false); img.src=url; }); }
-
-async function resolveImageURL(metaImage, tokenId){
-  const candidates = [];
-  if(metaImage){
-    metaImage = safeText(metaImage).trim();
-    if(metaImage.startsWith('data:')||metaImage.startsWith('http')) candidates.push(metaImage);
-    if(metaImage.startsWith('ipfs://')){
-      const path = ipfsPathFrom(metaImage);
-      candidates.push(`https://ipfs.io/ipfs/${path}`);
-      candidates.push(`https://dweb.link/ipfs/${path}`);
-      const parts = path.split('/');
-      if(parts.length) candidates.push(`https://${parts[0]}.ipfs.w3s.link/${parts.slice(1).join('/')}`);
-    }
-    const cid = extractCID(metaImage);
-    if(cid && !metaImage.startsWith('http')) {
-      candidates.push(`https://ipfs.io/ipfs/${metaImage}`);
-      candidates.push(`https://${cid}.ipfs.w3s.link/${metaImage.replace(cid+'/','')}`);
-      candidates.push(`https://dweb.link/ipfs/${metaImage}`);
-    }
-    if(!metaImage.startsWith('http') && !metaImage.startsWith('ipfs://') && !/bafy/i.test(metaImage)){
-      candidates.push(ART_BASE + metaImage);
-      candidates.push(METADATA_BASE + metaImage);
-    }
+async function fetchJSON(url){
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } catch (e){
+    return null;
   }
-  candidates.push(ART_BASE + tokenId + ".png");
-  candidates.push(ART_BASE + tokenId + ".webp");
-  candidates.push(ART_BASE + tokenId + ".jpg");
-  candidates.push(ART_BASE + tokenId);
-  const metaCID = extractCID(METADATA_BASE);
-  if(metaCID){
-    candidates.push(`https://ipfs.io/ipfs/${metaCID}/${tokenId}.png`);
-    candidates.push(`https://dweb.link/ipfs/${metaCID}/${tokenId}.png`);
-  }
-  const seen = new Set(); const uniq = candidates.filter(u=>u && !seen.has(u) && seen.add(u));
-  for(const u of uniq){
-    try { if(await testImage(u)) return u; } catch(e){}
-  }
-  return null;
 }
 
-async function fetchJSON(url){ try{ const r=await fetch(url); if(!r.ok) return null; return await r.json(); }catch(e){return null;} }
+async function loadRarityData(){
+  const url = "./rarityData.json";
+  const data = await fetchJSON(url);
+  return data; // may be null
+}
 
-function showError(msg){ document.getElementById('preview').innerHTML=`<div class="text-red-400">${msg}</div>`; document.getElementById('traits').innerHTML=''; document.getElementById('rarityScore').textContent=''; }
+function showError(msg){
+  preview.innerHTML = `<div class="text-red-400">${msg}</div>`;
+  traitsEl.innerHTML = "";
+  rarityEl.textContent = "";
+}
 
-function showMetadata(meta, resolvedImage){
-  const preview = document.getElementById('preview');
-  preview.innerHTML = '';
-  const imgDiv = document.createElement('div'); imgDiv.className = "mx-auto w-48 h-48 bg-black rounded mb-2 flex items-center justify-center";
-  const img = document.createElement('img'); img.style.maxWidth='100%'; img.style.maxHeight='100%'; img.className='pixelated';
-  if(resolvedImage) img.src = resolvedImage; else img.src = meta.image ? (meta.image.startsWith('ipfs://') ? meta.image.replace('ipfs://','https://ipfs.io/ipfs/') : meta.image) : '';
-  imgDiv.appendChild(img); preview.appendChild(imgDiv);
-  const name = document.createElement('div'); name.className='text-xl font-semibold'; name.textContent = meta.name || 'Unknown'; preview.appendChild(name);
+function showMetadata(meta){
+  preview.innerHTML = "";
+  const imgDiv = document.createElement('div');
+  imgDiv.className = "mx-auto w-48 h-48 bg-black rounded mb-2 flex items-center justify-center";
+  const img = document.createElement('img');
+  img.style.maxWidth = '100%';
+  img.style.maxHeight = '100%';
+  img.style.imageRendering = 'pixelated';
+  img.src = meta.image ? (meta.image.startsWith('ipfs://') ? meta.image.replace('ipfs://','https://ipfs.io/ipfs/') : meta.image) : '';
+  imgDiv.appendChild(img);
+  preview.appendChild(imgDiv);
 
-  const traitsEl = document.getElementById('traits'); traitsEl.innerHTML='';
+  const name = document.createElement('div');
+  name.className = 'text-xl font-semibold';
+  name.textContent = meta.name || 'Unknown';
+  preview.appendChild(name);
+
+  traitsEl.innerHTML = "";
   const attrs = meta.attributes || meta.traits || [];
-  if(attrs.length === 0) traitsEl.innerHTML = '<div class="col-span-2 text-gray-400">No attributes found in metadata.</div>';
-  else attrs.forEach(a=>{
-    const t = document.createElement('div'); t.className='bg-slate-700 p-2 rounded';
-    t.innerHTML = `<div class="font-semibold">${a.trait_type || a.type || 'Trait'}</div><div class="text-sm text-gray-300">${a.value || a}</div>`;
-    traitsEl.appendChild(t);
-  });
+  if (attrs.length === 0){
+    traitsEl.innerHTML = '<div class="col-span-2 text-gray-400">No attributes found in metadata.</div>';
+  } else {
+    attrs.forEach(a=>{
+      const t = document.createElement('div');
+      t.className = 'bg-slate-700 p-2 rounded';
+      t.innerHTML = `<div class="font-semibold">${a.trait_type || a.type || 'Trait'}</div><div class="text-sm text-gray-300">${a.value || a}</div>`;
+      traitsEl.appendChild(t);
+    });
+  }
 }
 
-document.getElementById('btnCheck').addEventListener('click', async ()=>{
-  const idRaw = document.getElementById('tokenId').value.trim();
-  if(!idRaw || isNaN(idRaw) || Number(idRaw) < 1){ showError('Enter a valid token ID'); return; }
-  const id = Number(idRaw);
-  document.getElementById('preview').innerHTML = 'Loading...'; document.getElementById('traits').innerHTML=''; document.getElementById('rarityScore').textContent='';
+btn.addEventListener('click', async ()=>{
+  const id = tokenInput.value.trim();
+  if (!id || isNaN(id) || Number(id) < 1) { showError('Enter a valid token ID'); return; }
+  const idn = Number(id);
 
-  const meta = await fetchJSON(METADATA_BASE + id + ".json") || await fetchJSON(METADATA_BASE + id);
-  if(!meta){ showError('Metadata not found on IPFS base.'); return; }
+  preview.innerHTML = 'Loading...';
+  traitsEl.innerHTML = '';
+  rarityEl.textContent = '';
 
-  const resolved = await resolveImageURL(meta.image || meta.image_url || meta.artwork, id);
-  showMetadata(meta, resolved);
+  const metaUrl = `${METADATA_BASE}${idn}.json`;
+  const meta = await fetchJSON(metaUrl);
 
-  // optional rarityData.json based scoring (unchanged)
-  const rarityData = await fetchJSON('./rarityData.json');
-  if(rarityData){
-    let score = 0; const attrs = meta.attributes || meta.traits || [];
-    for(const a of attrs){
-      const t = a.trait_type || a.type || 'Trait'; const v = a.value || a;
-      if(rarityData.attributes && rarityData.attributes[t] && rarityData.attributes[t][v]){
+  if (!meta) {
+    const meta2 = await fetchJSON(`${METADATA_BASE}${idn}`);
+    if (!meta2) { showError('Metadata not found on IPFS base.'); return; }
+    showMetadata(meta2);
+  } else {
+    showMetadata(meta);
+  }
+
+  const rarityData = await loadRarityData();
+  if (rarityData) {
+    let score = 0;
+    const attrs = (meta && (meta.attributes || meta.traits)) || [];
+    for (const a of attrs){
+      const t = a.trait_type || a.type || 'Trait';
+      const v = a.value || a;
+      if (rarityData.attributes && rarityData.attributes[t] && rarityData.attributes[t][v]){
         const count = rarityData.attributes[t][v];
         score += 1 / (count / (rarityData.totalSupply || 1));
       }
     }
-    document.getElementById('rarityScore').textContent = `Rarity score (higher = rarer): ${score.toFixed(3)} — based on uploaded rarityData.json`;
+    rarityEl.textContent = `Rarity score (higher = rarer): ${score.toFixed(3)} — based on uploaded rarityData.json`;
   } else {
-    document.getElementById('rarityScore').textContent = 'Rarity ranking not available. Upload rarityData.json to enable automatic rarity scoring.';
+    rarityEl.textContent = 'Rarity ranking not available. Upload rarityData.json to enable automatic rarity scoring.';
   }
 });
 </script>
