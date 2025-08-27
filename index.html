@@ -103,6 +103,25 @@
       transform: translateY(2px);
       box-shadow: 0 2px 0 #0f172a;
     }
+
+    .placeholder-snake {
+      width: 160px;
+      height: 160px;
+      background: linear-gradient(45deg, #1e293b 25%, #0f172a 25%, #0f172a 50%, #1e293b 50%, #1e293b 75%, #0f172a 75%, #0f172a);
+      background-size: 20px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .placeholder-snake::before {
+      content: "🐍";
+      font-size: 40px;
+      filter: grayscale(1);
+      opacity: 0.5;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -251,16 +270,49 @@
   </footer>
 
 <script>
+// Try multiple IPFS gateways for better compatibility
+const IPFS_GATEWAYS = [
+  "https://ipfs.io/ipfs/",
+  "https://gateway.ipfs.io/ipfs/",
+  "https://dweb.link/ipfs/",
+  "https://cf-ipfs.com/ipfs/",
+  "https://ipfs.fleek.co/ipfs/"
+];
+
 const META_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
 const TOKENS = [1,2,3,4,5,6];
 const gallery = document.getElementById('gallery');
 
+// Function to try multiple IPFS gateways
 function ipfsToHttp(url) {
   if (!url) return '';
+  
   if (url.startsWith('ipfs://')) {
-    return 'https://ipfs.io/ipfs/' + url.replace('ipfs://', '');
+    const cidPath = url.replace('ipfs://', '');
+    
+    // Try the first gateway, others will be fallbacks
+    return IPFS_GATEWAYS[0] + cidPath;
   }
+  
   return url;
+}
+
+// Function to try loading image with multiple gateways
+function loadImageWithFallbacks(imgElement, cidPath) {
+  let currentGatewayIndex = 0;
+  
+  function tryNextGateway() {
+    if (currentGatewayIndex >= IPFS_GATEWAYS.length) {
+      imgElement.onerror(); // All gateways failed
+      return;
+    }
+    
+    imgElement.src = IPFS_GATEWAYS[currentGatewayIndex] + cidPath;
+    currentGatewayIndex++;
+  }
+  
+  imgElement.onerror = tryNextGateway;
+  tryNextGateway();
 }
 
 async function fetchJSON(url) {
@@ -280,9 +332,9 @@ async function load() {
     card.className = "pixel-card p-4 flex flex-col items-center";
     card.innerHTML = `
       <div class='w-40 h-40 bg-black mb-3 flex items-center justify-center'>
-        <span class='text-xs text-gray-600'>#${id}</span>
+        <div class="placeholder-snake"></div>
       </div>
-      <div class='text-sm text-gray-300 pixel-font'>Loading...</div>
+      <div class='text-sm text-gray-300 pixel-font'>MegaPython #${id}</div>
     `;
     gallery.appendChild(card);
 
@@ -292,31 +344,41 @@ async function load() {
         throw new Error('No metadata found');
       }
       
-      const imgUrl = ipfsToHttp(meta.image);
-      const img = document.createElement('img');
-      img.className = "pixelated";
-      img.alt = meta.name || "MegaPython NFT";
-      img.src = imgUrl;
-      
-      img.onload = function() {
-        const imgWrap = card.querySelector('div');
-        imgWrap.innerHTML = "";
-        imgWrap.appendChild(img);
-        const label = card.querySelector('div + div');
-        label.textContent = meta.name || ("MegaPython #" + id);
-      };
-      
-      img.onerror = function() {
-        const imgWrap = card.querySelector('div');
-        imgWrap.innerHTML = `<span class='text-red-400 text-xs'>Image not available</span>`;
-        const label = card.querySelector('div + div');
-        label.textContent = meta.name || ("MegaPython #" + id);
-      };
-    } catch(e) {
-      const imgWrap = card.querySelector('div');
-      imgWrap.innerHTML = `<span class='text-red-400 text-xs'>Error loading</span>`;
       const label = card.querySelector('div + div');
-      label.textContent = "Metadata not found";
+      label.textContent = meta.name || ("MegaPython #" + id);
+      
+      if (meta.image) {
+        const imgWrap = card.querySelector('div > div');
+        imgWrap.innerHTML = "";
+        
+        const img = document.createElement('img');
+        img.className = "pixelated";
+        img.alt = meta.name || "MegaPython NFT";
+        
+        img.onload = function() {
+          imgWrap.appendChild(img);
+        };
+        
+        img.onerror = function() {
+          imgWrap.innerHTML = `<div class="placeholder-snake"></div>`;
+          console.log('Image failed to load, trying fallbacks for token', id);
+          
+          // If image is from IPFS, try multiple gateways
+          if (meta.image.startsWith('ipfs://')) {
+            const cidPath = meta.image.replace('ipfs://', '');
+            loadImageWithFallbacks(img, cidPath);
+          }
+        };
+        
+        // Set initial source
+        const imgUrl = ipfsToHttp(meta.image);
+        img.src = imgUrl;
+      }
+    } catch(e) {
+      const imgWrap = card.querySelector('div > div');
+      imgWrap.innerHTML = `<div class="placeholder-snake"></div>`;
+      const label = card.querySelector('div + div');
+      label.innerHTML = `<span class="text-red-400">Error loading #${id}</span>`;
       console.error('Error loading token', id, e);
     }
   }
