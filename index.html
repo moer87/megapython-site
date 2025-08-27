@@ -6,7 +6,12 @@
   <title>MegaPython — Reptiles Universe</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    img.pixelated { image-rendering: pixelated; }
+    img.pixelated { 
+      image-rendering: pixelated;
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-b from-black to-gray-900 text-gray-100 font-sans">
@@ -79,42 +84,73 @@ const META_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszd
 const TOKENS = [1,2,3,4,5,6];
 const gallery = document.getElementById('gallery');
 
-function ipfsToHttp(u){
-  return u.startsWith('ipfs://') ? u.replace('ipfs://','https://ipfs.io/ipfs/') : u;
+function ipfsToHttp(url) {
+  if (!url) return '';
+  if (url.startsWith('ipfs://')) {
+    return 'https://ipfs.io/ipfs/' + url.replace('ipfs://', '');
+  }
+  return url;
 }
 
-async function fetchJSON(url){
-  const r = await fetch(url);
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  return await r.json();
+async function fetchJSON(url) {
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } catch (error) {
+    console.error('Failed to fetch JSON:', error);
+    return null;
+  }
 }
 
-async function load(){
-  for(const id of TOKENS){
+async function load() {
+  for (const id of TOKENS) {
     const card = document.createElement('div');
     card.className = "bg-gray-800 rounded-xl p-3 shadow flex flex-col items-center";
-    card.innerHTML = `<div class='w-40 h-40 bg-black rounded mb-2 flex items-center justify-center'><span class='text-xs text-gray-600'>#${id}</span></div><div class='text-sm text-gray-300'>Loading...</div>`;
+    card.innerHTML = `
+      <div class='w-40 h-40 bg-black rounded mb-2 flex items-center justify-center'>
+        <span class='text-xs text-gray-600'>#${id}</span>
+      </div>
+      <div class='text-sm text-gray-300'>Loading...</div>
+    `;
     gallery.appendChild(card);
 
     try {
       const meta = await fetchJSON(META_BASE + id + ".json");
-      const imgUrl = ipfsToHttp(meta.image || "");
+      if (!meta) {
+        throw new Error('No metadata found');
+      }
+      
+      const imgUrl = ipfsToHttp(meta.image);
       const img = document.createElement('img');
       img.className = "pixelated";
-      img.style.maxWidth = "100%";
-      img.style.maxHeight = "100%";
+      img.alt = meta.name || "MegaPython NFT";
       img.src = imgUrl;
+      
+      img.onload = function() {
+        const imgWrap = card.querySelector('div');
+        imgWrap.innerHTML = "";
+        imgWrap.appendChild(img);
+        const label = card.querySelector('div + div');
+        label.textContent = meta.name || ("MegaPython #" + id);
+      };
+      
+      img.onerror = function() {
+        const imgWrap = card.querySelector('div');
+        imgWrap.innerHTML = `<span class='text-red-400'>Failed to load image</span>`;
+        const label = card.querySelector('div + div');
+        label.textContent = meta.name || ("MegaPython #" + id);
+      };
+    } catch(e) {
       const imgWrap = card.querySelector('div');
-      imgWrap.innerHTML = "";
-      imgWrap.appendChild(img);
-      const label = card.querySelector('div + div');
-      label.textContent = meta.name || ("MegaPython #" + id);
-    } catch(e){
+      imgWrap.innerHTML = `<span class='text-red-400'>Error loading</span>`;
       const label = card.querySelector('div + div');
       label.textContent = "Metadata not found";
+      console.error('Error loading token', id, e);
     }
   }
 }
+
 load();
 </script>
 </body>
