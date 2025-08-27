@@ -122,6 +122,17 @@
       filter: grayscale(1);
       opacity: 0.5;
     }
+    
+    .banner {
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                  url('https://ipfs.io/ipfs/bafkreigia4kiyshaluapgxrh247ueqqbx3y6eykppfqqbqtlfku3wjpm4e');
+      background-size: cover;
+      background-position: center;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -133,9 +144,12 @@
     <div class="absolute bottom-1/4 left-1/3 w-28 h-28 rounded-full bg-green-600 animate-pulse-slow delay-1000"></div>
   </div>
 
-  <!-- Header -->
+  <!-- Header with Logo -->
   <header class="relative z-10 py-6 px-4 flex justify-between items-center">
-    <div class="text-2xl pixel-font text-green-400 glow">MegaPython</div>
+    <div class="flex items-center">
+      <img src="https://ipfs.io/ipfs/bafkreigia4kiyshaluapgxrh247ueqqbx3y6eykppfqqbqtlfku3wjpm4e" alt="MegaPython Logo" class="h-12 mr-3">
+      <div class="text-2xl pixel-font text-green-400 glow">MegaPython</div>
+    </div>
     <nav class="flex gap-6">
       <a href="#" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
       <a href="/rarity.html" class="text-green-300 hover:text-green-500 transition-colors">Rarity</a>
@@ -144,47 +158,15 @@
     </nav>
   </header>
 
-  <!-- Hero Section -->
-  <section class="relative z-10 text-center py-16 px-4">
-    <div class="inline-block pixel-border p-2 mb-6">
+  <!-- Banner Section -->
+  <section class="relative z-10 banner pixel-border mx-4 mb-12 rounded-xl">
+    <div class="text-center">
       <h1 class="text-5xl md:text-6xl pixel-font text-green-400 mb-4 glow">🐍 MEGAPYTHON</h1>
-    </div>
-    <p class="text-xl text-green-200 mb-8 max-w-2xl mx-auto">Discover the Reptiles Universe on MegaETH — 2,222 unique pixel snakes slithering on the blockchain</p>
-    
-    <div class="flex flex-col md:flex-row gap-4 justify-center items-center mb-12">
+      <p class="text-xl text-green-200 mb-8 max-w-2xl mx-auto">2,222 unique pixel snakes slithering on the MegaETH blockchain</p>
       <a href="https://megapython.testnet.nfts2.me/" target="_blank"
          class="px-8 py-4 pixel-button pixel-font text-lg rounded-none">
          MINT NOW
       </a>
-      <a href="/rarity.html"
-         class="px-8 py-4 bg-transparent border-2 border-green-500 text-green-300 pixel-font text-lg hover:bg-green-500/10 transition-colors">
-         RARITY CHECKER
-      </a>
-    </div>
-    
-    <div class="max-w-4xl mx-auto mb-12">
-      <div class="snake-pattern p-6 pixel-border">
-        <div class="flex snake-slider gap-4">
-          <div class="flex-none w-48 h-48 bg-black flex items-center justify-center">
-            <span class="text-green-500 pixel-font">MegaPython #1</span>
-          </div>
-          <div class="flex-none w-48 h-48 bg-black flex items-center justify-center">
-            <span class="text-green-500 pixel-font">MegaPython #2</span>
-          </div>
-          <div class="flex-none w-48 h-48 bg-black flex items-center justify-center">
-            <span class="text-green-500 pixel-font">MegaPython #3</span>
-          </div>
-          <div class="flex-none w-48 h-48 bg-black flex items-center justify-center">
-            <span class="text-green-500 pixel-font">MegaPython #4</span>
-          </div>
-          <div class="flex-none w-48 h-48 bg-black flex items-center justify-center">
-            <span class="text-green-500 pixel-font">MegaPython #5</span>
-          </div>
-          <div class="flex-none w-48 h-48 bg-black flex items-center justify-center">
-            <span class="text-green-500 pixel-font">MegaPython #6</span>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -239,7 +221,55 @@
   <!-- Gallery Section -->
   <section class="relative z-10 max-w-6xl mx-auto px-4 py-16">
     <h2 class="text-3xl pixel-font text-green-400 text-center mb-12 glow">GALLERY PREVIEW</h2>
-    <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- NFT 1 -->
+      <div class="pixel-card p-4 flex flex-col items-center">
+        <div class='w-40 h-40 bg-black mb-3 flex items-center justify-center'>
+          <img src="https://ipfs.io/ipfs/bafkreifyak53gwnlujurbx5rglsnypk6ilju6rakjdqi23jrslgxoalhqi" class="pixelated" alt="MegaPython NFT" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"placeholder-snake\"></div>';">
+        </div>
+        <div class='text-sm text-gray-300 pixel-font'>MegaPython #1</div>
+      </div>
+      
+      <!-- NFT 2 -->
+      <div class="pixel-card p-4 flex flex-col items-center">
+        <div class='w-40 h-40 bg-black mb-3 flex items-center justify-center'>
+          <img src="https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm" class="pixelated" alt="MegaPython NFT" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"placeholder-snake\"></div>';">
+        </div>
+        <div class='text-sm text-gray-300 pixel-font'>MegaPython #2</div>
+      </div>
+      
+      <!-- NFT 3 -->
+      <div class="pixel-card p-4 flex flex-col items-center">
+        <div class='w-40 h-40 bg-black mb-3 flex items-center justify-center'>
+          <img src="https://ipfs.io/ipfs/bafkreigilizwe5aow4cj7pknk54ykwbgtcrqqp53xbaye6c7jzugsvjbmu" class="pixelated" alt="MegaPython NFT" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"placeholder-snake\"></div>';">
+        </div>
+        <div class='text-sm text-gray-300 pixel-font'>MegaPython #3</div>
+      </div>
+      
+      <!-- NFT 4 -->
+      <div class="pixel-card p-4 flex flex-col items-center">
+        <div class='w-40 h-40 bg-black mb-3 flex items-center justify-center'>
+          <img src="https://ipfs.io/ipfs/bafkreicfbtyh7p4njqbzideujs3z4pwr4zkyg7vxaxgv7sogdrojojgdr4" class="pixelated" alt="MegaPython NFT" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"placeholder-snake\"></div>';">
+        </div>
+        <div class='text-sm text-gray-300 pixel-font'>MegaPython #4</div>
+      </div>
+      
+      <!-- NFT 5 -->
+      <div class="pixel-card p-4 flex flex-col items-center">
+        <div class='w-40 h-40 bg-black mb-3 flex items-center justify-center'>
+          <img src="https://ipfs.io/ipfs/bafkreidykh3x4nwupemwanoa4wbxedvwspsctveksdyhjbnnbwt7hcjhx4" class="pixelated" alt="MegaPython NFT" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"placeholder-snake\"></div>';">
+        </div>
+        <div class='text-sm text-gray-300 pixel-font'>MegaPython #5</div>
+      </div>
+      
+      <!-- NFT 6 -->
+      <div class="pixel-card p-4 flex flex-col items-center">
+        <div class='w-40 h-40 bg-black mb-3 flex items-center justify-center'>
+          <img src="https://ipfs.io/ipfs/bafkreibvzxq6kv36jwaptyxltlsfvfqt3oyiv5ydflw5fhez74yfuojzlu" class="pixelated" alt="MegaPython NFT" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"placeholder-snake\"></div>';">
+        </div>
+        <div class='text-sm text-gray-300 pixel-font'>MegaPython #6</div>
+      </div>
+    </div>
   </section>
 
   <!-- Community Section -->
@@ -248,14 +278,11 @@
     <div class="pixel-card p-8">
       <p class="text-lg text-gray-300 mb-6">Our community is growing fast! Join other snake enthusiasts in building the Reptiles Universe.</p>
       <div class="flex flex-wrap justify-center gap-4">
-        <a href="#" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-green-300 pixel-font flex items-center gap-2 transition-colors">
-          <span>🐦</span> TWITTER
+        <a href="https://linktr.ee/megaPython" target="_blank" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-green-300 pixel-font flex items-center gap-2 transition-colors">
+          <span>🔗</span> LINKTREE
         </a>
-        <a href="#" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-green-300 pixel-font flex items-center gap-2 transition-colors">
-          <span>💬</span> DISCORD
-        </a>
-        <a href="#" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-green-300 pixel-font flex items-center gap-2 transition-colors">
-          <span>📸</span> INSTAGRAM
+        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" target="_blank" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-green-300 pixel-font flex items-center gap-2 transition-colors">
+          <span>🖼️</span> RARIBLE
         </a>
       </div>
     </div>
@@ -264,8 +291,16 @@
   <!-- Footer -->
   <footer class="relative z-10 py-12 text-center px-4">
     <div class="max-w-4xl mx-auto border-t border-green-800/50 pt-8">
-      <p class="text-green-500 pixel-font text-sm mb-4">MEGAPYTHON © 2025</p>
-      <p class="text-gray-500 text-sm">All rights reserved. This project is built on MegaETH testnet.</p>
+      <div class="flex justify-center items-center mb-6">
+        <img src="https://ipfs.io/ipfs/bafkreigia4kiyshaluapgxrh247ueqqbx3y6eykppfqqbqtlfku3wjpm4e" alt="MegaPython Logo" class="h-10 mr-3">
+        <p class="text-green-500 pixel-font text-sm">MEGAPYTHON</p>
+      </div>
+      <p class="text-gray-500 text-sm mb-4">© 2025 MegaPython. All rights reserved. Built on MegaETH testnet.</p>
+      <div class="flex justify-center gap-6">
+        <a href="https://linktr.ee/megaPython" target="_blank" class="text-green-400 hover:text-green-300 transition-colors">LinkTree</a>
+        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" target="_blank" class="text-green-400 hover:text-green-300 transition-colors">Rarible</a>
+        <a href="https://megapython.testnet.nfts2.me/" target="_blank" class="text-green-400 hover:text-green-300 transition-colors">Mint Page</a>
+      </div>
     </div>
   </footer>
 
@@ -279,31 +314,16 @@ const IPFS_GATEWAYS = [
   "https://ipfs.fleek.co/ipfs/"
 ];
 
-const META_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
-const TOKENS = [1,2,3,4,5,6];
-const gallery = document.getElementById('gallery');
-
-// Function to try multiple IPFS gateways
-function ipfsToHttp(url) {
-  if (!url) return '';
-  
-  if (url.startsWith('ipfs://')) {
-    const cidPath = url.replace('ipfs://', '');
-    
-    // Try the first gateway, others will be fallbacks
-    return IPFS_GATEWAYS[0] + cidPath;
-  }
-  
-  return url;
-}
-
 // Function to try loading image with multiple gateways
 function loadImageWithFallbacks(imgElement, cidPath) {
   let currentGatewayIndex = 0;
   
   function tryNextGateway() {
     if (currentGatewayIndex >= IPFS_GATEWAYS.length) {
-      imgElement.onerror(); // All gateways failed
+      // All gateways failed, show placeholder
+      if (imgElement.parentNode) {
+        imgElement.parentNode.innerHTML = '<div class="placeholder-snake"></div>';
+      }
       return;
     }
     
@@ -315,76 +335,20 @@ function loadImageWithFallbacks(imgElement, cidPath) {
   tryNextGateway();
 }
 
-async function fetchJSON(url) {
-  try {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return await r.json();
-  } catch (error) {
-    console.error('Failed to fetch JSON:', error);
-    return null;
-  }
-}
-
-async function load() {
-  for (const id of TOKENS) {
-    const card = document.createElement('div');
-    card.className = "pixel-card p-4 flex flex-col items-center";
-    card.innerHTML = `
-      <div class='w-40 h-40 bg-black mb-3 flex items-center justify-center'>
-        <div class="placeholder-snake"></div>
-      </div>
-      <div class='text-sm text-gray-300 pixel-font'>MegaPython #${id}</div>
-    `;
-    gallery.appendChild(card);
-
-    try {
-      const meta = await fetchJSON(META_BASE + id + ".json");
-      if (!meta) {
-        throw new Error('No metadata found');
-      }
-      
-      const label = card.querySelector('div + div');
-      label.textContent = meta.name || ("MegaPython #" + id);
-      
-      if (meta.image) {
-        const imgWrap = card.querySelector('div > div');
-        imgWrap.innerHTML = "";
-        
-        const img = document.createElement('img');
-        img.className = "pixelated";
-        img.alt = meta.name || "MegaPython NFT";
-        
-        img.onload = function() {
-          imgWrap.appendChild(img);
-        };
-        
-        img.onerror = function() {
-          imgWrap.innerHTML = `<div class="placeholder-snake"></div>`;
-          console.log('Image failed to load, trying fallbacks for token', id);
-          
-          // If image is from IPFS, try multiple gateways
-          if (meta.image.startsWith('ipfs://')) {
-            const cidPath = meta.image.replace('ipfs://', '');
-            loadImageWithFallbacks(img, cidPath);
-          }
-        };
-        
-        // Set initial source
-        const imgUrl = ipfsToHttp(meta.image);
-        img.src = imgUrl;
-      }
-    } catch(e) {
-      const imgWrap = card.querySelector('div > div');
-      imgWrap.innerHTML = `<div class="placeholder-snake"></div>`;
-      const label = card.querySelector('div + div');
-      label.innerHTML = `<span class="text-red-400">Error loading #${id}</span>`;
-      console.error('Error loading token', id, e);
+// Apply fallback loading to all images
+document.addEventListener('DOMContentLoaded', function() {
+  const images = document.querySelectorAll('img[src*="ipfs/"]');
+  
+  images.forEach(img => {
+    const src = img.src;
+    const cidMatch = src.match(/ipfs\/([^/]+)$/);
+    
+    if (cidMatch && cidMatch[1]) {
+      const cidPath = cidMatch[1];
+      loadImageWithFallbacks(img, cidPath);
     }
-  }
-}
-
-load();
+  });
+});
 </script>
 </body>
 </html>
