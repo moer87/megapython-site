@@ -196,58 +196,6 @@
       background: #2563eb;
     }
     
-    .wallet-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-    
-    .wallet-modal.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-    
-    .wallet-modal-content {
-      background: #1e3e1e;
-      border: 4px solid #4a9e4a;
-      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a;
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
-    }
-    
-    .wallet-option {
-      background: #3a7d3a;
-      border: 2px solid #4a9e4a;
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 10px 0;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    
-    .wallet-option:hover {
-      background: #4a9e4a;
-      transform: translateY(-2px);
-    }
-    
     .connected-wallet {
       background: #3a7d3a;
       color: white;
@@ -280,10 +228,11 @@
   <header class="relative z-10 py-6 px-4 flex justify-between items-center">
     <div class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython</div>
     <nav class="flex gap-6 items-center">
-      <a href="#" class="text-green-400 hover:text-green-300 transition-colors">Home</a>
-      <a href="/rarity.html" class="text-green-400 hover:text-green-300 transition-colors">Rarity</a>
-      <a href="#" class="text-green-400 hover:text-green-300 transition-colors">Meet the Founders</a>
-      <a href="#" class="text-green-400 hover:text-green-300 transition-colors">MegaGenerate</a>
+      <a href="#" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
+      <a href="/rarity.html" class="text-green-300 hover:text-green-500 transition-colors">Rarity</a>
+      <a href="/dashboard.html" class="text-green-300 hover:text-green-500 transition-colors">Dashboard</a>
+      <a href="#" class="text-green-300 hover:text-green-500 transition-colors">Meet the Founders</a>
+      <a href="#" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
       
       <!-- Wallet Connect Button -->
       <div id="walletConnectContainer">
@@ -291,23 +240,6 @@
       </div>
     </nav>
   </header>
-
-  <!-- Wallet Connect Modal -->
-  <div id="walletModal" class="wallet-modal">
-    <div class="wallet-modal-content">
-      <h2 class="text-2xl pixel-font text-green-500 mb-6">Connect Your Wallet</h2>
-      <p class="text-gray-300 mb-6">Connect your wallet to access exclusive features</p>
-      
-      <div class="wallet-option" id="metamaskOption">
-        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIwLjUgMTQuNUMyMC41IDE1Ljg4IDE5LjM4IDE3IDE4IDE3SDE2VjE5SDE0VjE3SDEyVjE1SDE4QzE4LjU1IDE1IDE5IDE0LjU1IDE5IDE0VjRIMTdWNUgxNVY0SDEzVjVIMTFWNEg5VjE0QzkgMTUuNjUgMTAuMzUgMTcgMTIgMTdIMTNWMTlIMTVWMTdIMTdWMTlIMTlWMTdIMThDMTkuMzggMTcgMjAuNSAxNS44OCAyMC41IDE0LjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNNy41IDEwLjVINy41QzcuNSAxMS4wNSA3LjA1IDExLjUgNi41IDExLjVINy41VjEwLjVINi41QzcuMDUgMTAuNSA3LjUgMTAuOTUgNy41IDExLjVWIjAgZmYwIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" width="24" height="24" alt="MetaMask">
-        <span>MetaMask</span>
-      </div>
-      
-      <p class="text-gray-400 text-sm mt-6">We recommend MetaMask for the best experience</p>
-      
-      <button id="closeWalletModal" class="mt-6 text-gray-400 hover:text-gray-300">Cancel</button>
-    </div>
-  </div>
 
   <!-- Banner Section -->
   <section class="relative z-10 text-center py-16 px-4">
@@ -554,9 +486,7 @@ function initSlider() {
 // Wallet Connect functionality
 function initWalletConnect() {
   const walletConnectBtn = document.getElementById('walletConnectBtn');
-  const walletModal = document.getElementById('walletModal');
-  const closeWalletModal = document.getElementById('closeWalletModal');
-  const metamaskOption = document.getElementById('metamaskOption');
+  const walletConnectContainer = document.getElementById('walletConnectContainer');
   
   // Check if user is already connected
   const connectedAddress = localStorage.getItem('connectedWallet');
@@ -564,25 +494,8 @@ function initWalletConnect() {
     updateWalletButton(connectedAddress);
   }
   
-  // Open modal when connect button is clicked
-  walletConnectBtn.addEventListener('click', () => {
-    walletModal.classList.add('active');
-  });
-  
-  // Close modal when cancel is clicked
-  closeWalletModal.addEventListener('click', () => {
-    walletModal.classList.remove('active');
-  });
-  
-  // Close modal when clicking outside
-  walletModal.addEventListener('click', (e) => {
-    if (e.target === walletModal) {
-      walletModal.classList.remove('active');
-    }
-  });
-  
-  // Connect to MetaMask
-  metamaskOption.addEventListener('click', async () => {
+  // Connect to wallet when button is clicked
+  walletConnectBtn.addEventListener('click', async () => {
     try {
       // Check if MetaMask is installed
       if (typeof window.ethereum === 'undefined') {
@@ -602,9 +515,6 @@ function initWalletConnect() {
       
       // Update UI
       updateWalletButton(address);
-      
-      // Close modal
-      walletModal.classList.remove('active');
       
       console.log('Connected with address:', address);
     } catch (error) {
