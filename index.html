@@ -46,6 +46,7 @@
       max-width: 800px;
       margin: 0 auto;
       border-radius: 12px;
+      aspect-ratio: 4/3;
     }
     
     .slider {
@@ -61,6 +62,12 @@
       align-items: center;
       justify-content: center;
       background: #1e3e1e;
+    }
+    
+    .slide img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
     }
     
     .slider-dots {
@@ -145,19 +152,19 @@
     <section class="slider-container pixel-card mb-12">
       <div class="slider">
         <div class="slide">
-          <img src="https://ipfs.io/ipfs/bafkreifyak53gwnlujurbx5rglsnypk6ilju6rakjdqi23jrslgxoalhqi" alt="MegaPython #1" class="w-full h-full object-cover">
+          <img src="https://ipfs.io/ipfs/bafkreifyak53gwnlujurbx5rglsnypk6ilju6rakjdqi23jrslgxoalhqi" alt="MegaPython #1">
         </div>
         <div class="slide">
-          <img src="https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm" alt="MegaPython #2" class="w-full h-full object-cover">
+          <img src="https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm" alt="MegaPython #2">
         </div>
         <div class="slide">
-          <img src="https://ipfs.io/ipfs/bafkreigilizwe5aow4cj7pknk54ykwbgtcrqqp53xbaye6c7jzugsvjbmu" alt="MegaPython #3" class="w-full h-full object-cover">
+          <img src="https://ipfs.io/ipfs/bafkreigilizwe5aow4cj7pknk54ykwbgtcrqqp53xbaye6c7jzugsvjbmu" alt="MegaPython #3">
         </div>
         <div class="slide">
-          <img src="https://ipfs.io/ipfs/bafkreicfbtyh7p4njqbzideujs3z4pwr4zkyg7vxaxgv7sogdrojojgdr4" alt="MegaPython #4" class="w-full h-full object-cover">
+          <img src="https://ipfs.io/ipfs/bafkreicfbtyh7p4njqbzideujs3z4pwr4zkyg7vxaxgv7sogdrojojgdr4" alt="MegaPython #4">
         </div>
         <div class="slide">
-          <img src="https://ipfs.io/ipfs/bafkreidykh3x4nwupemwanoa4wbxedvwspsctveksdyhjbnnbwt7hcjhx4" alt="MegaPython #5" class="w-full h-full object-cover">
+          <img src="https://ipfs.io/ipfs/bafkreidykh3x4nwupemwanoa4wbxedvwspsctveksdyhjbnnbwt7hcjhx4" alt="MegaPython #5">
         </div>
       </div>
       <div class="slider-dots">
@@ -196,7 +203,6 @@
   </div>
 
   <script>
-    // IPFS gateways for fallback
     const IPFS_GATEWAYS = [
       "https://ipfs.io/ipfs/",
       "https://gateway.ipfs.io/ipfs/",
@@ -205,7 +211,6 @@
       "https://ipfs.fleek.co/ipfs/"
     ];
 
-    // Function to load images with fallback
     function loadImageWithFallbacks(imgElement, cid) {
       let currentGatewayIndex = 0;
       
@@ -224,7 +229,6 @@
       tryNextGateway();
     }
 
-    // Apply fallback loading to all images
     document.addEventListener('DOMContentLoaded', function() {
       const images = document.querySelectorAll('img[src*="ipfs/"]');
       
@@ -242,7 +246,6 @@
       initWalletConnect();
     });
 
-    // Slider functionality
     function initSlider() {
       const slider = document.querySelector('.slider');
       const sliderContainer = document.querySelector('.slider-container');
@@ -276,7 +279,6 @@
       sliderContainer.addEventListener('mouseleave', startAutoSlide);
     }
 
-    // Wallet connect functionality
     function initWalletConnect() {
       const walletConnectBtn = document.getElementById('walletConnectBtn');
       const walletConnectContainer = document.getElementById('walletConnectContainer');
