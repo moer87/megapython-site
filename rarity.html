@@ -5,12 +5,72 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>MegaPython — Rarity Checker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
   <style>
-    /* ... (keep your existing styles) ... */
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a220a;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 40%);
+    }
+    
+    .pixel-font {
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .jungle-glow {
+      text-shadow: 0 0 10px rgba(74, 158, 74, 0.7);
+    }
+    
+    .pixel-card {
+      background: #1e3e1e;
+      border: 4px solid #4a9e4a;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .pixel-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 25px rgba(74, 158, 74, 0.8);
+    }
+    
+    .jungle-leaf {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 C5,35 15,35 20,35 C25,35 35,35 35,25 C35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      z-index: 0;
+      opacity: 0.3;
+    }
+    
+    .rarity-badge {
+      background: #4a9e4a;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+    
+    .trait-card {
+      background: rgba(42, 74, 42, 0.7);
+      padding: 8px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body class="min-h-screen">
-  <!-- ... (keep your jungle leaves decoration) ... -->
+  <!-- Jungle leaves decoration -->
+  <div class="jungle-leaf" style="top: 10%; left: 5%;"></div>
+  <div class="jungle-leaf" style="top: 15%; right: 7%; transform: rotate(45deg);"></div>
+  <div class="jungle-leaf" style="top: 40%; left: 8%; transform: rotate(80deg);"></div>
+  <div class="jungle-leaf" style="bottom: 20%; right: 10%; transform: rotate(120deg);"></div>
+  <div class="jungle-leaf" style="bottom: 30%; left: 12%; transform: rotate(160deg);"></div>
 
   <div class="relative z-10 max-w-4xl mx-auto p-6">
     <header class="text-center mb-8">
@@ -35,7 +95,8 @@
   </div>
 
 <script>
-// Array of rarity quotes
+const MEGAETH_RPC_URL = 'https://testnet.rpc.megaeth.io';
+const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
 const RARITY_QUOTES = {
   common: [
     "Just another pixel in the jungle.",
@@ -81,16 +142,6 @@ const RARITY_QUOTES = {
   ]
 };
 
-// IPFS metadata base URL - using direct IPFS gateway
-const METADATA_BASE = "https://ipfs.io/ipfs/bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/";
-const btn = document.getElementById('btnCheck');
-const tokenInput = document.getElementById('tokenId');
-const preview = document.getElementById('preview');
-const traitsEl = document.getElementById('traits');
-const rarityEl = document.getElementById('rarityScore');
-const resultEl = document.getElementById('result');
-
-// Multiple IPFS gateways for fallback
 const IPFS_GATEWAYS = [
   "https://ipfs.io/ipfs/",
   "https://gateway.ipfs.io/ipfs/",
@@ -99,30 +150,38 @@ const IPFS_GATEWAYS = [
   "https://ipfs.fleek.co/ipfs/"
 ];
 
-// Function to try loading metadata with multiple gateways
+const METADATA_BASE = "https://ipfs.io/ipfs/bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/";
+
+const btn = document.getElementById('btnCheck');
+const tokenInput = document.getElementById('tokenId');
+const preview = document.getElementById('preview');
+const traitsEl = document.getElementById('traits');
+const rarityEl = document.getElementById('rarityScore');
+const resultEl = document.getElementById('result');
+
 async function fetchWithFallbacks(cidPath) {
   for (const gateway of IPFS_GATEWAYS) {
     try {
       const response = await fetch(gateway + cidPath);
-      if (response.ok) {
-        return await response.json();
-      }
+      if (response.ok) return await response.json();
     } catch (error) {
       console.log(`Gateway ${gateway} failed, trying next...`);
-      continue;
     }
   }
   throw new Error("All IPFS gateways failed");
 }
 
-async function fetchJSON(url) {
+async function checkOwnership(tokenId) {
+  if (typeof window.ethereum === 'undefined') return false;
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.Contract(MEGAPYTHON_CONTRACT, ['function ownerOf(uint256) view returns (address)'], provider);
+    const owner = await contract.ownerOf(tokenId);
+    const accounts = await provider.listAccounts();
+    return owner.toLowerCase() === accounts[0]?.toLowerCase();
   } catch (error) {
-    console.error('Failed to fetch JSON:', error);
-    return null;
+    console.error('Error checking ownership:', error);
+    return false;
   }
 }
 
@@ -147,31 +206,29 @@ function getRarityQuote(category) {
   return quotes[Math.floor(Math.random() * quotes.length)];
 }
 
-function showMetadata(meta, rarityData) {
+function showMetadata(meta, tokenId) {
   preview.innerHTML = "";
   
-  // Create image preview
   const imageUrl = meta.image ? meta.image.replace('ipfs://', 'https://ipfs.io/ipfs/') : '/placeholder-nft.png';
   const previewHtml = `
-    <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${meta.name || `MegaPython #${tokenInput.value}`}</div>
+    <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${meta.name || `MegaPython #${tokenId}`}</div>
     <div class="nft-preview mb-4">
-      <img src="${imageUrl}" alt="${meta.name}" onerror="this.src='/placeholder-nft.png'">
+      <img src="${imageUrl}" alt="${meta.name || `MegaPython #${tokenId}`}" onerror="this.src='/placeholder-nft.png'">
     </div>
   `;
   preview.innerHTML = previewHtml;
 
-  // Calculate rarity score
-  let score = 0;
+  // Calculate rarity score based on trait rarity
   const attrs = meta.attributes || [];
-  
-  // Fallback scoring if no rarity data
-  score = Math.min(100, Math.max(0, attrs.length * 15 + Math.random() * 20));
-  
-  // Get rarity category and quote
+  let score = attrs.reduce((sum, attr) => {
+    const rarity = attr.rarity || 0.1; // Default rarity if not provided
+    return sum + (1 / rarity) * 10;
+  }, 0);
+  score = Math.min(100, score);
+
   const category = getRarityCategory(score);
   const quote = getRarityQuote(category);
   
-  // Display quote
   const quoteBox = document.createElement('div');
   quoteBox.className = 'quote-box text-center';
   quoteBox.innerHTML = `
@@ -180,9 +237,7 @@ function showMetadata(meta, rarityData) {
   `;
   preview.appendChild(quoteBox);
 
-  // Display traits
   traitsEl.innerHTML = "";
-  
   if (attrs.length === 0) {
     traitsEl.innerHTML = '<div class="col-span-3 text-gray-400 text-center p-4 bg-slate-900/50 rounded-lg">No attributes found in metadata.</div>';
   } else {
@@ -197,13 +252,12 @@ function showMetadata(meta, rarityData) {
     });
   }
   
-  // Display score
   rarityEl.innerHTML = `
     <div class="inline-flex items-center bg-slate-900 px-4 py-2 rounded-full border border-emerald-500/30">
       <span class="text-emerald-400 font-bold mr-2">Rarity Score:</span> 
-      <span class="text-white">${score.toFixed(3)}</span>
+      <span class="text-white">${score.toFixed(2)}</span>
     </div>
-    <p class="text-gray-400 mt-2 text-sm">Rarity scoring based on trait analysis</p>
+    <p class="text-gray-400 mt-2 text-sm">Rarity based on trait scarcity</p>
   `;
 }
 
@@ -221,12 +275,16 @@ btn.addEventListener('click', async () => {
   resultEl.classList.remove('hidden');
 
   try {
-    // Try direct IPFS metadata fetch
+    const ownsToken = await checkOwnership(idn);
+    if (!ownsToken) {
+      showError('You do not own this MegaPython NFT.');
+      return;
+    }
+
     const metaUrl = `${METADATA_BASE}${idn}.json`;
     let meta = await fetchWithFallbacks(`bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/${idn}.json`);
     
     if (!meta) {
-      // Try alternative format if first fails
       meta = await fetchWithFallbacks(`bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/${idn}`);
     }
     
@@ -235,14 +293,13 @@ btn.addEventListener('click', async () => {
       return;
     }
     
-    showMetadata(meta, null);
+    showMetadata(meta, idn);
   } catch (error) {
     console.error('Error:', error);
-    showError('An error occurred while fetching data. Please try again.');
+    showError('Failed to fetch data. Check your connection or try again later.');
   }
 });
 
-// Allow pressing Enter to submit
 tokenInput.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     btn.click();
