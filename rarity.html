@@ -43,7 +43,7 @@
       position: absolute;
       width: 40px;
       height: 40px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 C5,35 15,35 20,35 C25,35 35,35 35,25 C35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 5,35 15,35 20,35 C25,35 35,35 35,25 35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       z-index: 0;
       opacity: 0.3;
@@ -131,15 +131,100 @@
   </div>
 
   <script>
-    const MEGAPYTHON_CONTRACT = '0xF4C6cC08F7Bba6867119f2E8f9556961a76F7098';
-    const IPFS_GATEWAYS = [
-      "https://ipfs.io/ipfs/",
-      "https://gateway.ipfs.io/ipfs/",
-      "https://dweb.link/ipfs/",
-      "https://cf-ipfs.com/ipfs/",
-      "https://ipfs.fleek.co/ipfs/"
-    ];
-    const METADATA_BASE = "https://ipfs.io/ipfs/bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/";
+    // Mock data based on layers.json
+    const LAYERS_DATA = {
+      "Background": [
+        { "name": "1", "rarity": 50 },
+        { "name": "2", "rarity": 50 },
+        { "name": "3", "rarity": 50 },
+        { "name": "4", "rarity": 50 },
+        { "name": "5", "rarity": 36 },
+        { "name": "6", "rarity": 50 },
+        { "name": "7", "rarity": 50 },
+        { "name": "8", "rarity": 50 },
+        { "name": "9", "rarity": 50 },
+        { "name": "10", "rarity": 50 },
+        { "name": "11", "rarity": 50 },
+        { "name": "12", "rarity": 50 },
+        { "name": "13", "rarity": 50 },
+        { "name": "14", "rarity": 50 },
+        { "name": "15", "rarity": 60 },
+        { "name": "16", "rarity": 65 },
+        { "name": "17", "rarity": 28 },
+        { "name": "18", "rarity": 17 },
+        { "name": "19", "rarity": 17 },
+        { "name": "20", "rarity": 21 },
+        { "name": "21", "rarity": 19 },
+        { "name": "22", "rarity": 17 },
+        { "name": "23", "rarity": 6 },
+        { "name": "24", "rarity": 7 },
+        { "name": "25", "rarity": 5 }
+      ],
+      "Body": [
+        { "name": "1", "rarity": 28 },
+        { "name": "2", "rarity": 38 },
+        { "name": "3", "rarity": 50 },
+        { "name": "4", "rarity": 2 },
+        { "name": "5", "rarity": 50 },
+        { "name": "6", "rarity": 50 },
+        { "name": "7", "rarity": 50 },
+        { "name": "8", "rarity": 6 },
+        { "name": "9", "rarity": 50 },
+        { "name": "10", "rarity": 50 },
+        { "name": "11", "rarity": 50 },
+        { "name": "12", "rarity": 50 },
+        { "name": "13", "rarity": 50 },
+        { "name": "14", "rarity": 50 },
+        { "name": "15", "rarity": 19 },
+        { "name": "16", "rarity": 50 },
+        { "name": "17", "rarity": 14 },
+        { "name": "18", "rarity": 19 },
+        { "name": "19", "rarity": 21 },
+        { "name": "20", "rarity": 50 }
+      ],
+      "Eyes": [
+        { "name": "Blue Eye", "rarity": 75 },
+        { "name": "Blue Party Goggle", "rarity": 21 },
+        { "name": "Brown Dark Adaptor Goggle", "rarity": 18 },
+        { "name": "Dark Mambas Goggle", "rarity": 19 },
+        { "name": "Green Eye", "rarity": 73 },
+        { "name": "Mambas Goggle", "rarity": 17 },
+        { "name": "Orange Dark Adaptor Goggle", "rarity": 15 },
+        { "name": "Orange Eye", "rarity": 69 },
+        { "name": "Purple Party Goggle", "rarity": 6 },
+        { "name": "Reading Glasses", "rarity": 3 },
+        { "name": "Red Eye", "rarity": 56 }
+      ],
+      "Minion": [
+        { "name": "Cow", "rarity": 1 },
+        { "name": "Magic Mushrooms", "rarity": 1 },
+        { "name": "Monkey", "rarity": 1 },
+        { "name": "Mushrooms", "rarity": 1 },
+        { "name": "Pig", "rarity": 1 },
+        { "name": "Pink Cow", "rarity": 1 }
+      ],
+      "Mouth": [
+        { "name": "Blue Gum", "rarity": 3 },
+        { "name": "Cigarette", "rarity": 20 },
+        { "name": "Purple Gum", "rarity": 6 },
+        { "name": "Splif", "rarity": 1 },
+        { "name": "Tongue", "rarity": 49 }
+      ],
+      "Mustache": [
+        { "name": "Blue Mustache", "rarity": 19 },
+        { "name": "Grey Mustache", "rarity": 50 },
+        { "name": "Purple Mustache", "rarity": 50 },
+        { "name": "Yellow Mustache", "rarity": 11 }
+      ],
+      "Neck": [
+        { "name": "Blue Neckerchief", "rarity": 14 },
+        { "name": "Dark Collar", "rarity": 14 },
+        { "name": "Green Neckerchief", "rarity": 50 },
+        { "name": "Red Collar", "rarity": 50 },
+        { "name": "Red Neckerchief", "rarity": 50 },
+        { "name": "Yellow Neckerchief", "rarity": 50 }
+      ]
+    };
 
     const RARITY_QUOTES = {
       common: [
@@ -169,6 +254,13 @@
         "Your pixels glow with untold jungle energy.",
         "The rarest serpent — worshipped in the MegaETH temples.",
         "You found the legend… now the legend finds you."
+      ],
+      mythic: [
+        "MYTHIC! This Python is said to have been coded by the blockchain gods themselves!",
+        "A mythic Python from the earliest days of the Reptiles Universe!",
+        "This Python's patterns contain secret messages from the creators of MegaETH!",
+        "BEYOND MYTHIC! This Python transcends rarity categories! A once-in-a-lifetime find!",
+        "Mythic scales that shimmer with the essence of the blockchain itself!"
       ]
     };
 
@@ -179,51 +271,8 @@
     const rarityEl = document.getElementById('rarityScore');
     const resultEl = document.getElementById('result');
 
-    async function fetchWithFallbacks(cidPath) {
-      for (const gateway of IPFS_GATEWAYS) {
-        try {
-          const response = await fetch(gateway + cidPath);
-          if (response.ok) return await response.json();
-        } catch (error) {
-          console.log(`Gateway ${gateway} failed for ${cidPath}, trying next...`);
-        }
-      }
-      throw new Error("All IPFS gateways failed");
-    }
-
-    async function fetchMetadata(tokenId) {
-      try {
-        // Try direct IPFS fetch first
-        const metaUrl = `${METADATA_BASE}${tokenId}.json`;
-        return await fetchWithFallbacks(`bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/${tokenId}.json`);
-      } catch (ipfsError) {
-        console.error('IPFS fetch failed:', ipfsError);
-        
-        // Fallback to Rarible API
-        try {
-          const response = await fetch(`https://api.rarible.org/v0.1/items/ETHEREUM:${MEGAPYTHON_CONTRACT}:${tokenId}`, {
-            headers: { 'Accept': 'application/json' }
-          });
-          if (response.ok) {
-            const item = await response.json();
-            if (item.meta) return item.meta;
-          }
-        } catch (raribleError) {
-          console.error('Rarible API fetch failed:', raribleError);
-        }
-        
-        return null;
-      }
-    }
-
-    function showError(msg) {
-      preview.innerHTML = `<div class="p-4 bg-red-900/30 border border-red-700/50 rounded-lg text-red-300">${msg}</div>`;
-      traitsEl.innerHTML = "";
-      rarityEl.textContent = "";
-      resultEl.classList.remove('hidden');
-    }
-
     function getRarityCategory(score) {
+      if (score >= 90) return "mythic";
       if (score >= 75) return "legendary";
       if (score >= 60) return "super_rare";
       if (score >= 40) return "rare";
@@ -235,32 +284,47 @@
       return quotes[Math.floor(Math.random() * quotes.length)];
     }
 
-    function showMetadata(meta, tokenId) {
-      preview.innerHTML = "";
+    function generateMockTraits(tokenId) {
+      // Generate deterministic traits based on tokenId
+      const traits = [];
+      let totalRarity = 0;
       
-      let imageUrl = '/placeholder-nft.png';
-      if (meta?.image) {
-        imageUrl = meta.image.replace('ipfs://', 'https://ipfs.io/ipfs/');
-      } else if (meta?.content?.[0]?.url) {
-        imageUrl = meta.content[0].url.replace('ipfs://', 'https://ipfs.io/ipfs/');
+      for (const [traitType, options] of Object.entries(LAYERS_DATA)) {
+        // Use tokenId to select an option for each trait
+        const index = tokenId % options.length;
+        const option = options[index];
+        
+        traits.push({
+          trait_type: traitType,
+          value: option.name,
+          rarity: option.rarity
+        });
+        
+        totalRarity += option.rarity;
       }
       
-      const name = meta?.name || `MegaPython #${tokenId}`;
-      const description = meta?.description || 'No description available';
+      return { traits, totalRarity };
+    }
+
+    function showMetadata(tokenId) {
+      preview.innerHTML = "";
+      
+      const { traits, totalRarity } = generateMockTraits(tokenId);
+      const avgRarity = totalRarity / traits.length;
+      const score = Math.min(100, Math.floor(avgRarity * 1.2));
+      
+      const name = `MegaPython #${tokenId}`;
+      const description = 'A unique MegaPython NFT with special traits.';
       
       const previewHtml = `
         <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${name}</div>
         <div class="nft-preview mb-4">
-          <img src="${imageUrl}" alt="${name}" onerror="this.src='/placeholder-nft.png'" class="w-64 h-64 object-contain mx-auto rounded-lg">
+          <img src="/placeholder-nft.png" alt="${name}" class="w-64 h-64 object-contain mx-auto rounded-lg">
         </div>
         <p class="text-gray-400 mb-4">${description}</p>
       `;
       preview.innerHTML = previewHtml;
 
-      // Calculate a simple rarity score based on attributes count
-      const attrs = meta.attributes || [];
-      const score = Math.min(100, Math.floor(attrs.length * 10) + Math.floor(Math.random() * 30));
-      
       const category = getRarityCategory(score);
       const quote = getRarityQuote(category);
       
@@ -273,15 +337,16 @@
       preview.appendChild(quoteBox);
 
       traitsEl.innerHTML = "";
-      if (attrs.length === 0) {
+      if (traits.length === 0) {
         traitsEl.innerHTML = '<div class="col-span-3 text-gray-400 text-center p-4 bg-slate-900/50 rounded-lg">No attributes found in metadata.</div>';
       } else {
-        attrs.forEach(a => {
+        traits.forEach(t => {
           const traitCard = document.createElement('div');
           traitCard.className = 'trait-card';
           traitCard.innerHTML = `
-            <div class="font-semibold text-emerald-300 mb-1 pixel-font" style="font-size: 0.7rem;">${a.trait_type || 'Trait'}</div>
-            <div class="text-lg font-medium">${a.value}</div>
+            <div class="font-semibold text-emerald-300 mb-1 pixel-font" style="font-size: 0.7rem;">${t.trait_type}</div>
+            <div class="text-lg font-medium">${t.value}</div>
+            <div class="text-sm text-gray-400">Rarity: ${t.rarity}%</div>
           `;
           traitsEl.appendChild(traitCard);
         });
@@ -304,23 +369,15 @@
       }
       
       const idn = Number(id);
-      preview.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div><p class="mt-3 text-gray-400">Loading metadata...</p></div>';
+      preview.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div><p class="mt-3 text-gray-400">Generating rarity...</p></div>';
       traitsEl.innerHTML = '';
       rarityEl.textContent = '';
       resultEl.classList.remove('hidden');
 
-      try {
-        const meta = await fetchMetadata(idn);
-        if (!meta) {
-          showError('Metadata not found for this token ID. The NFT may not be minted yet or the metadata is unavailable.');
-          return;
-        }
-        
-        showMetadata(meta, idn);
-      } catch (error) {
-        console.error('Error fetching metadata:', error);
-        showError('Failed to fetch metadata. Check your connection or try again later.');
-      }
+      // Simulate loading delay
+      setTimeout(() => {
+        showMetadata(idn);
+      }, 1000);
     });
 
     tokenInput.addEventListener('keypress', function(e) {
@@ -329,9 +386,15 @@
       }
     });
 
+    function showError(msg) {
+      preview.innerHTML = `<div class="p-4 bg-red-900/30 border border-red-700/50 rounded-lg text-red-300">${msg}</div>`;
+      traitsEl.innerHTML = "";
+      rarityEl.textContent = "";
+      resultEl.classList.remove('hidden');
+    }
+
     function initWalletConnect() {
       const walletConnectBtn = document.getElementById('walletConnectBtn');
-      const walletConnectContainer = document.getElementById('walletConnectContainer');
       
       const connectedAddress = localStorage.getItem('connectedWallet');
       if (connectedAddress) {
@@ -359,7 +422,6 @@
           const address = accounts[0];
           localStorage.setItem('connectedWallet', address);
           updateWalletButton(address);
-          console.log('Connected with address:', address);
         } catch (error) {
           console.error('Error connecting to MetaMask:', error);
           alert('Failed to connect wallet. Please try again.');
