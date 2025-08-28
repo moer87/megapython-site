@@ -98,6 +98,15 @@
       z-index: 0;
       opacity: 0.3;
     }
+    
+    .social-link {
+      color: #a3e635;
+      transition: color 0.3s;
+    }
+    
+    .social-link:hover {
+      color: #4ade80;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -152,7 +161,7 @@
       </div>
       
       <div class="flex gap-2 mb-4">
-        <button class=" different tab-button active" data-tab="megapythons">MegaPythons</button>
+        <button class="tab-button active" data-tab="megapythons">MegaPythons</button>
         <button class="tab-button" data-tab="nfts">All NFTs</button>
         <button class="tab-button" data-tab="tokens">Tokens</button>
       </div>
@@ -193,21 +202,27 @@
     </section>
 
     <footer class="text-center text-gray-500">
-      <p>&copy; 2025 MegaPython. All rights reserved.</p>
+      <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
+      <div class="flex justify-center gap-8">
+        <a href="https://x.com/megapythons" class="social-link pixel-font">X</a>
+        <a href="https://megapython.testnet.nfts2.me/" class="social-link pixel-font">Mint</a>
+        <a href="https://linktr.ee/megaPython" class="social-link pixel-font">Linktree</a>
+        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
+      </div>
     </footer>
   </div>
 
   <script>
     const MEGAETH_CHAIN_ID = '0x18d2';
-    const MEGAETH_RPC_URL = 'https://carrot.megaeth.com/rpc';
+    const MEGAETH_RPC_URL = 'https://testnet.megaeth.network';
     const MEGAETH_NETWORK = {
       chainId: '0x18d2',
-      chainName: 'Mega Testnet',
-      nativeCurrency: { name: 'MegaETH', symbol: 'MegaETH', decimals: 18 },
+      chainName: 'MegaETH Testnet',
+      nativeCurrency: { name: 'MegaETH', symbol: 'METH', decimals: 18 },
       rpcUrls: [MEGAETH_RPC_URL],
-      blockExplorerUrls: ['https://megaexplorer.xyz/'],
+      blockExplorerUrls: ['https://testnet-explorer.megaeth.network/']
     };
-    const MEGAPYTHON_CONTRACT = '0xF4C6cC08F7Bba6867119f2E8f9556961a76F7098';
+    const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
     const RARIBLE_API_BASE = 'https://api.rarible.org/v0.1';
     const IPFS_GATEWAYS = [
       "https://ipfs.io/ipfs/",
@@ -236,18 +251,6 @@
 
     let portfolioChart = null;
 
-    async function fetchWithFallbacks(url) {
-      for (const gateway of IPFS_GATEWAYS) {
-        try {
-          const response = await fetch(url.replace('https://ipfs.io/ipfs/', gateway));
-          if (response.ok) return await response.json();
-        } catch (error) {
-          console.log(`Gateway ${gateway} failed, trying next...`);
-        }
-      }
-      throw new Error("All IPFS gateways failed");
-    }
-
     async function connectWallet() {
       try {
         if (typeof window.ethereum === 'undefined') {
@@ -262,6 +265,9 @@
         walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
         walletConnectBtn.classList.add('connected-wallet');
         
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (chainId !== MEGAETH_CHAIN_ID) {
           try {
@@ -271,18 +277,16 @@
               try {
                 await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [MEGAETH_NETWORK] });
               } catch (addError) {
-                alert('Failed to add Mega Testnet. Please add it manually in MetaMask.');
+                alert('Failed to add MegaETH Testnet. Please add it manually in MetaMask using:\nChain ID: 6354\nRPC URL: https://testnet.megaeth.network\nChain Name: MegaETH Testnet\nCurrency Symbol: METH\nExplorer: https://testnet-explorer.megaeth.network');
                 return false;
               }
             } else {
-              alert('Please switch to Mega Testnet in MetaMask.');
+              alert('Please switch to MegaETH Testnet in MetaMask.');
               return false;
             }
           }
         }
         
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
         localStorage.setItem('connectedWallet', userAddress);
         return true;
       } catch (error) {
@@ -290,6 +294,18 @@
         alert('Failed to connect wallet. Please try again.');
         return false;
       }
+    }
+
+    async function fetchWithFallbacks(url) {
+      for (const gateway of IPFS_GATEWAYS) {
+        try {
+          const response = await fetch(url.replace('https://ipfs.io/ipfs/', gateway));
+          if (response.ok) return await response.json();
+        } catch (error) {
+          console.log(`Gateway ${gateway} failed, trying next...`);
+        }
+      }
+      throw new Error("All IPFS gateways failed");
     }
 
     async function loadAssets() {
@@ -309,7 +325,7 @@
     async function loadMegaPythons() {
       try {
         const response = await fetch(`${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}&collection=ETHEREUM:${MEGAPYTHON_CONTRACT}`);
-        if (!response.ok) throw new Error('Rarible API error');
+        if (!response.ok) throw new Error(`Rarible API error: ${response.status}`);
         const data = await response.json();
         pythonContainer.innerHTML = '';
         if (data.items && data.items.length > 0) {
@@ -330,7 +346,7 @@
     async function loadAllNFTs() {
       try {
         const response = await fetch(`${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}`);
-        if (!response.ok) throw new Error('Rarible API error');
+        if (!response.ok) throw new Error(`Rarible API error: ${response.status}`);
         const data = await response.json();
         allNftContainer.innerHTML = '';
         allNFTs = data.items || [];
@@ -357,7 +373,7 @@
         const ethBalance = ethers.utils.formatEther(balance);
         
         const tokens = [
-          { name: 'MegaETH', symbol: 'MegaETH', balance: parseFloat(ethBalance).toFixed(4), value: `$${(parseFloat(ethBalance) * 1800).toFixed(2)}`, price: '$1800.00' },
+          { name: 'MegaETH', symbol: 'METH', balance: parseFloat(ethBalance).toFixed(4), value: `$${(parseFloat(ethBalance) * 1800).toFixed(2)}`, price: '$1800.00' },
         ];
         
         tokensContainer.innerHTML = '';
@@ -386,12 +402,12 @@
     function createNFTElement(nft) {
       const nftElement = document.createElement('div');
       nftElement.className = 'glass-card p-4 flex flex-col items-center card-hover';
-      const imageUrl = nft.meta?.content?.[0]?.url || '/placeholder-nft.png';
+      const imageUrl = nft.meta?.content?.[0]?.url?.replace('ipfs://', 'https://ipfs.io/ipfs/') || '/placeholder-nft.png';
       const name = nft.meta?.name || `NFT #${nft.tokenId}`;
       const collection = nft.collection?.name || 'Unknown Collection';
       nftElement.innerHTML = `
         <div class="w-40 h-40 bg-black mb-3 flex items-center justify-center overflow-hidden rounded-lg">
-          <img src="${imageUrl}" class="w-full h-full object-cover" alt="${name}" onerror="this.src='/placeholder-nft.png'">
+          <img src="${imageUrl}" class="w-full h-full object-contain" alt="${name}" onerror="this.src='/placeholder-nft.png'">
         </div>
         <div class="text-md font-semibold text-green-300 text-center">${name}</div>
         <div class="collection-badge">${collection}</div>
@@ -521,7 +537,7 @@
           signer = provider.getSigner();
           const chainId = await window.ethereum.request({ method: 'eth_chainId' });
           if (chainId !== MEGAETH_CHAIN_ID) {
-            alert('Please switch to Mega Testnet to view your assets');
+            alert('Please switch to MegaETH Testnet to view your assets. Use:\nChain ID: 6354\nRPC URL: https://testnet.megaeth.network\nChain Name: MegaETH Testnet\nCurrency Symbol: METH\nExplorer: https://testnet-explorer.megaeth.network');
           } else {
             await loadAssets();
           }
@@ -554,7 +570,7 @@
         if (chainId === MEGAETH_CHAIN_ID && userAddress) {
           await loadAssets();
         } else {
-          alert('Please switch to Mega Testnet to view your assets');
+          alert('Please switch to MegaETH Testnet to view your assets. Use:\nChain ID: 6354\nRPC URL: https://testnet.megaeth.network\nChain Name: MegaETH Testnet\nCurrency Symbol: METH\nExplorer: https://testnet-explorer.megaeth.network');
         }
       });
     }
