@@ -329,58 +329,27 @@
   </main>
 
   <script>
-    // MegaETH Testnet Configuration
+    // MegaETH Testnet Configuration - Fixed based on official details
     const MEGAETH_CHAIN_ID = '0x76ADF1'; // 7777777 in hex
-    const MEGAETH_RPC_URL = 'https://megeth.testnet.rpc.megaeth.io';
+    const MEGAETH_RPC_URL = 'https://rpc.testnet.megaeth.io';
     const MEGAETH_NETWORK = {
       chainId: MEGAETH_CHAIN_ID,
       chainName: 'MegaETH Testnet',
       nativeCurrency: {
-        name: 'MegaETH',
-        symbol: 'MEGA',
+        name: 'Ether',
+        symbol: 'ETH',
         decimals: 18,
       },
       rpcUrls: [MEGAETH_RPC_URL],
-      blockExplorerUrls: ['https://testnet.megaeth.io/'],
+      blockExplorerUrls: ['https://explorer.testnet.megaeth.io/'],
     };
 
     // Contract addresses
     const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
     
-    // Known MegaETH NFT Contracts
-    const KNOWN_NFT_CONTRACTS = [
-      '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098', // MegaPython
-      '0x72b084e518a0c39d791171133c9bf4ea85996594', // Fafelnacci
-      '0x56156a7a7f31e5ef191ae6ee564442cb7fed0ac8', // Lil Mega Bunz
-      '0x6a0d1c1b5deeb24ca0c452b19b5051f2ae0e7b23', // 1 Million Bread
-      '0xcd942dc421dca9096a2775f161103bb799a691be', // Mega Rebel Mutant
-      '0xa3bf0fa4a0c4763cf2b71d32e2c09914aa686ae0', // Mega Rebel Pika
-      '0x9c4e45e819e32e9276c448cad892fa9c783d1099', // Mega Rebel Doll
-      '0x2a0c39b24379d61821d63119b36ecbe9906b772d', // Mega Rebel Botz
-      '0xf4565cb3709c3c39895324688474aa27c33b0e60', // Mega Rebel Jelly
-      '0xb796c8fd06f9a89d4cad03cc538a936a865cbeb0', // Way My Dogs At
-      '0xf68cd4084b787be2d7d5f8007f8019117ed94736', // MegaBunnyVerse Preview
-      '0x72cd59c3e011f2a860e57a52d5263f0b57422a5e', // MegaBunnyVerse Preview-2
-      '0xc5622a9fb4a8330bd2d42c057b7448be96122e77', // Puffles MegaETH Pass
-      '0xfdc06def0e3ec05c9055a2cea3b2ac4bf66b4365', // Mega Rebel
-      '0xf1f50d5a9a629bf663d7c90a83070a36b367c3a1', // Nacci's Member Card
-      '0xd45ad5678fd51d3d6b4ce55c720817d9896bb269', // Legend Of Breadio Loafarina Of Time
-      '0x85ed4e4c8a50a4aae200ae040a17a6e490aae5ef', // Remiko Testnet
-      '0x4ec7ed0b288f20e4ca278bc1f8dcd9ef61363533', // Nacci Glitchiness
-      '0xbb06e179db81111f0a9cae1606b342355ee59af2', // Nacci's Creativiness
-      '0xaf538816f2b21e5728e61e59675d3154157385eb', // Nacci's Cheetah
-      '0x037673f253edae7a2551375281007f7f97d27a05'  // Nacci's Busyness
-    ];
-
-    // Known Token Contracts
-    const KNOWN_TOKEN_CONTRACTS = {
-      '0x10a6be7d23989d00d528e68cf8051d095f741145': { name: 'MegaETH', symbol: 'MEGA', decimals: 18 },
-      '0xa89db629c4c1cc227af47c5bcee8a0e6df271e': { name: 'Mega Beer', symbol: 'BEER', decimals: 18 },
-      '0x9629684df53db9e4484697d0a50c442b2bfa80a8': { name: 'GTE', symbol: 'GTE', decimals: 18 },
-      '0x1bc166ae1704123759e66f32dff040312f04dbaa': { name: 'Breadguy', symbol: 'BREAD', decimals: 18 },
-      '0x776401b9bc8aae31a685731b7147d4445fd9fb19': { name: 'Wrapped Ether', symbol: 'WETH', decimals: 18 }
-    };
-
+    // Rarible API for fetching NFTs
+    const RARIBLE_API_BASE = 'https://api.rarible.org/v0.1';
+    
     // Initialize ethers provider
     let provider;
     let signer;
@@ -493,12 +462,12 @@
       }
     }
 
-    // Load MegaPythons
+    // Load MegaPythons using Rarible API
     async function loadMegaPythons() {
       try {
         // Use Rarible API to fetch MegaPython NFTs
         const response = await fetch(
-          `https://api.rarible.org/v0.1/items/byOwner?owner=ETHEREUM:${userAddress}&contract=${MEGAPYTHON_CONTRACT}`
+          `${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}&collection=${MEGAPYTHON_CONTRACT}`
         );
         
         const data = await response.json();
@@ -525,12 +494,12 @@
       }
     }
 
-    // Load all NFTs
+    // Load all NFTs using Rarible API
     async function loadAllNFTs() {
       try {
         // Use Rarible API to fetch all NFTs
         const response = await fetch(
-          `https://api.rarible.org/v0.1/items/byOwner?owner=ETHEREUM:${userAddress}`
+          `${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}`
         );
         
         const data = await response.json();
@@ -569,7 +538,7 @@
       
       const imageUrl = nft.meta?.content?.[0]?.url || '/placeholder-nft.png';
       const name = nft.meta?.name || `NFT #${nft.tokenId}`;
-      const collection = nft.contract?.split(':')[1] || 'Unknown Collection';
+      const collection = nft.collection?.name || 'Unknown Collection';
       
       nftElement.innerHTML = `
         <div class="w-40 h-40 bg-black mb-3 flex items-center justify-center overflow-hidden rounded-lg">
@@ -585,19 +554,19 @@
     // Load tokens
     async function loadTokens() {
       try {
-        // Get native token balance (MegaETH)
+        // Get native token balance (ETH)
         const balance = await provider.getBalance(userAddress);
-        const megaEthBalance = ethers.utils.formatEther(balance);
+        const ethBalance = ethers.utils.formatEther(balance);
         
         // For demo purposes, we'll create some sample tokens
         // In a real implementation, you would fetch actual token balances
         const sampleTokens = [
           { 
-            name: "MegaETH", 
-            symbol: "MEGA", 
-            balance: parseFloat(megaEthBalance).toFixed(4), 
-            value: `$${(parseFloat(megaEthBalance) * 0.5).toFixed(2)}`, 
-            price: "$0.50" 
+            name: "Ether", 
+            symbol: "ETH", 
+            balance: parseFloat(ethBalance).toFixed(4), 
+            value: `$${(parseFloat(ethBalance) * 1800).toFixed(2)}`, 
+            price: "$1800.00" 
           },
           { 
             name: "Test Token", 
@@ -711,7 +680,7 @@
       // Filter NFTs based on search term
       const filteredNFTs = allNFTs.filter(nft => {
         const name = (nft.meta?.name || `NFT #${nft.tokenId}`).toLowerCase();
-        const collection = (nft.contract?.split(':')[1] || 'Unknown Collection').toLowerCase();
+        const collection = (nft.collection?.name || 'Unknown Collection').toLowerCase();
         
         return name.includes(searchTerm) || collection.includes(searchTerm);
       });
