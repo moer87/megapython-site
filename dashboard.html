@@ -213,23 +213,49 @@
   </div>
 
   <script>
-    const MEGAETH_CHAIN_ID = '0x18d2';
+    const MEGAETH_CHAIN_ID = '0x18D2'; // 6354 in decimal
     const MEGAETH_RPC_URL = 'https://testnet.megaeth.network';
-    const MEGAETH_NETWORK = {
-      chainId: '0x18d2',
-      chainName: 'MegaETH Testnet',
-      nativeCurrency: { name: 'MegaETH', symbol: 'METH', decimals: 18 },
-      rpcUrls: [MEGAETH_RPC_URL],
-      blockExplorerUrls: ['https://testnet-explorer.megaeth.network/']
-    };
-    const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
-    const RARIBLE_API_BASE = 'https://api.rarible.org/v0.1';
+    const MEGAPYTHON_CONTRACT = '0xF4C6cC08F7Bba6867119f2E8f9556961a76F7098';
     const IPFS_GATEWAYS = [
       "https://ipfs.io/ipfs/",
       "https://gateway.ipfs.io/ipfs/",
       "https://dweb.link/ipfs/",
       "https://cf-ipfs.com/ipfs/",
       "https://ipfs.fleek.co/ipfs/"
+    ];
+
+    // Known NFT collections on MegaETH
+    const NFT_COLLECTIONS = [
+      { name: "MegaPython", address: "0xF4C6cC08F7Bba6867119f2E8f9556961a76F7098" },
+      { name: "Fafelnacci", address: "0x72b084e518a0c39d791171133c9bf4ea85996594" },
+      { name: "Lil Mega Bunz", address: "0x56156a7a7f31e5ef191ae6ee564442cb7fed0ac8" },
+      { name: "1 Million Bread", address: "0x6a0d1c1b5deeb24ca0c452b19b5051f2ae0e7b23" },
+      { name: "Mega Rebel Mutant", address: "0xcd942dc421dca9096a2775f161103bb799a691be" },
+      { name: "Mega Rebel Pika", address: "0xa3bf0fa4a0c4763cf2b71d32e2c09914aa686ae0" },
+      { name: "Mega Rebel Doll", address: "0x9c4e45e819e32e9276c448cad892fa9c783d1099" },
+      { name: "Mega Rebel Botz", address: "0x2a0c39b24379d61821d63119b36ecbe9906b772d" },
+      { name: "Mega Rebel Jelly", address: "0xf4565cb3709c3c39895324688474aa27c33b0e60" },
+      { name: "Way My Dogs At", address: "0xb796c8fd06f9a89d4cad03cc538a936a865cbeb0" },
+      { name: "MegaBunnyVerse Preview", address: "0xf68cd4084b787be2d7d5f8007f8019117ed94736" },
+      { name: "MegaBunnyVerse Preview-2", address: "0x72cd59c3e011f2a860e57a52d5263f0b57422a5e" },
+      { name: "Puffles MegaETH Pass", address: "0xc5622a9fb4a8330bd2d42c057b7448be96122e77" },
+      { name: "Nacci's Member Card", address: "0xf1f50d5a9a629bf663d7c90a83070a36b367c3a1" },
+      { name: "Legend Of Breadio", address: "0xd45ad5678fd51d3d6b4ce55c720817d9896bb269" },
+      { name: "Remiko Testnet", address: "0x85ed4e4c8a50a4aae200ae040a17a6e490aae5ef" },
+      { name: "Nacci Glitchiness", address: "0x4ec7ed0b288f20e4ca278bc1f8dcd9ef61363533" },
+      { name: "Nacci's Creativiness", address: "0xbb06e179db81111f0a9cae1606b342355ee59af2" },
+      { name: "Nacci's Cheetah", address: "0xaf538816f2b21e5728e61e59675d3154157385eb" },
+      { name: "Nacci's Busyness", address: "0x037673f253edae7a2551375281007f7f97d27a05" }
+    ];
+
+    // Known tokens on MegaETH
+    const TOKENS = [
+      { name: "MegaETH", symbol: "METH", address: "native", decimals: 18 },
+      { name: "MEGA", symbol: "MEGA", address: "0x10a6be7d23989d00d528e68cf8051d095f741145", decimals: 18 },
+      { name: "MEGA BEER", symbol: "BEER", address: "0xa89db62954c4c1cc227af47c5bcee8a0e6df271e", decimals: 18 },
+      { name: "GTE", symbol: "GTE", address: "0x9629684df53db9e4484697d0a50c442b2bfa80a8", decimals: 18 },
+      { name: "Breadguy", symbol: "BREAD", address: "0x1bc166ae1704123759e66f32dff040312f04dbaa", decimals: 18 },
+      { name: "Wrapped Ether", symbol: "WETH", address: "0x776401b9bc8aae31a685731b7147d4445fd9fb19", decimals: 18 }
     ];
 
     let provider;
@@ -271,11 +297,27 @@
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (chainId !== MEGAETH_CHAIN_ID) {
           try {
-            await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: MEGAETH_CHAIN_ID }] });
+            await window.ethereum.request({ 
+              method: 'wallet_switchEthereumChain', 
+              params: [{ chainId: MEGAETH_CHAIN_ID }] 
+            });
           } catch (switchError) {
             if (switchError.code === 4902) {
               try {
-                await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [MEGAETH_NETWORK] });
+                await window.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [{
+                    chainId: MEGAETH_CHAIN_ID,
+                    chainName: 'MegaETH Testnet',
+                    nativeCurrency: {
+                      name: 'MegaETH',
+                      symbol: 'METH',
+                      decimals: 18
+                    },
+                    rpcUrls: [MEGAETH_RPC_URL],
+                    blockExplorerUrls: ['https://testnet-explorer.megaeth.network/']
+                  }]
+                });
               } catch (addError) {
                 alert('Failed to add MegaETH Testnet. Please add it manually in MetaMask using:\nChain ID: 6354\nRPC URL: https://testnet.megaeth.network\nChain Name: MegaETH Testnet\nCurrency Symbol: METH\nExplorer: https://testnet-explorer.megaeth.network');
                 return false;
@@ -296,122 +338,210 @@
       }
     }
 
-    async function fetchWithFallbacks(url) {
-      for (const gateway of IPFS_GATEWAYS) {
-        try {
-          const response = await fetch(url.replace('https://ipfs.io/ipfs/', gateway));
-          if (response.ok) return await response.json();
-        } catch (error) {
-          console.log(`Gateway ${gateway} failed, trying next...`);
-        }
-      }
-      throw new Error("All IPFS gateways failed");
-    }
-
-    async function loadAssets() {
+    async function fetchNFTs() {
       nftLoading.style.display = 'block';
+      pythonContainer.innerHTML = '';
+      allNftContainer.innerHTML = '';
+      
       try {
-        await Promise.all([loadMegaPythons(), loadAllNFTs(), loadTokens()]);
-        updatePortfolioSummary();
-        initChart();
+        let allNFTs = [];
+        let megaPythonNFTs = [];
+        
+        // For each collection, try to fetch NFTs
+        for (const collection of NFT_COLLECTIONS) {
+          try {
+            // Simple implementation - in a real app you'd use a proper indexer
+            const contract = new ethers.Contract(
+              collection.address,
+              [
+                "function balanceOf(address owner) view returns (uint256)",
+                "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)",
+                "function tokenURI(uint256 tokenId) view returns (string)"
+              ],
+              provider
+            );
+            
+            const balance = await contract.balanceOf(userAddress);
+            
+            for (let i = 0; i < balance.toNumber(); i++) {
+              try {
+                const tokenId = await contract.tokenOfOwnerByIndex(userAddress, i);
+                const tokenURI = await contract.tokenURI(tokenId);
+                
+                const nft = {
+                  contract: collection.address,
+                  tokenId: tokenId.toString(),
+                  collection: collection.name,
+                  tokenURI: tokenURI
+                };
+                
+                allNFTs.push(nft);
+                
+                if (collection.address.toLowerCase() === MEGAPYTHON_CONTRACT.toLowerCase()) {
+                  megaPythonNFTs.push(nft);
+                }
+              } catch (error) {
+                console.error(`Error fetching token ${i} from ${collection.name}:`, error);
+              }
+            }
+          } catch (error) {
+            console.error(`Error fetching from ${collection.name}:`, error);
+          }
+        }
+        
+        // Display MegaPython NFTs
+        if (megaPythonNFTs.length > 0) {
+          pythonCountElement.textContent = megaPythonNFTs.length;
+          for (const nft of megaPythonNFTs) {
+            const nftElement = await createNFTElement(nft);
+            pythonContainer.appendChild(nftElement);
+          }
+        } else {
+          pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">No MegaPython NFTs found in your wallet</div>';
+          pythonCountElement.textContent = '0';
+        }
+        
+        // Display all NFTs
+        if (allNFTs.length > 0) {
+          nftCountDisplay.textContent = `${allNFTs.length} NFTs`;
+          otherNftCountElement.textContent = (allNFTs.length - megaPythonNFTs.length).toString();
+          
+          for (const nft of allNFTs) {
+            const nftElement = await createNFTElement(nft);
+            allNftContainer.appendChild(nftElement);
+          }
+        } else {
+          allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">No NFTs found in your wallet</div>';
+          nftCountDisplay.textContent = '0 NFTs';
+          otherNftCountElement.textContent = '0';
+        }
+        
       } catch (error) {
-        console.error('Error loading assets:', error);
-        alert('Failed to load assets. Check your connection or try again later.');
+        console.error('Error fetching NFTs:', error);
+        pythonContainer.innerHTML = '<div class="text-center py-12 text-red-400">Error loading NFTs. Try again later.</div>';
+        allNftContainer.innerHTML = '<div class="text-center py-12 text-red-400">Error loading NFTs. Try again later.</div>';
       } finally {
         nftLoading.style.display = 'none';
       }
     }
 
-    async function loadMegaPythons() {
+    async function fetchTokens() {
+      tokensContainer.innerHTML = '';
+      
       try {
-        const response = await fetch(`${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}&collection=ETHEREUM:${MEGAPYTHON_CONTRACT}`);
-        if (!response.ok) throw new Error(`Rarible API error: ${response.status}`);
-        const data = await response.json();
-        pythonContainer.innerHTML = '';
-        if (data.items && data.items.length > 0) {
-          data.items.forEach(nft => {
-            const nftElement = createNFTElement(nft);
-            pythonContainer.appendChild(nftElement);
-          });
-        } else {
-          pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">No MegaPython NFTs found in your wallet</div>';
-        }
-        pythonCountElement.textContent = data.items ? data.items.length : 0;
-      } catch (error) {
-        console.error('Error loading MegaPythons:', error);
-        pythonContainer.innerHTML = '<div class="text-center py-12 text-red-400">Error loading MegaPython NFTs. Try again later.</div>';
-      }
-    }
-
-    async function loadAllNFTs() {
-      try {
-        const response = await fetch(`${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}`);
-        if (!response.ok) throw new Error(`Rarible API error: ${response.status}`);
-        const data = await response.json();
-        allNftContainer.innerHTML = '';
-        allNFTs = data.items || [];
-        if (allNFTs.length > 0) {
-          allNFTs.forEach(nft => {
-            const nftElement = createNFTElement(nft);
-            allNftContainer.appendChild(nftElement);
-          });
-          nftCountDisplay.textContent = `${allNFTs.length} NFTs`;
-        } else {
-          allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">No NFTs found in your wallet</div>';
-          nftCountDisplay.textContent = '0 NFTs';
-        }
-        otherNftCountElement.textContent = Math.max(0, allNFTs.length - parseInt(pythonCountElement.textContent));
-      } catch (error) {
-        console.error('Error loading all NFTs:', error);
-        allNftContainer.innerHTML = '<div class="text-center py-12 text-red-400">Error loading NFTs. Try again later.</div>';
-      }
-    }
-
-    async function loadTokens() {
-      try {
-        const balance = await provider.getBalance(userAddress);
-        const ethBalance = ethers.utils.formatEther(balance);
+        let tokenCount = 0;
         
-        const tokens = [
-          { name: 'MegaETH', symbol: 'METH', balance: parseFloat(ethBalance).toFixed(4), value: `$${(parseFloat(ethBalance) * 1800).toFixed(2)}`, price: '$1800.00' },
-        ];
+        // Fetch native token balance (METH)
+        const nativeBalance = await provider.getBalance(userAddress);
+        const nativeBalanceFormatted = ethers.utils.formatEther(nativeBalance);
         
-        tokensContainer.innerHTML = '';
-        tokens.forEach(token => {
+        if (parseFloat(nativeBalanceFormatted) > 0) {
+          tokenCount++;
           const tokenRow = document.createElement('tr');
           tokenRow.className = 'hover:bg-green-900/20';
           tokenRow.innerHTML = `
             <td class="py-3">
-              <div class="font-semibold">${token.name}</div>
-              <div class="text-sm text-gray-400">${token.symbol}</div>
+              <div class="font-semibold">MegaETH</div>
+              <div class="text-sm text-gray-400">METH</div>
             </td>
-            <td>${token.balance}</td>
-            <td class="font-semibold">${token.value}</td>
-            <td>${token.price}</td>
+            <td>${parseFloat(nativeBalanceFormatted).toFixed(4)}</td>
+            <td class="font-semibold">-</td>
+            <td>-</td>
           `;
           tokensContainer.appendChild(tokenRow);
-        });
+        }
         
-        tokenCountElement.textContent = tokens.length;
+        // Fetch ERC20 token balances
+        for (const token of TOKENS) {
+          if (token.address === 'native') continue;
+          
+          try {
+            const tokenContract = new ethers.Contract(
+              token.address,
+              [
+                "function balanceOf(address account) view returns (uint256)",
+                "function decimals() view returns (uint8)",
+                "function symbol() view returns (string)"
+              ],
+              provider
+            );
+            
+            const balance = await tokenContract.balanceOf(userAddress);
+            const decimals = await tokenContract.decimals();
+            const symbol = await tokenContract.symbol();
+            
+            const balanceFormatted = ethers.utils.formatUnits(balance, decimals);
+            
+            if (parseFloat(balanceFormatted) > 0) {
+              tokenCount++;
+              const tokenRow = document.createElement('tr');
+              tokenRow.className = 'hover:bg-green-900/20';
+              tokenRow.innerHTML = `
+                <td class="py-3">
+                  <div class="font-semibold">${token.name}</div>
+                  <div class="text-sm text-gray-400">${symbol}</div>
+                </td>
+                <td>${parseFloat(balanceFormatted).toFixed(4)}</td>
+                <td class="font-semibold">-</td>
+                <td>-</td>
+              `;
+              tokensContainer.appendChild(tokenRow);
+            }
+          } catch (error) {
+            console.error(`Error fetching ${token.name} balance:`, error);
+          }
+        }
+        
+        tokenCountElement.textContent = tokenCount.toString();
+        
+        if (tokenCount === 0) {
+          tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">No tokens found in your wallet</td></tr>';
+        }
       } catch (error) {
-        console.error('Error loading tokens:', error);
+        console.error('Error fetching tokens:', error);
         tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-red-400">Error loading token balances. Try again later.</td></tr>';
       }
     }
 
-    function createNFTElement(nft) {
+    async function createNFTElement(nft) {
       const nftElement = document.createElement('div');
       nftElement.className = 'glass-card p-4 flex flex-col items-center card-hover';
-      const imageUrl = nft.meta?.content?.[0]?.url?.replace('ipfs://', 'https://ipfs.io/ipfs/') || '/placeholder-nft.png';
-      const name = nft.meta?.name || `NFT #${nft.tokenId}`;
-      const collection = nft.collection?.name || 'Unknown Collection';
+      
+      let imageUrl = '/placeholder-nft.png';
+      let name = `NFT #${nft.tokenId}`;
+      
+      try {
+        // Try to fetch metadata
+        let metadataUrl = nft.tokenURI;
+        if (metadataUrl.startsWith('ipfs://')) {
+          metadataUrl = 'https://ipfs.io/ipfs/' + metadataUrl.slice(7);
+        }
+        
+        const response = await fetch(metadataUrl);
+        if (response.ok) {
+          const metadata = await response.json();
+          name = metadata.name || name;
+          
+          if (metadata.image) {
+            if (metadata.image.startsWith('ipfs://')) {
+              imageUrl = 'https://ipfs.io/ipfs/' + metadata.image.slice(7);
+            } else {
+              imageUrl = metadata.image;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching NFT metadata:', error);
+      }
+      
       nftElement.innerHTML = `
         <div class="w-40 h-40 bg-black mb-3 flex items-center justify-center overflow-hidden rounded-lg">
           <img src="${imageUrl}" class="w-full h-full object-contain" alt="${name}" onerror="this.src='/placeholder-nft.png'">
         </div>
         <div class="text-md font-semibold text-green-300 text-center">${name}</div>
-        <div class="collection-badge">${collection}</div>
+        <div class="collection-badge">${nft.collection}</div>
       `;
+      
       return nftElement;
     }
 
@@ -419,6 +549,8 @@
       const megaPythonCount = parseInt(pythonCountElement.textContent) || 0;
       const otherNftCount = parseInt(otherNftCountElement.textContent) || 0;
       const tokenCount = parseInt(tokenCountElement.textContent) || 0;
+      
+      // Simple valuation - in a real app you'd use actual prices
       const totalValue = (megaPythonCount * 0.5) + (otherNftCount * 0.2) + (tokenCount * 10);
       totalValueElement.textContent = `$${totalValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
     }
@@ -426,10 +558,13 @@
     function initChart() {
       const ctx = document.getElementById('portfolioChart').getContext('2d');
       if (portfolioChart) portfolioChart.destroy();
+      
       const megaPythonCount = parseInt(pythonCountElement.textContent) || 0;
       const otherNftCount = parseInt(otherNftCountElement.textContent) || 0;
       const tokenCount = parseInt(tokenCountElement.textContent) || 0;
+      
       const data = [megaPythonCount, otherNftCount, tokenCount];
+      
       portfolioChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -456,53 +591,21 @@
       });
     }
 
-    assetSearch.addEventListener('input', function() {
-      const searchTerm = this.value.toLowerCase();
-      const activeTab = document.querySelector('.tab-button.active').getAttribute('data-tab');
-      
-      if (activeTab === 'nfts') {
-        allNftContainer.innerHTML = '';
-        const filteredNFTs = allNFTs.filter(nft => {
-          const name = (nft.meta?.name || `NFT #${nft.tokenId}`).toLowerCase();
-          const collection = (nft.collection?.name || 'Unknown Collection').toLowerCase();
-          return name.includes(searchTerm) || collection.includes(searchTerm);
-        });
-        if (filteredNFTs.length > 0) {
-          filteredNFTs.forEach(nft => {
-            const nftElement = createNFTElement(nft);
-            allNftContainer.appendChild(nftElement);
-          });
-        } else {
-          allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">No NFTs match your search</div>';
-        }
-      } else if (activeTab === 'megapythons') {
-        pythonContainer.innerHTML = '';
-        const filteredNFTs = allNFTs.filter(nft => nft.collection?.id === `ETHEREUM:${MEGAPYTHON_CONTRACT}` && (
-          (nft.meta?.name || `NFT #${nft.tokenId}`).toLowerCase().includes(searchTerm)
-        ));
-        if (filteredNFTs.length > 0) {
-          filteredNFTs.forEach(nft => {
-            const nftElement = createNFTElement(nft);
-            pythonContainer.appendChild(nftElement);
-          });
-        } else {
-          pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">No MegaPythons match your search</div>';
-        }
-      }
-    });
+    async function loadAssets() {
+      await Promise.all([fetchNFTs(), fetchTokens()]);
+      updatePortfolioSummary();
+      initChart();
+    }
 
     document.querySelectorAll('.tab-button').forEach(button => {
       button.addEventListener('click', () => {
         document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
         button.classList.add('active');
         document.getElementById(`${button.getAttribute('data-tab')}-tab`).classList.add('active');
+        
         assetSearch.value = '';
-        if (button.getAttribute('data-tab') === 'nfts') {
-          loadAllNFTs();
-        } else if (button.getAttribute('data-tab') === 'megapythons') {
-          loadMegaPythons();
-        }
       });
     });
 
@@ -512,13 +615,20 @@
         walletConnectBtn.innerHTML = 'Connect Wallet';
         walletConnectBtn.classList.remove('connected-wallet');
         userAddress = null;
+        
         pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view your MegaPython NFTs</div>';
         allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view all your NFTs</div>';
         tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">Connect your wallet to view token balances</td></tr>';
-        updatePortfolioSummary();
+        
+        pythonCountElement.textContent = '0';
+        otherNftCountElement.textContent = '0';
+        tokenCountElement.textContent = '0';
+        totalValueElement.textContent = '$0.00';
+        
         initChart();
         return;
       }
+      
       const connected = await connectWallet();
       if (connected) {
         await loadAssets();
@@ -533,13 +643,15 @@
           const shortenedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
           walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
           walletConnectBtn.classList.add('connected-wallet');
+          
           provider = new ethers.providers.Web3Provider(window.ethereum);
           signer = provider.getSigner();
+          
           const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-          if (chainId !== MEGAETH_CHAIN_ID) {
-            alert('Please switch to MegaETH Testnet to view your assets. Use:\nChain ID: 6354\nRPC URL: https://testnet.megaeth.network\nChain Name: MegaETH Testnet\nCurrency Symbol: METH\nExplorer: https://testnet-explorer.megaeth.network');
-          } else {
+          if (chainId === MEGAETH_CHAIN_ID) {
             await loadAssets();
+          } else {
+            alert('Please switch to MegaETH Testnet to view your assets. Use:\nChain ID: 6354\nRPC URL: https://testnet.megaeth.network\nChain Name: MegaETH Testnet\nCurrency Symbol: METH\nExplorer: https://testnet-explorer.megaeth.network');
           }
         }
       }
@@ -551,10 +663,16 @@
           walletConnectBtn.innerHTML = 'Connect Wallet';
           walletConnectBtn.classList.remove('connected-wallet');
           userAddress = null;
+          
           pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view your MegaPython NFTs</div>';
           allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view all your NFTs</div>';
           tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">Connect your wallet to view token balances</td></tr>';
-          updatePortfolioSummary();
+          
+          pythonCountElement.textContent = '0';
+          otherNftCountElement.textContent = '0';
+          tokenCountElement.textContent = '0';
+          totalValueElement.textContent = '$0.00';
+          
           initChart();
         } else {
           userAddress = accounts[0];
@@ -562,15 +680,17 @@
           walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
           walletConnectBtn.classList.add('connected-wallet');
           localStorage.setItem('connectedWallet', userAddress);
-          await loadAssets();
+          
+          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+          if (chainId === MEGAETH_CHAIN_ID) {
+            await loadAssets();
+          }
         }
       });
       
       window.ethereum.on('chainChanged', async (chainId) => {
         if (chainId === MEGAETH_CHAIN_ID && userAddress) {
           await loadAssets();
-        } else {
-          alert('Please switch to MegaETH Testnet to view your assets. Use:\nChain ID: 6354\nRPC URL: https://testnet.megaeth.network\nChain Name: MegaETH Testnet\nCurrency Symbol: METH\nExplorer: https://testnet-explorer.megaeth.network');
         }
       });
     }
