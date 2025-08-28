@@ -3,31 +3,17 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <!-- Open Graph Meta Tags for Link Preview -->
+  <meta property="og:title" content="MegaPython Rarity Checker"/>
+  <meta property="og:description" content="Check the rarity of your MegaPython NFT and discover its unique traits and score!"/>
+  <meta property="og:image" content="https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/Background/1.png"/>
+  <meta property="og:url" content="https://yourwebsite.com/rarity.html"/>
+  <meta property="og:type" content="website"/>
   <title>MegaPython — Rarity Checker</title>
-  
-  <!-- Open Graph Meta Tags for Link Previews -->
-  <meta property="og:title" content="MegaPython - Rarity Checker" />
-  <meta property="og:description" content="Discover the rarity of your MegaPython NFT on the MegaETH Testnet. Enter a token ID to see unique traits and scores!" />
-  <meta property="og:image" content="https://via.placeholder.com/1200x630/4a9e4a/000000?text=MegaPython+Preview" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="MegaPython NFT Preview" />
-  <meta property="og:url" content="https://megapython.testnet.nfts2.me/rarity.html" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="MegaPython" />
-  
-  <!-- Twitter Card Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="MegaPython - Rarity Checker" />
-  <meta name="twitter:description" content="Discover the rarity of your MegaPython NFT on the MegaETH Testnet. Enter a token ID to see unique traits and scores!" />
-  <meta name="twitter:image" content="https://via.placeholder.com/1200x630/4a9e4a/000000?text=MegaPython+Preview" />
-  <meta name="twitter:site" content="@megapythons" />
-  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #0a220a;
@@ -37,27 +23,22 @@
         radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
         radial-gradient(circle at 80% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 40%);
     }
-    
     .pixel-font {
       font-family: 'Press Start 2P', cursive;
     }
-    
     .jungle-glow {
       text-shadow: 0 0 10px rgba(74, 158, 74, 0.7);
     }
-    
     .pixel-card {
       background: #1e3e1e;
       border: 4px solid #4a9e4a;
       box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
       transition: all 0.3s ease;
     }
-    
     .pixel-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 25px rgba(74, 158, 74, 0.8);
     }
-    
     .jungle-leaf {
       position: absolute;
       width: 40px;
@@ -67,7 +48,6 @@
       z-index: 0;
       opacity: 0.3;
     }
-    
     .rarity-badge {
       background: #4a9e4a;
       color: white;
@@ -75,13 +55,11 @@
       border-radius: 12px;
       font-size: 0.9rem;
     }
-    
     .trait-card {
       background: rgba(42, 74, 42, 0.7);
       padding: 8px;
       border-radius: 4px;
     }
-    
     .connected-wallet {
       background: #a3e635;
       color: #0f172a;
@@ -90,26 +68,13 @@
       align-items: center;
       padding: 0 12px;
     }
-    
     .social-link {
       color: #a3e635;
       transition: color 0.3s;
     }
-    
     .social-link:hover {
       color: #4ade80;
     }
-    
-    .nft-preview img {
-      z-index: auto;
-    }
-    .nft-preview img:nth-child(1) { z-index: 1; } /* Background */
-    .nft-preview img:nth-child(2) { z-index: 2; } /* Body */
-    .nft-preview img:nth-child(3) { z-index: 3; } /* Eyes */
-    .nft-preview img:nth-child(4) { z-index: 4; } /* Minion */
-    .nft-preview img:nth-child(5) { z-index: 5; } /* Mouth */
-    .nft-preview img:nth-child(6) { z-index: 6; } /* Mustache */
-    .nft-preview img:nth-child(7) { z-index: 7; } /* Neck */
   </style>
 </head>
 <body class="min-h-screen">
@@ -161,98 +126,101 @@
   </div>
 
   <script>
-    // Layer data with placeholder image URLs (replace with actual URLs)
+    // IPFS base URL for images
+    const IPFS_BASE_URL = 'https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/';
+
+    // Mock data based on layers.json
     const LAYERS_DATA = {
       "Background": [
-        { "name": "1", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-1" },
-        { "name": "2", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-2" },
-        { "name": "3", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-3" },
-        { "name": "4", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-4" },
-        { "name": "5", "rarity": 36, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-5" },
-        { "name": "6", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-6" },
-        { "name": "7", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-7" },
-        { "name": "8", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-8" },
-        { "name": "9", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-9" },
-        { "name": "10", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-10" },
-        { "name": "11", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-11" },
-        { "name": "12", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-12" },
-        { "name": "13", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-13" },
-        { "name": "14", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-14" },
-        { "name": "15", "rarity": 60, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-15" },
-        { "name": "16", "rarity": 65, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-16" },
-        { "name": "17", "rarity": 28, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-17" },
-        { "name": "18", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-18" },
-        { "name": "19", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-19" },
-        { "name": "20", "rarity": 21, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-20" },
-        { "name": "21", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-21" },
-        { "name": "22", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-22" },
-        { "name": "23", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-23" },
-        { "name": "24", "rarity": 7, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-24" },
-        { "name": "25", "rarity": 5, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-25" }
+        { "name": "1", "rarity": 50 },
+        { "name": "2", "rarity": 50 },
+        { "name": "3", "rarity": 50 },
+        { "name": "4", "rarity": 50 },
+        { "name": "5", "rarity": 36 },
+        { "name": "6", "rarity": 50 },
+        { "name": "7", "rarity": 50 },
+        { "name": "8", "rarity": 50 },
+        { "name": "9", "rarity": 50 },
+        { "name": "10", "rarity": 50 },
+        { "name": "11", "rarity": 50 },
+        { "name": "12", "rarity": 50 },
+        { "name": "13", "rarity": 50 },
+        { "name": "14", "rarity": 50 },
+        { "name": "15", "rarity": 60 },
+        { "name": "16", "rarity": 65 },
+        { "name": "17", "rarity": 28 },
+        { "name": "18", "rarity": 17 },
+        { "name": "19", "rarity": 17 },
+        { "name": "20", "rarity": 21 },
+        { "name": "21", "rarity": 19 },
+        { "name": "22", "rarity": 17 },
+        { "name": "23", "rarity": 6 },
+        { "name": "24", "rarity": 7 },
+        { "name": "25", "rarity": 5 }
       ],
       "Body": [
-        { "name": "1", "rarity": 28, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-1" },
-        { "name": "2", "rarity": 38, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-2" },
-        { "name": "3", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-3" },
-        { "name": "4", "rarity": 2, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-4" },
-        { "name": "5", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-5" },
-        { "name": "6", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-6" },
-        { "name": "7", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-7" },
-        { "name": "8", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-8" },
-        { "name": "9", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-9" },
-        { "name": "10", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-10" },
-        { "name": "11", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-11" },
-        { "name": "12", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-12" },
-        { "name": "13", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-13" },
-        { "name": "14", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-14" },
-        { "name": "15", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-15" },
-        { "name": "16", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-16" },
-        { "name": "17", "rarity": 14, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-17" },
-        { "name": "18", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-18" },
-        { "name": "19", "rarity": 21, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-19" },
-        { "name": "20", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-20" }
+        { "name": "1", "rarity": 28 },
+        { "name": "2", "rarity": 38 },
+        { "name": "3", "rarity": 50 },
+        { "name": "4", "rarity": 2 },
+        { "name": "5", "rarity": 50 },
+        { "name": "6", "rarity": 50 },
+        { "name": "7", "rarity": 50 },
+        { "name": "8", "rarity": 6 },
+        { "name": "9", "rarity": 50 },
+        { "name": "10", "rarity": 50 },
+        { "name": "11", "rarity": 50 },
+        { "name": "12", "rarity": 50 },
+        { "name": "13", "rarity": 50 },
+        { "name": "14", "rarity": 50 },
+        { "name": "15", "rarity": 19 },
+        { "name": "16", "rarity": 50 },
+        { "name": "17", "rarity": 14 },
+        { "name": "18", "rarity": 19 },
+        { "name": "19", "rarity": 21 },
+        { "name": "20", "rarity": 50 }
       ],
       "Eyes": [
-        { "name": "Blue Eye", "rarity": 75, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Blue+Eye" },
-        { "name": "Blue Party Goggle", "rarity": 21, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Blue+Party+Goggle" },
-        { "name": "Brown Dark Adaptor Goggle", "rarity": 18, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Brown+Dark+Adaptor" },
-        { "name": "Dark Mambas Goggle", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Dark+Mambas" },
-        { "name": "Green Eye", "rarity": 73, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Green+Eye" },
-        { "name": "Mambas Goggle", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Mambas+Goggle" },
-        { "name": "Orange Dark Adaptor Goggle", "rarity": 15, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Orange+Dark+Adaptor" },
-        { "name": "Orange Eye", "rarity": 69, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Orange+Eye" },
-        { "name": "Purple Party Goggle", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Purple+Party+Goggle" },
-        { "name": "Reading Glasses", "rarity": 3, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Reading+Glasses" },
-        { "name": "Red Eye", "rarity": 56, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Red+Eye" }
+        { "name": "Blue Eye", "rarity": 75 },
+        { "name": "Blue Party Goggle", "rarity": 21 },
+        { "name": "Brown Dark Adaptor Goggle", "rarity": 18 },
+        { "name": "Dark Mambas Goggle", "rarity": 19 },
+        { "name": "Green Eye", "rarity": 73 },
+        { "name": "Mambas Goggle", "rarity": 17 },
+        { "name": "Orange Dark Adaptor Goggle", "rarity": 15 },
+        { "name": "Orange Eye", "rarity": 69 },
+        { "name": "Purple Party Goggle", "rarity": 6 },
+        { "name": "Reading Glasses", "rarity": 3 },
+        { "name": "Red Eye", "rarity": 56 }
       ],
       "Minion": [
-        { "name": "Cow", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Cow" },
-        { "name": "Magic Mushrooms", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Magic+Mushrooms" },
-        { "name": "Monkey", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Monkey" },
-        { "name": "Mushrooms", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Mushrooms" },
-        { "name": "Pig", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Pig" },
-        { "name": "Pink Cow", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Pink+Cow" }
+        { "name": "Cow", "rarity": 1 },
+        { "name": "Magic Mushrooms", "rarity": 1 },
+        { "name": "Monkey", "rarity": 1 },
+        { "name": "Mushrooms", "rarity": 1 },
+        { "name": "Pig", "rarity": 1 },
+        { "name": "Pink Cow", "rarity": 1 }
       ],
       "Mouth": [
-        { "name": "Blue Gum", "rarity": 3, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Blue+Gum" },
-        { "name": "Cigarette", "rarity": 20, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Cigarette" },
-        { "name": "Purple Gum", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Purple+Gum" },
-        { "name": "Splif", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Splif" },
-        { "name": "Tongue", "rarity": 49, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Tongue" }
+        { "name": "Blue Gum", "rarity": 3 },
+        { "name": "Cigarette", "rarity": 20 },
+        { "name": "Purple Gum", "rarity": 6 },
+        { "name": "Splif", "rarity": 1 },
+        { "name": "Tongue", "rarity": 49 }
       ],
       "Mustache": [
-        { "name": "Blue Mustache", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Blue" },
-        { "name": "Grey Mustache", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Grey" },
-        { "name": "Purple Mustache", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Purple" },
-        { "name": "Yellow Mustache", "rarity": 11, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Yellow" }
+        { "name": "Blue Mustache", "rarity": 19 },
+        { "name": "Grey Mustache", "rarity": 50 },
+        { "name": "Purple Mustache", "rarity": 50 },
+        { "name": "Yellow Mustache", "rarity": 11 }
       ],
       "Neck": [
-        { "name": "Blue Neckerchief", "rarity": 14, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Blue+Neckerchief" },
-        { "name": "Dark Collar", "rarity": 14, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Dark+Collar" },
-        { "name": "Green Neckerchief", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Green+Neckerchief" },
-        { "name": "Red Collar", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Red+Collar" },
-        { "name": "Red Neckerchief", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Red+Neckerchief" },
-        { "name": "Yellow Neckerchief", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Yellow+Neckerchief" }
+        { "name": "Blue Neckerchief", "rarity": 14 },
+        { "name": "Dark Collar", "rarity": 14 },
+        { "name": "Green Neckerchief", "rarity": 50 },
+        { "name": "Red Collar", "rarity": 50 },
+        { "name": "Red Neckerchief", "rarity": 50 },
+        { "name": "Yellow Neckerchief", "rarity": 50 }
       ]
     };
 
@@ -300,7 +268,6 @@
     const traitsEl = document.getElementById('traits');
     const rarityEl = document.getElementById('rarityScore');
     const resultEl = document.getElementById('result');
-    const walletConnectBtn = document.getElementById('walletConnectBtn');
 
     function getRarityCategory(score) {
       if (score >= 90) return "mythic";
@@ -323,11 +290,18 @@
         const index = tokenId % options.length;
         const option = options[index];
         
+        // Construct image path
+        let imagePath = `${IPFS_BASE_URL}${traitType}/${option.name}.png`;
+        // Handle special cases for Eyes, Minion, Mouth, Mustache, Neck where names may include spaces
+        if (["Eyes", "Minion", "Mouth", "Mustache", "Neck"].includes(traitType)) {
+          imagePath = `${IPFS_BASE_URL}${traitType}/${option.name.replace(/ /g, '_')}.png`;
+        }
+        
         traits.push({
           trait_type: traitType,
           value: option.name,
           rarity: option.rarity,
-          preview: option.preview
+          image: imagePath
         });
         
         totalRarity += option.rarity;
@@ -346,14 +320,12 @@
       const name = `MegaPython #${tokenId}`;
       const description = 'A unique MegaPython NFT with special traits.';
       
+      // Create a composite image by stacking layers
       const previewHtml = `
         <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${name}</div>
         <div class="nft-preview mb-4 relative w-64 h-64 mx-auto">
           ${traits.map(t => `
-            <img src="${t.preview}" 
-                 class="absolute top-0 left-0 w-full h-full object-contain" 
-                 alt="${t.trait_type} ${t.value}"
-                 onerror="this.src='https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Error'">
+            <img src="${t.image}" alt="${t.value}" class="absolute w-64 h-64 object-contain rounded-lg" onerror="this.src='/placeholder-nft.png'">
           `).join('')}
         </div>
         <p class="text-gray-400 mb-4">${description}</p>
@@ -428,20 +400,11 @@
     }
 
     function initWalletConnect() {
-      if (typeof window.ethereum === 'undefined') {
-        walletConnectBtn.innerHTML = 'Install MetaMask';
-        walletConnectBtn.classList.add('bg-red-500', 'hover:bg-red-400');
-        walletConnectBtn.addEventListener('click', () => {
-          window.open('https://metamask.io/download/', '_blank');
-        });
-        return;
-      }
+      const walletConnectBtn = document.getElementById('walletConnectBtn');
       
       const connectedAddress = localStorage.getItem('connectedWallet');
       if (connectedAddress) {
-        const shortenedAddress = `${connectedAddress.substring(0, 6)}...${connectedAddress.substring(connectedAddress.length - 4)}`;
-        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
-        walletConnectBtn.classList.add('connected-wallet');
+        updateWalletButton(connectedAddress);
       }
       
       walletConnectBtn.addEventListener('click', async () => {
@@ -449,26 +412,33 @@
           localStorage.removeItem('connectedWallet');
           walletConnectBtn.innerHTML = 'Connect Wallet';
           walletConnectBtn.classList.remove('connected-wallet');
-          walletConnectBtn.classList.add('bg-green-500', 'hover:bg-green-400');
           return;
         }
         
         try {
+          if (!window.ethereum) {
+            alert('MetaMask not detected. Please install MetaMask to connect your wallet.');
+            return;
+          }
+          
           const accounts = await window.ethereum.request({
             method: 'eth_requestAccounts'
           });
           
           const address = accounts[0];
           localStorage.setItem('connectedWallet', address);
-          const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-          walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
-          walletConnectBtn.classList.add('connected-wallet');
-          walletConnectBtn.classList.remove('bg-red-500', 'hover:bg-red-400');
+          updateWalletButton(address);
         } catch (error) {
           console.error('Error connecting to MetaMask:', error);
-          alert('Failed to connect wallet. Please try again.');
+          alert('Failed to connect wallet: ' + error.message);
         }
       });
+      
+      function updateWalletButton(address) {
+        const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
+        walletConnectBtn.classList.add('connected-wallet');
+      }
     }
 
     window.addEventListener('load', initWalletConnect);
