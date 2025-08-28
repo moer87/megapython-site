@@ -3,83 +3,611 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Open Graph Meta Tags for Link Preview -->
+  <meta property="og:title" content="MegaPython Dashboard"/>
+  <meta property="og:description" content="Manage your MegaPython NFTs, view your portfolio, and track your assets on the MegaETH Testnet."/>
+  <meta property="og:image" content="https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/Background/1.png"/>
+  <meta property="og:url" content="https://yourwebsite.com/dashboard.html"/>
+  <meta property="og:type" content="website"/>
   <title>MegaPython — Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-
-  <!-- OpenGraph & Twitter -->
-  <meta property="og:title" content="MegaPython — Dashboard">
-  <meta property="og:description" content="Track your MegaPython NFTs, tokens, and portfolio on MegaETH Testnet.">
-  <meta property="og:image" content="https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm">
-  <meta property="og:url" content="https://megapython.testnet.nfts2.me/dashboard.html">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MegaPython — Dashboard">
-  <meta name="twitter:description" content="NFT dashboard for MegaPython holders.">
-  <meta name="twitter:image" content="https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a220a;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 40%);
+    }
+    .pixel-font {
+      font-family: 'Press Start 2P', cursive;
+    }
+    .jungle-glow {
+      text-shadow: 0 0 10px rgba(74, 158, 74, 0.7);
+    }
+    .pixel-card {
+      background: #1e3e1e;
+      border: 4px solid #4a9e4a;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
+      transition: all 0.3s ease;
+    }
+    .pixel-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 25px rgba(74, 158, 74, 0.8);
+    }
+    .glass-card {
+      background: rgba(30, 62, 30, 0.5);
+      backdrop-filter: blur(5px);
+      border: 2px solid rgba(74, 158, 74, 0.3);
+      border-radius: 12px;
+    }
+    .card-hover:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(74, 158, 74, 0.7);
+    }
+    .tab-button {
+      background: #1e3e1e;
+      border: 2px solid #4a9e4a;
+      padding: 8px 16px;
+      border-radius: 8px 8px 0 0;
+      color: #e2e8f0;
+      transition: all 0.3s;
+    }
+    .tab-button.active {
+      background: #4a9e4a;
+      color: #0f172a;
+      font-weight: bold;
+    }
+    .tab-button:hover {
+      background: #3a7d3a;
+    }
+    .connected-wallet {
+      background: #a3e635;
+      color: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px;
+    }
+    .collection-badge {
+      background: #4a9e4a;
+      color: #0f172a;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-top: 8px;
+    }
+    .jungle-leaf {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 5,35 15,35 20,35 C25,35 35,35 35,25 35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      z-index: 0;
+      opacity: 0.3;
+    }
+    .social-link {
+      color: #a3e635;
+      transition: color 0.3s;
+    }
+    .social-link:hover {
+      color: #4ade80;
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-green-950 text-gray-200">
-  <div class="max-w-6xl mx-auto p-6">
+<body class="min-h-screen">
+  <!-- Jungle leaves decoration -->
+  <div class="jungle-leaf" style="top: 10%; left: 5%;"></div>
+  <div class="jungle-leaf" style="top: 15%; right: 7%; transform: rotate(45deg);"></div>
+  <div class="jungle-leaf" style="top: 40%; left: 8%; transform: rotate(80deg);"></div>
+  <div class="jungle-leaf" style="bottom: 20%; right: 10%; transform: rotate(120deg);"></div>
+  <div class="jungle-leaf" style="bottom: 30%; left: 12%; transform: rotate(160deg);"></div>
+
+  <div class="relative z-10 max-w-6xl mx-auto p-6">
     <header class="flex justify-between items-center mb-12">
-      <h1 class="text-3xl pixel-font text-green-500">MegaPython Dashboard</h1>
+      <h1 class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython Dashboard</h1>
       <nav class="flex gap-4 items-center">
-        <a href="/" class="text-green-300 hover:text-green-500">Home</a>
-        <a href="/rarity.html" class="text-green-300 hover:text-green-500">Rarity</a>
-        <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 text-black rounded-lg font-bold">Connect Wallet</button>
+        <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
+        <a href="/rarity.html" class="text-green-300 hover:text-green-500 transition-colors">Rarity Checker</a>
+        <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
+        <div id="walletConnectContainer">
+          <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold transition-colors">Connect Wallet</button>
+        </div>
       </nav>
     </header>
 
     <section class="mb-12">
-      <h2 class="text-2xl text-green-400 mb-4">Portfolio Overview</h2>
+      <h2 class="text-2xl pixel-font text-green-400 mb-4 jungle-glow">Portfolio Overview</h2>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="p-4 bg-green-900 text-center"><p>Total Value</p><p id="totalValue" class="text-xl font-bold">$0.00</p></div>
-        <div class="p-4 bg-green-900 text-center"><p>MegaPythons</p><p id="pythonCount" class="text-xl font-bold">0</p></div>
-        <div class="p-4 bg-green-900 text-center"><p>Other NFTs</p><p id="otherNftCount" class="text-xl font-bold">0</p></div>
-        <div class="p-4 bg-green-900 text-center"><p>Tokens</p><p id="tokenCount" class="text-xl font-bold">0</p></div>
+        <div class="pixel-card p-4 text-center">
+          <p class="text-gray-400">Total Value</p>
+          <p id="totalValue" class="text-xl font-bold text-green-300">$0.00</p>
+        </div>
+        <div class="pixel-card p-4 text-center">
+          <p class="text-gray-400">MegaPythons</p>
+          <p id="pythonCount" class="text-xl font-bold text-green-300">0</p>
+        </div>
+        <div class="pixel-card p-4 text-center">
+          <p class="text-gray-400">Other NFTs</p>
+          <p id="otherNftCount" class="text-xl font-bold text-green-300">0</p>
+        </div>
+        <div class="pixel-card p-4 text-center">
+          <p class="text-gray-400">Tokens</p>
+          <p id="tokenCount" class="text-xl font-bold text-green-300">0</p>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2 class="text-2xl text-green-400 mb-4">Portfolio Breakdown</h2>
-      <canvas id="portfolioChart" style="max-height:300px;"></canvas>
+    <section class="mb-12">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl pixel-font text-green-400 jungle-glow">Assets</h2>
+        <div class="flex gap-2">
+          <input id="assetSearch" type="text" placeholder="Search assets..." class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30" />
+        </div>
+      </div>
+      
+      <div class="flex gap-2 mb-4">
+        <button class="tab-button active" data-tab="megapythons">MegaPythons</button>
+        <button class="tab-button" data-tab="nfts">All NFTs</button>
+        <button class="tab-button" data-tab="tokens">Tokens</button>
+      </div>
+
+      <div id="megapythons-tab" class="tab-content active">
+        <div id="nftLoading" class="text-center py-12 hidden">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div>
+          <p class="mt-3 text-gray-400">Loading NFTs...</p>
+        </div>
+        <div id="pythonContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+      </div>
+      
+      <div id="nfts-tab" class="tab-content hidden">
+        <p id="nftCountDisplay" class="text-gray-400 mb-4">0 NFTs</p>
+        <div id="allNftContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+      </div>
+      
+      <div id="tokens-tab" class="tab-content hidden">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="text-gray-400">
+              <th class="py-3">Asset</th>
+              <th>Balance</th>
+              <th>Value</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody id="tokensContainer"></tbody>
+        </table>
+      </div>
     </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl pixel-font text-green-400 mb-4 jungle-glow">Portfolio Breakdown</h2>
+      <div class="pixel-card p-6">
+        <canvas id="portfolioChart" style="max-height: 300px;"></canvas>
+      </div>
+    </section>
+
+    <footer class="text-center text-gray-500">
+      <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
+      <div class="flex justify-center gap-8">
+        <a href="https://x.com/megapythons" class="social-link pixel-font">X</a>
+        <a href="https://megapython.testnet.nfts2.me/" class="social-link pixel-font">Mint</a>
+        <a href="https://linktr.ee/megaPython" class="social-link pixel-font">Linktree</a>
+        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
+      </div>
+    </footer>
   </div>
 
   <script>
-    const walletBtn = document.getElementById("walletConnectBtn");
-    const pythonCountElement = document.getElementById("pythonCount");
-    const otherNftCountElement = document.getElementById("otherNftCount");
-    const tokenCountElement = document.getElementById("tokenCount");
-    const totalValueElement = document.getElementById("totalValue");
+    const MEGAETH_CHAIN_ID = '0x18d2';
+    const MEGAETH_RPC_URL = 'https://testnet.megaeth.network';
+    const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
+    const IPFS_BASE_URL = 'https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/';
 
-    let portfolioChart;
+    const NFT_COLLECTIONS = [
+      { name: "MegaPython", address: "0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" },
+      { name: "Fafelnacci", address: "0x72b084e518a0c39d791171133c9bf4ea85996594" },
+      { name: "Lil Mega Bunz", address: "0x56156a7a7f31e5ef191ae6ee564442cb7fed0ac8" },
+      { name: "1 Million Bread", address: "0x6a0d1c1b5deeb24ca0c452b19b5051f2ae0e7b23" },
+      { name: "Mega Rebel Mutant", address: "0xcd942dc421dca9096a2775f161103bb799a691be" },
+      { name: "Mega Rebel Pika", address: "0xa3bf0fa4a0c4763cf2b71d32e2c09914aa686ae0" },
+      { name: "Mega Rebel Doll", address: "0x9c4e45e819e32e9276c448cad892fa9c783d1099" },
+      { name: "Mega Rebel Botz", address: "0x2a0c39b24379d61821d63119b36ecbe9906b772d" },
+      { name: "Mega Rebel Jelly", address: "0xf4565cb3709c3c39895324688474aa27c33b0e60" },
+      { name: "Way My Dogs At", address: "0xb796c8fd06f9a89d4cad03cc538a936a865cbeb0" },
+      { name: "MegaBunnyVerse Preview", address: "0xf68cd4084b787be2d7d5f8007f8019117ed94736" },
+      { name: "MegaBunnyVerse Preview-2", address: "0x72cd59c3e011f2a860e57a52d5263f0b57422a5e" },
+      { name: "Puffles MegaETH Pass", address: "0xc5622a9fb4a8330bd2d42c057b7448be96122e77" },
+      { name: "Nacci's Member Card", address: "0xf1f50d5a9a629bf663d7c90a83070a36b367c3a1" },
+      { name: "Legend Of Breadio", address: "0xd45ad5678fd51d3d6b4ce55c720817d9896bb269" },
+      { name: "Remiko Testnet", address: "0x85ed4e4c8a50a4aae200ae040a17a6e490aae5ef" },
+      { name: "Nacci Glitchiness", address: "0x4ec7ed0b288f20e4ca278bc1f8dcd9ef61363533" },
+      { name: "Nacci's Creativiness", address: "0xbb06e179db81111f0a9cae1606b342355ee59af2" },
+      { name: "Nacci's Cheetah", address: "0xaf538816f2b21e5728e61e59675d3154157385eb" },
+      { name: "Nacci's Busyness", address: "0x037673f253edae7a2551375281007f7f97d27a05" }
+    ];
 
-    walletBtn.addEventListener("click", () => {
-      // Mock data for demo
-      pythonCountElement.textContent = "2";
-      otherNftCountElement.textContent = "5";
-      tokenCountElement.textContent = "3";
-      totalValueElement.textContent = "$1234.56";
-      drawChart();
-    });
+    const TOKENS = [
+      { name: "MegaETH", symbol: "METH", address: "native", decimals: 18 },
+      { name: "MEGA", symbol: "MEGA", address: "0x10a6be7d23989d00d528e68cf8051d095f741145", decimals: 18 },
+      { name: "MEGA BEER", symbol: "BEER", address: "0xa89db62954c4c1cc227af47c5bcee8a0e6df271e", decimals: 18 },
+      { name: "GTE", symbol: "GTE", address: "0x9629684df53db9e4484697d0a50c442b2bfa80a8", decimals: 18 },
+      { name: "Breadguy", symbol: "BREAD", address: "0x1bc166ae1704123759e66f32dff040312f04dbaa", decimals: 18 },
+      { name: "Wrapped Ether", symbol: "WETH", address: "0x776401b9bc8aae31a685731b7147d4445fd9fb19", decimals: 18 }
+    ];
 
-    function drawChart() {
-      const ctx = document.getElementById("portfolioChart").getContext("2d");
+    let provider;
+    let signer;
+    let userAddress = null;
+    let allNFTs = [];
+
+    const walletConnectBtn = document.getElementById('walletConnectBtn');
+    const pythonContainer = document.getElementById('pythonContainer');
+    const allNftContainer = document.getElementById('allNftContainer');
+    const tokensContainer = document.getElementById('tokensContainer');
+    const totalValueElement = document.getElementById('totalValue');
+    const pythonCountElement = document.getElementById('pythonCount');
+    const otherNftCountElement = document.getElementById('otherNftCount');
+    const tokenCountElement = document.getElementById('tokenCount');
+    const nftLoading = document.getElementById('nftLoading');
+    const nftCountDisplay = document.getElementById('nftCountDisplay');
+    const assetSearch = document.getElementById('assetSearch');
+
+    let portfolioChart = null;
+
+    async function connectWallet() {
+      try {
+        if (!window.ethereum) {
+          alert('MetaMask not detected. Please install MetaMask to connect your wallet.');
+          return false;
+        }
+        
+        const accounts = await window.ethereum.request({ 
+          method: 'eth_requestAccounts' 
+        }).catch(err => {
+          if (err.code === 4001) {
+            alert('Please connect your wallet to use this feature');
+            return [];
+          }
+          throw err;
+        });
+        
+        if (accounts.length === 0) return false;
+        
+        userAddress = accounts[0];
+        const shortenedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
+        
+        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
+        walletConnectBtn.classList.add('connected-wallet');
+        
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        
+        if (chainId !== MEGAETH_CHAIN_ID) {
+          try {
+            await window.ethereum.request({ 
+              method: 'wallet_switchEthereumChain', 
+              params: [{ chainId: MEGAETH_CHAIN_ID }] 
+            });
+          } catch (switchError) {
+            if (switchError.code === 4902) {
+              try {
+                await window.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [{
+                    chainId: MEGAETH_CHAIN_ID,
+                    chainName: 'MegaETH Testnet',
+                    nativeCurrency: {
+                      name: 'MegaETH',
+                      symbol: 'METH',
+                      decimals: 18
+                    },
+                    rpcUrls: [MEGAETH_RPC_URL],
+                    blockExplorerUrls: ['https://testnet-explorer.megaeth.network/']
+                  }]
+                });
+              } catch (addError) {
+                console.error('Error adding MegaETH network:', addError);
+                alert('Failed to add MegaETH Testnet. Please add it manually in MetaMask.');
+                return false;
+              }
+            } else {
+              console.error('Error switching to MegaETH:', switchError);
+              alert('Please switch to MegaETH Testnet in MetaMask to view your assets.');
+              return false;
+            }
+          }
+        }
+        
+        localStorage.setItem('connectedWallet', userAddress);
+        return true;
+      } catch (error) {
+        console.error('Error connecting wallet:', error);
+        alert('Failed to connect wallet: ' + error.message);
+        return false;
+      }
+    }
+
+    async function fetchNFTs() {
+      nftLoading.style.display = 'block';
+      pythonContainer.innerHTML = '';
+      allNftContainer.innerHTML = '';
+      
+      try {
+        // Mock MegaPython NFTs with IPFS images
+        const mockMegaPythons = [
+          { 
+            id: 1, 
+            name: "MegaPython #123", 
+            image: `${IPFS_BASE_URL}Background/1.png`,
+            collection: "MegaPython"
+          },
+          { 
+            id: 2, 
+            name: "MegaPython #456", 
+            image: `${IPFS_BASE_URL}Background/2.png`,
+            collection: "MegaPython"
+          }
+        ];
+        
+        // Mock other NFTs
+        const mockOtherNFTs = [
+          { 
+            id: 1, 
+            name: "Fafelnacci #789", 
+            image: "https://via.placeholder.com/200x200/4a9e4a/000000?text=Fafelnacci+NFT",
+            collection: "Fafelnacci"
+          },
+          { 
+            id: 2, 
+            name: "Lil Mega Bunz #101", 
+            image: "https://via.placeholder.com/200x200/4a9e4a/000000?text=Lil+Mega+Bunz",
+            collection: "Lil Mega Bunz"
+          }
+        ];
+        
+        if (mockMegaPythons.length > 0) {
+          pythonCountElement.textContent = mockMegaPythons.length;
+          for (const nft of mockMegaPythons) {
+            const nftElement = createNFTElement(nft);
+            pythonContainer.appendChild(nftElement);
+          }
+        } else {
+          pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">No MegaPython NFTs found in your wallet</div>';
+          pythonCountElement.textContent = '0';
+        }
+        
+        const allNFTs = [...mockMegaPythons, ...mockOtherNFTs];
+        if (allNFTs.length > 0) {
+          nftCountDisplay.textContent = `${allNFTs.length} NFTs`;
+          otherNftCountElement.textContent = mockOtherNFTs.length.toString();
+          
+          for (const nft of allNFTs) {
+            const nftElement = createNFTElement(nft);
+            allNftContainer.appendChild(nftElement);
+          }
+        } else {
+          allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">No NFTs found in your wallet</div>';
+          nftCountDisplay.textContent = '0 NFTs';
+          otherNftCountElement.textContent = '0';
+        }
+        
+      } catch (error) {
+        console.error('Error fetching NFTs:', error);
+        pythonContainer.innerHTML = '<div class="text-center py-12 text-red-400">Error loading NFTs. Try again later.</div>';
+        allNftContainer.innerHTML = '<div class="text-center py-12 text-red-400">Error loading NFTs. Try again later.</div>';
+      } finally {
+        nftLoading.style.display = 'none';
+      }
+    }
+
+    async function fetchTokens() {
+      tokensContainer.innerHTML = '';
+      
+      try {
+        const mockTokens = [
+          { name: 'MegaETH', symbol: 'METH', balance: '1.2345', value: '$2,223.10', price: '$1,800.00' },
+          { name: 'MEGA', symbol: 'MEGA', balance: '500.00', value: '$250.00', price: '$0.50' },
+          { name: 'GTE', symbol: 'GTE', balance: '1000.00', value: '$100.00', price: '$0.10' }
+        ];
+        
+        tokenCountElement.textContent = mockTokens.length.toString();
+        
+        for (const token of mockTokens) {
+          const tokenRow = document.createElement('tr');
+          tokenRow.className = 'hover:bg-green-900/20';
+          tokenRow.innerHTML = `
+            <td class="py-3">
+              <div class="font-semibold">${token.name}</div>
+              <div class="text-sm text-gray-400">${token.symbol}</div>
+            </td>
+            <td>${token.balance}</td>
+            <td class="font-semibold">${token.value}</td>
+            <td>${token.price}</td>
+          `;
+          tokensContainer.appendChild(tokenRow);
+        }
+        
+        if (mockTokens.length === 0) {
+          tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">No tokens found in your wallet</td></tr>';
+        }
+      } catch (error) {
+        console.error('Error fetching tokens:', error);
+        tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-red-400">Error loading token balances. Try again later.</td></tr>';
+      }
+    }
+
+    function createNFTElement(nft) {
+      const nftElement = document.createElement('div');
+      nftElement.className = 'glass-card p-4 flex flex-col items-center card-hover';
+      
+      nftElement.innerHTML = `
+        <div class="w-40 h-40 bg-black mb-3 flex items-center justify-center overflow-hidden rounded-lg">
+          <img src="${nft.image}" class="w-full h-full object-contain" alt="${nft.name}" onerror="this.src='/placeholder-nft.png'">
+        </div>
+        <div class="text-md font-semibold text-green-300 text-center">${nft.name}</div>
+        <div class="collection-badge">${nft.collection}</div>
+      `;
+      
+      return nftElement;
+    }
+
+    function updatePortfolioSummary() {
+      const megaPythonCount = parseInt(pythonCountElement.textContent) || 0;
+      const otherNftCount = parseInt(otherNftCountElement.textContent) || 0;
+      const tokenCount = parseInt(tokenCountElement.textContent) || 0;
+      
+      const totalValue = (megaPythonCount * 0.5) + (otherNftCount * 0.2) + (tokenCount * 10);
+      totalValueElement.textContent = `$${totalValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('portfolioChart').getContext('2d');
       if (portfolioChart) portfolioChart.destroy();
+      
+      const megaPythonCount = parseInt(pythonCountElement.textContent) || 0;
+      const otherNftCount = parseInt(otherNftCountElement.textContent) || 0;
+      const tokenCount = parseInt(tokenCountElement.textContent) || 0;
+      
+      const data = [megaPythonCount, otherNftCount, tokenCount];
+      
       portfolioChart = new Chart(ctx, {
-        type: "doughnut",
+        type: 'doughnut',
         data: {
-          labels: ["MegaPythons", "Other NFTs", "Tokens"],
+          labels: ['MegaPythons', 'Other NFTs', 'Tokens'],
           datasets: [{
-            data: [
-              parseInt(pythonCountElement.textContent),
-              parseInt(otherNftCountElement.textContent),
-              parseInt(tokenCountElement.textContent)
-            ],
-            backgroundColor: ["#4a9e4a", "#3a7d3a", "#2a4a2a"]
+            data: data.every(v => v === 0) ? [1, 1, 1] : data,
+            backgroundColor: ['#4a9e4a', '#3a7d3a', '#2a4a2a'],
+            borderWidth: 0
           }]
         },
-        options: { plugins: { legend: { position: "bottom" } } }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#e2e8f0', font: { size: 12 } }
+            },
+            tooltip: {
+              enabled: !data.every(v => v === 0)
+            }
+          }
+        }
+      });
+    }
+
+    async function loadAssets() {
+      await Promise.all([fetchNFTs(), fetchTokens()]);
+      updatePortfolioSummary();
+      initChart();
+    }
+
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        button.classList.add('active');
+        document.getElementById(`${button.getAttribute('data-tab')}-tab`).classList.add('active');
+        
+        assetSearch.value = '';
+      });
+    });
+
+    walletConnectBtn.addEventListener('click', async () => {
+      if (walletConnectBtn.classList.contains('connected-wallet')) {
+        localStorage.removeItem('connectedWallet');
+        walletConnectBtn.innerHTML = 'Connect Wallet';
+        walletConnectBtn.classList.remove('connected-wallet');
+        userAddress = null;
+        
+        pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view your MegaPython NFTs</div>';
+        allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view all your NFTs</div>';
+        tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">Connect your wallet to view token balances</td></tr>';
+        
+        pythonCountElement.textContent = '0';
+        otherNftCountElement.textContent = '0';
+        tokenCountElement.textContent = '0';
+        totalValueElement.textContent = '$0.00';
+        
+        initChart();
+        return;
+      }
+      
+      const connected = await connectWallet();
+      if (connected) {
+        await loadAssets();
+      }
+    });
+
+    window.addEventListener('load', async function() {
+      if (!window.ethereum) {
+        console.warn('MetaMask not detected');
+        return;
+      }
+      
+      const connectedAddress = localStorage.getItem('connectedWallet');
+      if (connectedAddress) {
+        userAddress = connectedAddress;
+        const shortenedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
+        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
+        walletConnectBtn.classList.add('connected-wallet');
+        
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (chainId === MEGAETH_CHAIN_ID) {
+          await loadAssets();
+        } else {
+          alert('Please switch to MegaETH Testnet to view your assets.');
+        }
+      }
+    });
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', async (accounts) => {
+        if (accounts.length === 0) {
+          walletConnectBtn.innerHTML = 'Connect Wallet';
+          walletConnectBtn.classList.remove('connected-wallet');
+          userAddress = null;
+          
+          pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view your MegaPython NFTs</div>';
+          allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view all your NFTs</div>';
+          tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">Connect your wallet to view token balances</td></tr>';
+          
+          pythonCountElement.textContent = '0';
+          otherNftCountElement.textContent = '0';
+          tokenCountElement.textContent = '0';
+          totalValueElement.textContent = '$0.00';
+          
+          initChart();
+        } else {
+          userAddress = accounts[0];
+          const shortenedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
+          walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
+          walletConnectBtn.classList.add('connected-wallet');
+          localStorage.setItem('connectedWallet', userAddress);
+          
+          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+          if (chainId === MEGAETH_CHAIN_ID) {
+            await loadAssets();
+          }
+        }
+      });
+      
+      window.ethereum.on('chainChanged', async (chainId) => {
+        if (chainId === MEGAETH_CHAIN_ID && userAddress) {
+          await loadAssets();
+        }
       });
     }
   </script>
