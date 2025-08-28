@@ -109,7 +109,7 @@
   <div class="jungle-leaf" style="bottom: 30%; left: 12%; transform: rotate(160deg);"></div>
 
   <div class="relative z-10 max-w-6xl mx-auto p-6">
-    <header class="flex justify-between items-center mb-8">
+    <header class="flex justify-between items-center mb-12">
       <h1 class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython Dashboard</h1>
       <nav class="flex gap-4 items-center">
         <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
@@ -152,7 +152,7 @@
       </div>
       
       <div class="flex gap-2 mb-4">
-        <button class="tab-button active" data-tab="megapythons">MegaPythons</button>
+        <button class=" different tab-button active" data-tab="megapythons">MegaPythons</button>
         <button class="tab-button" data-tab="nfts">All NFTs</button>
         <button class="tab-button" data-tab="tokens">Tokens</button>
       </div>
@@ -209,6 +209,13 @@
     };
     const MEGAPYTHON_CONTRACT = '0xF4C6cC08F7Bba6867119f2E8f9556961a76F7098';
     const RARIBLE_API_BASE = 'https://api.rarible.org/v0.1';
+    const IPFS_GATEWAYS = [
+      "https://ipfs.io/ipfs/",
+      "https://gateway.ipfs.io/ipfs/",
+      "https://dweb.link/ipfs/",
+      "https://cf-ipfs.com/ipfs/",
+      "https://ipfs.fleek.co/ipfs/"
+    ];
 
     let provider;
     let signer;
@@ -223,17 +230,29 @@
     const pythonCountElement = document.getElementById('pythonCount');
     const otherNftCountElement = document.getElementById('otherNftCount');
     const tokenCountElement = document.getElementById('tokenCount');
-    const nftCountDisplay = document.getElementById('nftCountDisplay');
     const nftLoading = document.getElementById('nftLoading');
+    const nftCountDisplay = document.getElementById('nftCountDisplay');
     const assetSearch = document.getElementById('assetSearch');
 
     let portfolioChart = null;
+
+    async function fetchWithFallbacks(url) {
+      for (const gateway of IPFS_GATEWAYS) {
+        try {
+          const response = await fetch(url.replace('https://ipfs.io/ipfs/', gateway));
+          if (response.ok) return await response.json();
+        } catch (error) {
+          console.log(`Gateway ${gateway} failed, trying next...`);
+        }
+      }
+      throw new Error("All IPFS gateways failed");
+    }
 
     async function connectWallet() {
       try {
         if (typeof window.ethereum === 'undefined') {
           alert('Please install MetaMask to connect your wallet');
-          return;
+          return false;
         }
         
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -253,11 +272,11 @@
                 await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [MEGAETH_NETWORK] });
               } catch (addError) {
                 alert('Failed to add Mega Testnet. Please add it manually in MetaMask.');
-                return;
+                return false;
               }
             } else {
               alert('Please switch to Mega Testnet in MetaMask.');
-              return;
+              return false;
             }
           }
         }
@@ -265,10 +284,11 @@
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner();
         localStorage.setItem('connectedWallet', userAddress);
-        loadAssets();
+        return true;
       } catch (error) {
         console.error('Error connecting wallet:', error);
         alert('Failed to connect wallet. Please try again.');
+        return false;
       }
     }
 
@@ -483,7 +503,10 @@
         initChart();
         return;
       }
-      await connectWallet();
+      const connected = await connectWallet();
+      if (connected) {
+        await loadAssets();
+      }
     });
 
     window.addEventListener('load', async function() {
@@ -500,7 +523,7 @@
           if (chainId !== MEGAETH_CHAIN_ID) {
             alert('Please switch to Mega Testnet to view your assets');
           } else {
-            loadAssets();
+            await loadAssets();
           }
         }
       }
