@@ -58,7 +58,7 @@
     
     .pixel-button:hover {
       transform: translateY(2px);
-      box-shadow: 0 2px 0 #0f172a;
+      box-shadow: 0 2px 0 #0f2a0f;
     }
     
     .jungle-leaf {
@@ -128,7 +128,6 @@
           <label class="block text-green-300 mb-2">Background</label>
           <select id="backgroundSelect">
             <option value="">Select Background</option>
-            <!-- Options will be populated by JavaScript -->
           </select>
         </div>
         
@@ -136,7 +135,6 @@
           <label class="block text-green-300 mb-2">Body</label>
           <select id="bodySelect">
             <option value="">Select Body</option>
-            <!-- Options will be populated by JavaScript -->
           </select>
         </div>
         
@@ -144,7 +142,6 @@
           <label class="block text-green-300 mb-2">Eyes</label>
           <select id="eyesSelect">
             <option value="">Select Eyes</option>
-            <!-- Options will be populated by JavaScript -->
           </select>
         </div>
         
@@ -152,7 +149,6 @@
           <label class="block text-green-300 mb-2">Minion</label>
           <select id="minionSelect">
             <option value="">Select Minion</option>
-            <!-- Options will be populated by JavaScript -->
           </select>
         </div>
         
@@ -160,7 +156,6 @@
           <label class="block text-green-300 mb-2">Mouth</label>
           <select id="mouthSelect">
             <option value="">Select Mouth</option>
-            <!-- Options will be populated by JavaScript -->
           </select>
         </div>
         
@@ -168,7 +163,6 @@
           <label class="block text-green-300 mb-2">Mustache</label>
           <select id="mustacheSelect">
             <option value="">Select Mustache</option>
-            <!-- Options will be populated by JavaScript -->
           </select>
         </div>
         
@@ -176,7 +170,6 @@
           <label class="block text-green-300 mb-2">Neck</label>
           <select id="neckSelect">
             <option value="">Select Neck</option>
-            <!-- Options will be populated by JavaScript -->
           </select>
         </div>
         
@@ -194,34 +187,58 @@
   </div>
 
   <script>
-    // Layer configuration from your layers.json
     const layersConfig = [
       {
         id: "19281741-b24e-47e2-a5e0-da53d2604337",
         name: "Background",
         files: [
-          { id: "869209e6-7b05-42c1-b9ec-f9da8f9e0442", name: "1", rarity: 50 },
-          { id: "585e95f9-d8cd-4e91-b3d0-26dfd45f0eb0", name: "2", rarity: 50 },
-          // More background options would be here
+          { id: "bg1", name: "Green Forest", rarity: 50, path: "/placeholder-nft.png" },
+          { id: "bg2", name: "Blue Cave", rarity: 50, path: "/placeholder-nft.png" },
         ]
       },
       {
         id: "b2ce6962-5b65-46c5-89cb-b091cc5c77e0",
         name: "Body",
         files: [
-          { id: "95442834-1188-45e5-a168-ae1fec622e48", name: "1", rarity: 28 },
-          { id: "59806af7-a7f6-4b44-84e5-8e076439e184", name: "2", rarity: 38 },
-          // More body options would be here
+          { id: "body1", name: "Scaly Green", rarity: 28, path: "/placeholder-nft.png" },
+          { id: "body2", name: "Spotted Yellow", rarity: 38, path: "/placeholder-nft.png" },
         ]
       },
-      // More layers would be here
+      {
+        id: "eyes1", name: "Eyes", files: [
+          { id: "eye1", name: "Red Eyes", rarity: 30, path: "/placeholder-nft.png" },
+          { id: "eye2", name: "Blue Eyes", rarity: 20, path: "/placeholder-nft.png" },
+        ]
+      },
+      {
+        id: "minion1", name: "Minion", files: [
+          { id: "minion1", name: "Small Snake", rarity: 25, path: "/placeholder-nft.png" },
+          { id: "minion2", name: "Tiny Lizard", rarity: 15, path: "/placeholder-nft.png" },
+        ]
+      },
+      {
+        id: "mouth1", name: "Mouth", files: [
+          { id: "mouth1", name: "Fanged", rarity: 35, path: "/placeholder-nft.png" },
+          { id: "mouth2", name: "Tongue Out", rarity: 25, path: "/placeholder-nft.png" },
+        ]
+      },
+      {
+        id: "mustache1", name: "Mustache", files: [
+          { id: "mustache1", name: "Curly", rarity: 10, path: "/placeholder-nft.png" },
+          { id: "mustache2", name: "Handlebar", rarity: 5, path: "/placeholder-nft.png" },
+        ]
+      },
+      {
+        id: "neck1", name: "Neck", files: [
+          { id: "neck1", name: "Collar", rarity: 20, path: "/placeholder-nft.png" },
+          { id: "neck2", name: "Scarf", rarity: 15, path: "/placeholder-nft.png" },
+        ]
+      }
     ];
 
-    // Initialize the canvas
     const canvas = document.getElementById('previewCanvas');
     const ctx = canvas.getContext('2d');
     
-    // Populate the select dropdowns
     function populateSelects() {
       const layerIds = ['backgroundSelect', 'bodySelect', 'eyesSelect', 'minionSelect', 'mouthSelect', 'mustacheSelect', 'neckSelect'];
       
@@ -241,7 +258,40 @@
       });
     }
     
-    // Generate a random Python
+    async function generatePython() {
+      const layerIds = ['backgroundSelect', 'bodySelect', 'eyesSelect', 'minionSelect', 'mouthSelect', 'mustacheSelect', 'neckSelect'];
+      const selectedLayers = layerIds.map(id => document.getElementById(id).value);
+      
+      if (selectedLayers.some(val => !val)) {
+        alert('Please select an option for each layer.');
+        return;
+      }
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      for (const [index, layerId] of layerIds.entries()) {
+        const layerValue = selectedLayers[index];
+        const layer = layersConfig.find(l => l.name.toLowerCase() === layerId.replace('Select', '').toLowerCase());
+        const file = layer.files.find(f => f.id === layerValue);
+        
+        if (file && file.path) {
+          const img = new Image();
+          img.crossOrigin = 'Anonymous';
+          await new Promise(resolve => {
+            img.onload = () => {
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              resolve();
+            };
+            img.onerror = () => {
+              console.error(`Failed to load ${file.name}`);
+              resolve();
+            };
+            img.src = file.path;
+          });
+        }
+      }
+    }
+    
     function generateRandomPython() {
       const layerIds = ['backgroundSelect', 'bodySelect', 'eyesSelect', 'minionSelect', 'mouthSelect', 'mustacheSelect', 'neckSelect'];
       
@@ -256,34 +306,6 @@
       generatePython();
     }
     
-    // Generate the Python based on selected options
-    function generatePython() {
-      // Clear the canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // In a real implementation, this would load and draw each layer
-      // For now, we'll just draw a placeholder
-      ctx.fillStyle = '#1e3e1e';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      ctx.fillStyle = '#4a9e4a';
-      ctx.font = '20px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('Python Preview', canvas.width / 2, canvas.height / 2);
-      
-      // Add a simple snake drawing
-      ctx.beginPath();
-      ctx.fillStyle = '#4a9e4a';
-      ctx.ellipse(canvas.width / 2, canvas.height / 2 + 30, 100, 20, 0, 0, Math.PI * 2);
-      ctx.fill();
-      
-      ctx.beginPath();
-      ctx.fillStyle = '#38a169';
-      ctx.arc(canvas.width / 2 - 90, canvas.height / 2 + 30, 15, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    
-    // Download the generated image
     function downloadImage() {
       const link = document.createElement('a');
       link.download = 'megapython-custom.png';
@@ -291,12 +313,10 @@
       link.click();
     }
     
-    // Event listeners
     document.getElementById('generateBtn').addEventListener('click', generatePython);
     document.getElementById('randomBtn').addEventListener('click', generateRandomPython);
     document.getElementById('downloadBtn').addEventListener('click', downloadImage);
     
-    // Initialize the page
     window.addEventListener('load', () => {
       populateSelects();
       generateRandomPython();
