@@ -252,22 +252,16 @@ const RARITY_QUOTES = {
   ]
 };
 
-const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
+// Use Rarible API for metadata
+const RARIBLE_API_BASE = 'https://api.rarible.org/v0.1';
+const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
+
 const btn = document.getElementById('btnCheck');
 const tokenInput = document.getElementById('tokenId');
 const preview = document.getElementById('preview');
 const traitsEl = document.getElementById('traits');
 const rarityEl = document.getElementById('rarityScore');
 const resultEl = document.getElementById('result');
-
-// Improved IPFS URL conversion
-function ipfsToHttp(url) {
-  if (!url) return '';
-  if (url.startsWith('ipfs://')) {
-    return 'https://ipfs.io/ipfs/' + url.replace('ipfs://', '');
-  }
-  return url;
-}
 
 async function fetchJSON(url) {
   try {
@@ -314,23 +308,23 @@ function getRarityQuote(category) {
 function showMetadata(meta, rarityData) {
   preview.innerHTML = "";
   
-  // Create image preview
-  const imageUrl = ipfsToHttp(meta.image);
+  // Create image preview using Rarible API
+  const imageUrl = meta.meta?.content?.[0]?.url || '/placeholder-nft.png';
   const previewHtml = `
     <div class="nft-preview mb-4">
-      <img src="${imageUrl}" alt="${meta.name}" onerror="this.src='/placeholder-nft.png'">
+      <img src="${imageUrl}" alt="${meta.meta.name}" onerror="this.src='/placeholder-nft.png'">
     </div>
-    <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${meta.name || `MegaPython #${tokenInput.value}`}</div>
+    <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${meta.meta.name || `MegaPython #${tokenInput.value}`}</div>
   `;
   preview.innerHTML = previewHtml;
 
   // Calculate rarity score
   let score = 0;
-  const attrs = meta.attributes || [];
+  const attrs = meta.meta?.attributes || [];
   
   if (rarityData) {
     for (const a of attrs) {
-      const t = a.trait_type;
+      const t = a.key;
       const v = a.value;
       
       if (rarityData.attributes && rarityData.attributes[t] && rarityData.attributes[t][v]) {
@@ -366,7 +360,7 @@ function showMetadata(meta, rarityData) {
       const traitCard = document.createElement('div');
       traitCard.className = 'trait-card';
       traitCard.innerHTML = `
-        <div class="font-semibold text-emerald-300 mb-1 pixel-font" style="font-size: 0.7rem;">${a.trait_type || 'Trait'}</div>
+        <div class="font-semibold text-emerald-300 mb-1 pixel-font" style="font-size: 0.7rem;">${a.key || 'Trait'}</div>
         <div class="text-lg font-medium">${a.value}</div>
       `;
       traitsEl.appendChild(traitCard);
@@ -405,14 +399,9 @@ btn.addEventListener('click', async () => {
   resultEl.classList.remove('hidden');
 
   try {
-    // Try first format
-    const metaUrl = `${METADATA_BASE}${idn}.json`;
+    // Use Rarible API to fetch metadata
+    const metaUrl = `${RARIBLE_API_BASE}/items/ETHEREUM:${MEGAPYTHON_CONTRACT}:${idn}`;
     let meta = await fetchJSON(metaUrl);
-    
-    // Try alternative format if first fails
-    if (!meta) {
-      meta = await fetchJSON(`${METADATA_BASE}${idn}`);
-    }
     
     if (!meta) {
       showError('Metadata not found for this token ID.');
