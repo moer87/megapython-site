@@ -52,7 +52,7 @@
       background: #4a9e4a;
       color: #0f172a;
       border: 2px solid #0f172a;
-      box-shadow: 0 4px 0 #0f172a;
+      box-shadow: 0 4px 0 #0f2a0f;
       transition: all 0.1s ease;
     }
     
@@ -152,27 +152,6 @@
           </select>
         </div>
         
-        <div class="layer-selector">
-          <label class="block text-green-300 mb-2">Mouth</label>
-          <select id="mouthSelect">
-            <option value="">Select Mouth</option>
-          </select>
-        </div>
-        
-        <div class="layer-selector">
-          <label class="block text-green-300 mb-2">Mustache</label>
-          <select id="mustacheSelect">
-            <option value="">Select Mustache</option>
-          </select>
-        </div>
-        
-        <div class="layer-selector">
-          <label class="block text-green-300 mb-2">Neck</label>
-          <select id="neckSelect">
-            <option value="">Select Neck</option>
-          </select>
-        </div>
-        
         <div class="text-center mt-6">
           <button id="randomBtn" class="pixel-button px-6 py-3 pixel-font mr-4">Randomize</button>
           <button id="generateBtn" class="pixel-button px-6 py-3 pixel-font">Generate</button>
@@ -189,137 +168,156 @@
   <script>
     const layersConfig = [
       {
-        id: "19281741-b24e-47e2-a5e0-da53d2604337",
+        id: "background",
         name: "Background",
         files: [
-          { id: "bg1", name: "Green Forest", rarity: 50, path: "/placeholder-nft.png" },
-          { id: "bg2", name: "Blue Cave", rarity: 50, path: "/placeholder-nft.png" },
+          { id: "bg1", name: "Green Forest", rarity: 40, path: "https://ipfs.io/ipfs/bafkreia5nkhvf3fa6cytxeifj5mbyu7vvpsdkywdld77vbpz2rlh4p6as4" },
+          { id: "bg2", name: "Blue Cave", rarity: 35, path: "https://ipfs.io/ipfs/bafkreid2gjagjeunzz47ftgmpgdu6gmobb7nkar6al6mlvu7l5v4drd2bq" },
+          { id: "bg3", name: "Purple Swamp", rarity: 25, path: "https://ipfs.io/ipfs/bafkreieuwosnurzcivss7rgpwenn4z3vycf52g3musvqb43h7rarjkvrae" }
         ]
       },
       {
-        id: "b2ce6962-5b65-46c5-89cb-b091cc5c77e0",
+        id: "body",
         name: "Body",
         files: [
-          { id: "body1", name: "Scaly Green", rarity: 28, path: "/placeholder-nft.png" },
-          { id: "body2", name: "Spotted Yellow", rarity: 38, path: "/placeholder-nft.png" },
+          { id: "body1", name: "Scaly Green", rarity: 40, path: "https://ipfs.io/ipfs/bafkreiag4e5rhpgrzeye72bdp4hnhyupts6xlr4qcfzyh46ygqluk24g6q" },
+          { id: "body2", name: "Spotted Yellow", rarity: 35, path: "https://ipfs.io/ipfs/bafkreigk6odpfrvv4i67yobnrlmdwsfdinypxk6fprmjjhsifyg75ao3ue" },
+          { id: "body3", name: "Striped Red", rarity: 25, path: "https://ipfs.io/ipfs/bafkreid4p3nhjxbznbqjumwhtlfrqyuxu6v6m2uzabrm7opnp2w4g576iy" }
         ]
       },
       {
-        id: "eyes1", name: "Eyes", files: [
-          { id: "eye1", name: "Red Eyes", rarity: 30, path: "/placeholder-nft.png" },
-          { id: "eye2", name: "Blue Eyes", rarity: 20, path: "/placeholder-nft.png" },
+        id: "eyes",
+        name: "Eyes",
+        files: [
+          { id: "eye1", name: "Red Eyes", rarity: 40, path: "https://ipfs.io/ipfs/bafkreifmeark6ymynw3f4xico5qp4eu6jqiravgzbdmtsd7jpft2staam4" },
+          { id: "eye2", name: "Blue Eyes", rarity: 35, path: "https://ipfs.io/ipfs/bafkreib5uxdst4lvdvqrnfbx53hwibk2kwq6lkzomuqqtpirhmvek5qohy" },
+          { id: "eye3", name: "Golden Eyes", rarity: 25, path: "https://ipfs.io/ipfs/bafkreicdgrlyvz4mrlfrkatkoicycxsxdpk3bqlhf77bacaelubu3oawh4" }
         ]
       },
       {
-        id: "minion1", name: "Minion", files: [
-          { id: "minion1", name: "Small Snake", rarity: 25, path: "/placeholder-nft.png" },
-          { id: "minion2", name: "Tiny Lizard", rarity: 15, path: "/placeholder-nft.png" },
-        ]
-      },
-      {
-        id: "mouth1", name: "Mouth", files: [
-          { id: "mouth1", name: "Fanged", rarity: 35, path: "/placeholder-nft.png" },
-          { id: "mouth2", name: "Tongue Out", rarity: 25, path: "/placeholder-nft.png" },
-        ]
-      },
-      {
-        id: "mustache1", name: "Mustache", files: [
-          { id: "mustache1", name: "Curly", rarity: 10, path: "/placeholder-nft.png" },
-          { id: "mustache2", name: "Handlebar", rarity: 5, path: "/placeholder-nft.png" },
-        ]
-      },
-      {
-        id: "neck1", name: "Neck", files: [
-          { id: "neck1", name: "Collar", rarity: 20, path: "/placeholder-nft.png" },
-          { id: "neck2", name: "Scarf", rarity: 15, path: "/placeholder-nft.png" },
+        id: "minion",
+        name: "Minion",
+        files: [
+          { id: "minion1", name: "Small Snake", rarity: 40, path: "https://ipfs.io/ipfs/bafkreidgvjhudbwm3idr6a2zkkmipcwmcksfioppe6w4ikjuiojlwqj2ka" },
+          { id: "minion2", name: "Tiny Lizard", rarity: 35, path: "https://ipfs.io/ipfs/bafkreiagmpipk2yvn7275vgd3j6sqqfnyy6lz6qivamygb4q6cnhrdoyju" },
+          { id: "minion3", name: "Baby Turtle", rarity: 25, path: "https://ipfs.io/ipfs/bafkreicx42nsoadhma4wig7cqn7l3yxhaidlijqalndorpemn4wqol26je" }
         ]
       }
     ];
 
+    const IPFS_GATEWAYS = [
+      "https://ipfs.io/ipfs/",
+      "https://gateway.ipfs.io/ipfs/",
+      "https://dweb.link/ipfs/",
+      "https://cf-ipfs.com/ipfs/",
+      "https://ipfs.fleek.co/ipfs/"
+    ];
+
     const canvas = document.getElementById('previewCanvas');
     const ctx = canvas.getContext('2d');
-    
+    const generateBtn = document.getElementById('generateBtn');
+    const randomBtn = document.getElementById('randomBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
     function populateSelects() {
-      const layerIds = ['backgroundSelect', 'bodySelect', 'eyesSelect', 'minionSelect', 'mouthSelect', 'mustacheSelect', 'neckSelect'];
-      
-      layerIds.forEach(layerId => {
-        const select = document.getElementById(layerId);
-        const layerName = layerId.replace('Select', '');
-        const layer = layersConfig.find(l => l.name.toLowerCase() === layerName.toLowerCase());
-        
-        if (layer) {
-          layer.files.forEach(file => {
-            const option = document.createElement('option');
-            option.value = file.id;
-            option.textContent = `${file.name} (${file.rarity}%)`;
-            select.appendChild(option);
-          });
-        }
+      layersConfig.forEach(layer => {
+        const select = document.getElementById(`${layer.id}Select`);
+        select.innerHTML = '<option value="">Select ' + layer.name + '</option>';
+        layer.files.forEach(file => {
+          const option = document.createElement('option');
+          option.value = file.path;
+          option.textContent = file.name;
+          select.appendChild(option);
+        });
       });
     }
-    
-    async function generatePython() {
-      const layerIds = ['backgroundSelect', 'bodySelect', 'eyesSelect', 'minionSelect', 'mouthSelect', 'mustacheSelect', 'neckSelect'];
-      const selectedLayers = layerIds.map(id => document.getElementById(id).value);
+
+    async function loadImageWithFallbacks(src) {
+      for (const gateway of IPFS_GATEWAYS) {
+        try {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.src = src.startsWith('https://ipfs.io/ipfs/') ? src : gateway + src.replace('https://ipfs.io/ipfs/', '');
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+          return img;
+        } catch (error) {
+          console.log(`Gateway ${gateway} failed for ${src}, trying next...`);
+        }
+      }
+      throw new Error("All IPFS gateways failed");
+    }
+
+    async function generateImage() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      if (selectedLayers.some(val => !val)) {
-        alert('Please select an option for each layer.');
+      const selectedLayers = layersConfig.map(layer => {
+        const select = document.getElementById(`${layer.id}Select`);
+        return select.value;
+      });
+      
+      if (selectedLayers.some(layer => !layer)) {
+        alert('Please select an option for each layer before generating.');
         return;
       }
       
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      for (const [index, layerId] of layerIds.entries()) {
-        const layerValue = selectedLayers[index];
-        const layer = layersConfig.find(l => l.name.toLowerCase() === layerId.replace('Select', '').toLowerCase());
-        const file = layer.files.find(f => f.id === layerValue);
-        
-        if (file && file.path) {
-          const img = new Image();
-          img.crossOrigin = 'Anonymous';
-          await new Promise(resolve => {
-            img.onload = () => {
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              resolve();
-            };
-            img.onerror = () => {
-              console.error(`Failed to load ${file.name}`);
-              resolve();
-            };
-            img.src = file.path;
-          });
+      try {
+        for (const layerPath of selectedLayers) {
+          const img = await loadImageWithFallbacks(layerPath);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         }
+      } catch (error) {
+        console.error('Error generating image:', error);
+        alert('Failed to load one or more images. Please try again.');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '16px "Press Start 2P"';
+        ctx.textAlign = 'center';
+        ctx.fillText('Error loading image', canvas.width / 2, canvas.height / 2);
       }
     }
-    
-    function generateRandomPython() {
-      const layerIds = ['backgroundSelect', 'bodySelect', 'eyesSelect', 'minionSelect', 'mouthSelect', 'mustacheSelect', 'neckSelect'];
-      
-      layerIds.forEach(layerId => {
-        const select = document.getElementById(layerId);
-        if (select.options.length > 1) {
-          const randomIndex = Math.floor(Math.random() * (select.options.length - 1)) + 1;
-          select.selectedIndex = randomIndex;
-        }
-      });
-      
-      generatePython();
+
+    function getRandomLayer(layer) {
+      const totalRarity = layer.files.reduce((sum, file) => sum + file.rarity, 0);
+      let random = Math.random() * totalRarity;
+      for (const file of layer.files) {
+        random -= file.rarity;
+        if (random <= 0) return file.path;
+      }
+      return layer.files[layer.files.length - 1].path;
     }
-    
+
+    function randomizeLayers() {
+      layersConfig.forEach(layer => {
+        const select = document.getElementById(`${layer.id}Select`);
+        select.value = getRandomLayer(layer);
+      });
+      generateImage();
+    }
+
     function downloadImage() {
       const link = document.createElement('a');
-      link.download = 'megapython-custom.png';
+      link.download = 'MegaPython-Generated.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
     }
-    
-    document.getElementById('generateBtn').addEventListener('click', generatePython);
-    document.getElementById('randomBtn').addEventListener('click', generateRandomPython);
-    document.getElementById('downloadBtn').addEventListener('click', downloadImage);
-    
+
+    generateBtn.addEventListener('click', generateImage);
+    randomBtn.addEventListener('click', randomizeLayers);
+    downloadBtn.addEventListener('click', downloadImage);
+
+    layersConfig.forEach(layer => {
+      const select = document.getElementById(`${layer.id}Select`);
+      select.addEventListener('change', generateImage);
+    });
+
     window.addEventListener('load', () => {
       populateSelects();
-      generateRandomPython();
+      randomizeLayers();
     });
   </script>
 </body>
