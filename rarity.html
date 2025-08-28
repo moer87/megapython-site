@@ -128,13 +128,15 @@
   </div>
 
 <script>
-// Try multiple IPFS gateways for better compatibility
+// Enhanced IPFS gateway list with fallbacks for better compatibility :cite[1]:cite[3]
 const IPFS_GATEWAYS = [
   "https://ipfs.io/ipfs/",
   "https://gateway.ipfs.io/ipfs/",
   "https://dweb.link/ipfs/",
   "https://cf-ipfs.com/ipfs/",
-  "https://ipfs.fleek.co/ipfs/"
+  "https://ipfs.fleek.co/ipfs/",
+  "https://nftstorage.link/ipfs/",
+  "https://cloudflare-ipfs.com/ipfs/"
 ];
 
 const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
@@ -145,7 +147,7 @@ const traitsEl = document.getElementById('traits');
 const rarityEl = document.getElementById('rarityScore');
 const resultEl = document.getElementById('result');
 
-// Function to try loading image with multiple gateways
+// Function to try loading image with multiple gateways :cite[1]:cite[3]
 function loadImageWithFallbacks(imgElement, cidPath) {
   let currentGatewayIndex = 0;
   
@@ -166,7 +168,7 @@ function loadImageWithFallbacks(imgElement, cidPath) {
   tryNextGateway();
 }
 
-// Improved IPFS URL conversion
+// Improved IPFS URL conversion with better error handling :cite[1]
 function ipfsToHttp(url) {
   if (!url) return '';
   if (url.startsWith('ipfs://')) {
@@ -175,11 +177,31 @@ function ipfsToHttp(url) {
   return url;
 }
 
+// Enhanced fetchJSON with timeout and better error handling :cite[3]:cite[8]
 async function fetchJSON(url) {
   try {
-    const response = await fetch(url);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10-second timeout
+    
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
+    
+    const text = await response.text();
+    
+    // Validate JSON structure to avoid parsing issues :cite[8]
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      console.error('Invalid JSON structure:', e);
+      // Try to fix common JSON issues (like trailing commas) :cite[8]
+      try {
+        return JSON.parse(text.replace(/,\s*}/g, '}').replace(/,\s*]/g, ']'));
+      } catch (e2) {
+        throw new Error('Invalid JSON format in metadata');
+      }
+    }
   } catch (error) {
     console.error('Failed to fetch JSON:', error);
     return null;
@@ -215,7 +237,7 @@ function showMetadata(meta) {
   img.className = "pixelated";
   img.alt = meta.name || "MegaPython NFT";
   
-  // Set up image loading
+  // Set up image loading with enhanced error handling :cite[1]:cite[3]
   if (meta.image) {
     const imgUrl = ipfsToHttp(meta.image);
     img.src = imgUrl;
@@ -227,7 +249,7 @@ function showMetadata(meta) {
     img.onerror = function() {
       imgContainer.innerHTML = '<div class="placeholder-snake"></div>';
       
-      // If image is from IPFS, try multiple gateways
+      // If image is from IPFS, try multiple gateways :cite[1]:cite[3]
       if (meta.image.startsWith('ipfs://')) {
         const cidPath = meta.image.replace('ipfs://', '');
         loadImageWithFallbacks(img, cidPath);
@@ -282,7 +304,7 @@ btn.addEventListener('click', async () => {
     const metaUrl = `${METADATA_BASE}${idn}.json`;
     let meta = await fetchJSON(metaUrl);
     
-    // Try alternative format if first fails
+    // Try alternative format if first fails :cite[3]
     if (!meta) {
       meta = await fetchJSON(`${METADATA_BASE}${idn}`);
     }
@@ -294,7 +316,7 @@ btn.addEventListener('click', async () => {
     
     showMetadata(meta);
 
-    // Load rarity data if available
+    // Load rarity data if available :cite[2]:cite[4]
     const rarityData = await loadRarityData();
     if (rarityData) {
       let score = 0;
