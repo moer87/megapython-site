@@ -95,8 +95,17 @@
   </div>
 
   <script>
-    const MEGAETH_RPC_URL = 'https://testnet.rpc.megaeth.io';
-    const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
+    const RARIBLE_API_BASE = 'https://api.rarible.org/v0.1';
+    const MEGAPYTHON_CONTRACT = '0xF4C6cC08F7Bba6867119f2E8f9556961a76F7098';
+    const IPFS_GATEWAYS = [
+      "https://ipfs.io/ipfs/",
+      "https://gateway.ipfs.io/ipfs/",
+      "https://dweb.link/ipfs/",
+      "https://cf-ipfs.com/ipfs/",
+      "https://ipfs.fleek.co/ipfs/"
+    ];
+    const METADATA_BASE = "https://ipfs.io/ipfs/bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/";
+
     const RARITY_QUOTES = {
       common: [
         "Just another pixel in the jungle.",
@@ -142,16 +151,6 @@
       ]
     };
 
-    const IPFS_GATEWAYS = [
-      "https://ipfs.io/ipfs/",
-      "https://gateway.ipfs.io/ipfs/",
-      "https://dweb.link/ipfs/",
-      "https://cf-ipfs.com/ipfs/",
-      "https://ipfs.fleek.co/ipfs/"
-    ];
-
-    const METADATA_BASE = "https://ipfs.io/ipfs/bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/";
-
     const btn = document.getElementById('btnCheck');
     const tokenInput = document.getElementById('tokenId');
     const preview = document.getElementById('preview');
@@ -171,17 +170,34 @@
       throw new Error("All IPFS gateways failed");
     }
 
-    async function checkOwnership(tokenId) {
-      if (typeof window.ethereum === 'undefined') return false;
+    async function checkOwnership(tokenId, userAddress) {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const contract = new ethers.Contract(MEGAPYTHON_CONTRACT, ['function ownerOf(uint256) view returns (address)'], provider);
-        const owner = await contract.ownerOf(tokenId);
-        const accounts = await provider.listAccounts();
-        return owner.toLowerCase() === accounts[0]?.toLowerCase();
+        const response = await fetch(`${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}&collection=ETHEREUM:${MEGAPYTHON_CONTRACT}`);
+        if (!response.ok) throw new Error('Rarible API error');
+        const data = await response.json();
+        return data.items.some(item => item.tokenId === tokenId.toString());
       } catch (error) {
         console.error('Error checking ownership:', error);
         return false;
+      }
+    }
+
+    async function fetchMetadata(tokenId) {
+      try {
+        const itemId = `ETHEREUM:${MEGAPYTHON_CONTRACT}:${tokenId}`;
+        const response = await fetch(`${RARIBLE_API_BASE}/items/${itemId}`);
+        if (!response.ok) throw new Error('Rarible API error');
+        const item = await response.json();
+        return item.meta;
+      } catch (error) {
+        console.error('Rarible API fetch failed, trying IPFS:', error);
+        try {
+          const metaUrl = `${METADATA_BASE}${tokenId}.json`;
+          return await fetchWithFallbacks(`bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/${tokenId}.json`);
+        } catch (ipfsError) {
+          console.error('IPFS fetch failed:', ipfsError);
+          return null;
+        }
       }
     }
 
@@ -209,12 +225,16 @@
     function showMetadata(meta, tokenId) {
       preview.innerHTML = "";
       
-      const imageUrl = meta.image ? meta.image.replace('ipfs://', 'https://ipfs.io/ipfs/') : '/placeholder-nft.png';
+      const imageUrl = meta?.content?.[0]?.url || (meta.image ? meta.image.replace('ipfs://', 'https://ipfs.io/ipfs/') : '/placeholder-nft.png');
+      const name = meta?.name || `MegaPython #${tokenId}`;
+      const description = meta?.description || 'No description available';
+      
       const previewHtml = `
-        <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${meta.name || `MegaPython #${tokenId}`}</div>
+        <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${name}</div>
         <div class="nft-preview mb-4">
-          <img src="${imageUrl}" alt="${meta.name || `MegaPython #${tokenId}`}" onerror="this.src='/placeholder-nft.png'">
+          <img src="${imageUrl}" alt="${name}" onerror="this.src='/placeholder-nft.png'" class="w-64 h-64 object-cover mx-auto rounded-lg">
         </div>
+        <p class="text-gray-400 mb-4">${description}</p>
       `;
       preview.innerHTML = previewHtml;
 
@@ -274,19 +294,21 @@
       resultEl.classList.remove('hidden');
 
       try {
-        const ownsToken = await checkOwnership(idn);
+        if (typeof window.ethereum === 'undefined') {
+          showError('Please install MetaMask and connect your wallet');
+          return;
+        }
+        
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const userAddress = accounts[0];
+        
+        const ownsToken = await checkOwnership(idn, userAddress);
         if (!ownsToken) {
           showError('You do not own this MegaPython NFT.');
           return;
         }
 
-        const metaUrl = `${METADATA_BASE}${idn}.json`;
-        let meta = await fetchWithFallbacks(`bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/${idn}.json`);
-        
-        if (!meta) {
-          meta = await fetchWithFallbacks(`bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq/${idn}`);
-        }
-        
+        const meta = await fetchMetadata(idn);
         if (!meta) {
           showError('Metadata not found for this token ID. The metadata may not be available yet.');
           return;
