@@ -419,7 +419,8 @@ function loadImageWithFallbacks(imgElement, cidPath) {
   
   function tryNextGateway() {
     if (currentGatewayIndex >= IPFS_GATEWAYS.length) {
-      // All gateways failed
+      imgElement.src = '/placeholder-nft.png'; // Fallback image
+      imgElement.alt = 'Failed to load NFT image';
       return;
     }
     
@@ -455,16 +456,18 @@ document.addEventListener('DOMContentLoaded', function() {
 // Slider functionality
 function initSlider() {
   const slider = document.querySelector('.slider');
+  const sliderContainer = document.querySelector('.slider-container');
   const dots = document.querySelectorAll('.slider-dot');
   let currentSlide = 0;
-  
+  let autoSlideInterval;
+
   // Set up dot click events
   dots.forEach((dot, index) => {
     dot.addEventListener('click', () => {
       goToSlide(index);
     });
   });
-  
+
   // Function to go to specific slide
   function goToSlide(index) {
     currentSlide = index;
@@ -475,12 +478,20 @@ function initSlider() {
       dot.classList.toggle('active', i === currentSlide);
     });
   }
-  
+
   // Auto-advance slides
-  setInterval(() => {
-    currentSlide = (currentSlide + 1) % dots.length;
-    goToSlide(currentSlide);
-  }, 4000);
+  function startAutoSlide() {
+    autoSlideInterval = setInterval(() => {
+      currentSlide = (currentSlide + 1) % dots.length;
+      goToSlide(currentSlide);
+    }, 6000); // Slower interval
+  }
+
+  startAutoSlide();
+
+  // Pause on hover
+  sliderContainer.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+  sliderContainer.addEventListener('mouseleave', startAutoSlide);
 }
 
 // Wallet Connect functionality
@@ -496,6 +507,14 @@ function initWalletConnect() {
   
   // Connect to wallet when button is clicked
   walletConnectBtn.addEventListener('click', async () => {
+    if (walletConnectBtn.classList.contains('connected-wallet')) {
+      // Disconnect wallet
+      localStorage.removeItem('connectedWallet');
+      walletConnectBtn.innerHTML = 'Connect Wallet';
+      walletConnectBtn.classList.remove('connected-wallet');
+      return;
+    }
+    
     try {
       // Check if MetaMask is installed
       if (typeof window.ethereum === 'undefined') {
@@ -526,9 +545,7 @@ function initWalletConnect() {
   // Update wallet button with connected address
   function updateWalletButton(address) {
     const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-    walletConnectBtn.innerHTML = `
-      <span>${shortenedAddress}</span>
-    `;
+    walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
     walletConnectBtn.classList.add('connected-wallet');
   }
 }
