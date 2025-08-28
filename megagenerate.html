@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MegaPython — MegaGenerate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a220a;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 40%);
+    }
+    
+    .pixel-font {
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .jungle-border {
+      border: 4px solid #3a7d3a;
+      box-shadow: 0 0 0 2px #1b3f1b, 0 0 0 6px #4a9e4a;
+      background: #1e3e1e;
+    }
+    
+    .pixel-card {
+      background: #1e3e1e;
+      border: 4px solid #4a9e4a;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .pixel-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 25px rgba(74, 158, 74, 0.8);
+    }
+    
+    .glow {
+      text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
+    }
+    
+    .jungle-glow {
+      text-shadow: 0 0 10px rgba(74, 158, 74, 0.7);
+    }
+    
+    .pixel-button {
+      background: #4a9e4a;
+      color: #0f172a;
+      border: 2px solid #0f172a;
+      box-shadow: 0 4px 0 #0f172a;
+      transition: all 0.1s ease;
+    }
+    
+    .pixel-button:hover {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #0f172a;
+    }
+    
+    .jungle-leaf {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 C5,35 15,35 20,35 C25,35 35,35 35,25 C35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      z-index: 0;
+      opacity: 0.3;
+    }
+    
+    .preview-canvas {
+      width: 400px;
+      height: 400px;
+      border: 4px solid #4a9e4a;
+      border-radius: 12px;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a;
+      margin: 0 auto;
+      background: #000;
+    }
+    
+    .layer-selector {
+      background: rgba(42, 74, 42, 0.7);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .layer-selector select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      background: #1e3e1e;
+      color: #e2e8f0;
+      border: 1px solid #4a9e4a;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Jungle leaves decoration -->
+  <div class="jungle-leaf" style="top: 10%; left: 5%;"></div>
+  <div class="jungle-leaf" style="top: 15%; right: 7%; transform: rotate(45deg);"></div>
+  <div class="jungle-leaf" style="top: 40%; left: 8%; transform: rotate(80deg);"></div>
+  <div class="jungle-leaf" style="bottom: 20%; right: 10%; transform: rotate(120deg);"></div>
+  <div class="jungle-leaf" style="bottom: 30%; left: 12%; transform: rotate(160deg);"></div>
+
+  <div class="relative z-10 max-w-6xl mx-auto p-6">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl pixel-font text-green-500 mb-4 jungle-glow">MegaPython Generator</h1>
+      <p class="text-lg text-gray-400 mb-6">Create your own custom MegaPython NFT with our generator tool!</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="pixel-card p-6">
+        <h2 class="text-2xl pixel-font text-green-400 mb-4">Preview</h2>
+        <canvas id="previewCanvas" class="preview-canvas" width="400" height="400"></canvas>
+        <div class="text-center mt-4">
+          <button id="downloadBtn" class="pixel-button px-6 py-3 pixel-font">Download Image</button>
+        </div>
+      </div>
+
+      <div class="pixel-card p-6">
+        <h2 class="text-2xl pixel-font text-green-400 mb-4">Customize Your Python</h2>
+        
+        <div class="layer-selector">
+          <label class="block text-green-300 mb-2">Background</label>
+          <select id="backgroundSelect">
+            <option value="">Select Background</option>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        
+        <div class="layer-selector">
+          <label class="block text-green-300 mb-2">Body</label>
+          <select id="bodySelect">
+            <option value="">Select Body</option>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        
+        <div class="layer-selector">
+          <label class="block text-green-300 mb-2">Eyes</label>
+          <select id="eyesSelect">
+            <option value="">Select Eyes</option>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        
+        <div class="layer-selector">
+          <label class="block text-green-300 mb-2">Minion</label>
+          <select id="minionSelect">
+            <option value="">Select Minion</option>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        
+        <div class="layer-selector">
+          <label class="block text-green-300 mb-2">Mouth</label>
+          <select id="mouthSelect">
+            <option value="">Select Mouth</option>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        
+        <div class="layer-selector">
+          <label class="block text-green-300 mb-2">Mustache</label>
+          <select id="mustacheSelect">
+            <option value="">Select Mustache</option>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        
+        <div class="layer-selector">
+          <label class="block text-green-300 mb-2">Neck</label>
+          <select id="neckSelect">
+            <option value="">Select Neck</option>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        
+        <div class="text-center mt-6">
+          <button id="randomBtn" class="pixel-button px-6 py-3 pixel-font mr-4">Randomize</button>
+          <button id="generateBtn" class="pixel-button px-6 py-3 pixel-font">Generate</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 text-center">
+      <p class="text-gray-400 mb-4">Note: This is a fun tool for creating custom Python images. These are not official MegaPython NFTs.</p>
+      <a href="/" class="text-emerald-400 hover:text-emerald-300 underline transition-colors">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    // Layer configuration from your layers.json
+    const layersConfig = [
+      {
+        id: "19281741-b24e-47e2-a5e0-da53d2604337",
+        name: "Background",
+        files: [
+          { id: "869209e6-7b05-42c1-b9ec-f9da8f9e0442", name: "1", rarity: 50 },
+          { id: "585e95f9-d8cd-4e91-b3d0-26dfd45f0eb0", name: "2", rarity: 50 },
+          // More background options would be here
+        ]
+      },
+      {
+        id: "b2ce6962-5b65-46c5-89cb-b091cc5c77e0",
+        name: "Body",
+        files: [
+          { id: "95442834-1188-45e5-a168-ae1fec622e48", name: "1", rarity: 28 },
+          { id: "59806af7-a7f6-4b44-84e5-8e076439e184", name: "2", rarity: 38 },
+          // More body options would be here
+        ]
+      },
+      // More layers would be here
+    ];
+
+    // Initialize the canvas
+    const canvas = document.getElementById('previewCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Populate the select dropdowns
+    function populateSelects() {
+      const layerIds = ['backgroundSelect', 'bodySelect', 'eyesSelect', 'minionSelect', 'mouthSelect', 'mustacheSelect', 'neckSelect'];
+      
+      layerIds.forEach(layerId => {
+        const select = document.getElementById(layerId);
+        const layerName = layerId.replace('Select', '');
+        const layer = layersConfig.find(l => l.name.toLowerCase() === layerName.toLowerCase());
+        
+        if (layer) {
+          layer.files.forEach(file => {
+            const option = document.createElement('option');
+            option.value = file.id;
+            option.textContent = `${file.name} (${file.rarity}%)`;
+            select.appendChild(option);
+          });
+        }
+      });
+    }
+    
+    // Generate a random Python
+    function generateRandomPython() {
+      const layerIds = ['backgroundSelect', 'bodySelect', 'eyesSelect', 'minionSelect', 'mouthSelect', 'mustacheSelect', 'neckSelect'];
+      
+      layerIds.forEach(layerId => {
+        const select = document.getElementById(layerId);
+        if (select.options.length > 1) {
+          const randomIndex = Math.floor(Math.random() * (select.options.length - 1)) + 1;
+          select.selectedIndex = randomIndex;
+        }
+      });
+      
+      generatePython();
+    }
+    
+    // Generate the Python based on selected options
+    function generatePython() {
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // In a real implementation, this would load and draw each layer
+      // For now, we'll just draw a placeholder
+      ctx.fillStyle = '#1e3e1e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = '#4a9e4a';
+      ctx.font = '20px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Python Preview', canvas.width / 2, canvas.height / 2);
+      
+      // Add a simple snake drawing
+      ctx.beginPath();
+      ctx.fillStyle = '#4a9e4a';
+      ctx.ellipse(canvas.width / 2, canvas.height / 2 + 30, 100, 20, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.fillStyle = '#38a169';
+      ctx.arc(canvas.width / 2 - 90, canvas.height / 2 + 30, 15, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Download the generated image
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.download = 'megapython-custom.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+    
+    // Event listeners
+    document.getElementById('generateBtn').addEventListener('click', generatePython);
+    document.getElementById('randomBtn').addEventListener('click', generateRandomPython);
+    document.getElementById('downloadBtn').addEventListener('click', downloadImage);
+    
+    // Initialize the page
+    window.addEventListener('load', () => {
+      populateSelects();
+      generateRandomPython();
+    });
+  </script>
+</body>
+</html>
