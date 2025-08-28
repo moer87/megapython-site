@@ -329,20 +329,20 @@
   </main>
 
   <script>
-    // MegaETH Testnet Configuration - Fixed based on official details
-    const MEGAETH_CHAIN_ID = '0x76ADF1'; // 7777777 in hex
-    const MEGAETH_RPC_URL = 'https://rpc.testnet.megaeth.io';
-    const MEGAETH_NETWORK = {
-      chainId: MEGAETH_CHAIN_ID,
-      chainName: 'MegaETH Testnet',
-      nativeCurrency: {
-        name: 'Ether',
-        symbol: 'ETH',
-        decimals: 18,
-      },
-      rpcUrls: [MEGAETH_RPC_URL],
-      blockExplorerUrls: ['https://explorer.testnet.megaeth.io/'],
-    };
+// MegaETH Testnet Configuration - Updated with correct information
+const MEGAETH_CHAIN_ID = '0x76ADF1'; // 7777777 in hex
+const MEGAETH_RPC_URL = 'https://testnet.rpc.megaeth.io'; // Updated RPC URL
+const MEGAETH_NETWORK = {
+  chainId: MEGAETH_CHAIN_ID,
+  chainName: 'MegaETH Testnet',
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+  rpcUrls: [MEGAETH_RPC_URL],
+  blockExplorerUrls: ['https://explorer.testnet.megaeth.io/'],
+};
 
     // Contract addresses
     const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
