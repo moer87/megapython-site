@@ -62,6 +62,15 @@
       padding: 8px;
       border-radius: 4px;
     }
+    
+    .connected-wallet {
+      background: #a3e635;
+      color: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -73,10 +82,22 @@
   <div class="jungle-leaf" style="bottom: 30%; left: 12%; transform: rotate(160deg);"></div>
 
   <div class="relative z-10 max-w-4xl mx-auto p-6">
-    <header class="text-center mb-8">
+    <header class="flex justify-between items-center mb-12">
+      <h1 class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython</h1>
+      <nav class="flex gap-4 items-center">
+        <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
+        <a href="/dashboard.html" class="text-green-300 hover:text-green-500 transition-colors">Dashboard</a>
+        <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
+        <div id="walletConnectContainer">
+          <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold transition-colors">Connect Wallet</button>
+        </div>
+      </nav>
+    </header>
+
+    <section class="text-center mb-8">
       <h1 class="text-4xl pixel-font text-green-500 mb-4 jungle-glow">MegaPython Rarity Checker</h1>
       <p class="text-lg text-gray-400 mb-6">Enter a token ID (1–2222) to discover your Python's rarity and unique quote!</p>
-    </header>
+    </section>
 
     <div class="flex gap-2 justify-center mb-8">
       <input id="tokenId" type="number" min="1" max="2222" placeholder="Token ID (e.g. 42)" class="px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 w-48" />
@@ -87,10 +108,6 @@
       <div id="preview" class="text-center"></div>
       <div id="traits" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
       <div id="rarityScore" class="text-center p-3 bg-slate-900/50 rounded-lg"></div>
-    </div>
-
-    <div class="mt-10 text-center text-sm text-gray-500">
-      <p><a href="/" class="text-emerald-400 hover:text-emerald-300 underline transition-colors">← Back to Home</a></p>
     </div>
   </div>
 
@@ -168,18 +185,6 @@
         }
       }
       throw new Error("All IPFS gateways failed");
-    }
-
-    async function checkOwnership(tokenId, userAddress) {
-      try {
-        const response = await fetch(`${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}&collection=ETHEREUM:${MEGAPYTHON_CONTRACT}`);
-        if (!response.ok) throw new Error('Rarible API error');
-        const data = await response.json();
-        return data.items.some(item => item.tokenId === tokenId.toString());
-      } catch (error) {
-        console.error('Error checking ownership:', error);
-        return false;
-      }
     }
 
     async function fetchMetadata(tokenId) {
@@ -294,30 +299,16 @@
       resultEl.classList.remove('hidden');
 
       try {
-        if (typeof window.ethereum === 'undefined') {
-          showError('Please install MetaMask and connect your wallet');
-          return;
-        }
-        
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const userAddress = accounts[0];
-        
-        const ownsToken = await checkOwnership(idn, userAddress);
-        if (!ownsToken) {
-          showError('You do not own this MegaPython NFT.');
-          return;
-        }
-
         const meta = await fetchMetadata(idn);
         if (!meta) {
-          showError('Metadata not found for this token ID. The metadata may not be available yet.');
+          showError('Metadata not found for this token ID. The NFT may not be minted yet.');
           return;
         }
         
         showMetadata(meta, idn);
       } catch (error) {
         console.error('Error:', error);
-        showError('Failed to fetch data. Check your connection or try again later.');
+        showError('Failed to fetch metadata. Check your connection or try again later.');
       }
     });
 
@@ -326,6 +317,53 @@
         btn.click();
       }
     });
+
+    // Wallet connect functionality (optional, for consistency with other pages)
+    function initWalletConnect() {
+      const walletConnectBtn = document.getElementById('walletConnectBtn');
+      const walletConnectContainer = document.getElementById('walletConnectContainer');
+      
+      const connectedAddress = localStorage.getItem('connectedWallet');
+      if (connectedAddress) {
+        updateWalletButton(connectedAddress);
+      }
+      
+      walletConnectBtn.addEventListener('click', async () => {
+        if (walletConnectBtn.classList.contains('connected-wallet')) {
+          localStorage.removeItem('connectedWallet');
+          walletConnectBtn.innerHTML = 'Connect Wallet';
+          walletConnectBtn.classList.remove('connected-wallet');
+          return;
+        }
+        
+        try {
+          if (typeof window.ethereum === 'undefined') {
+            alert('Please install MetaMask to connect your wallet');
+            return;
+          }
+          
+          const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+          });
+          
+          const address = accounts[0];
+          localStorage.setItem('connectedWallet', address);
+          updateWalletButton(address);
+          console.log('Connected with address:', address);
+        } catch (error) {
+          console.error('Error connecting to MetaMask:', error);
+          alert('Failed to connect wallet. Please try again.');
+        }
+      });
+      
+      function updateWalletButton(address) {
+        const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
+        walletConnectBtn.classList.add('connected-wallet');
+      }
+    }
+
+    window.addEventListener('load', initWalletConnect);
   </script>
 </body>
 </html>
