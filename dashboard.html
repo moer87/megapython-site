@@ -198,18 +198,16 @@
   </div>
 
   <script>
-    const MEGAETH_CHAIN_ID = '0x76ADF1';
-    const MEGAETH_RPC_URL = 'https://testnet.rpc.megaeth.io';
+    const MEGAETH_CHAIN_ID = '0x18d2';
+    const MEGAETH_RPC_URL = 'https://carrot.megaeth.com/rpc';
     const MEGAETH_NETWORK = {
-      chainId: MEGAETH_CHAIN_ID,
-      chainName: 'MegaETH Testnet',
-      nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+      chainId: '0x18d2',
+      chainName: 'Mega Testnet',
+      nativeCurrency: { name: 'MegaETH', symbol: 'MegaETH', decimals: 18 },
       rpcUrls: [MEGAETH_RPC_URL],
-      blockExplorerUrls: ['https://explorer.testnet.megaeth.io/'],
+      blockExplorerUrls: ['https://megaexplorer.xyz/'],
     };
-
-    const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
-    const SAMPLE_TOKEN_CONTRACT = '0x0000000000000000000000000000000000000000'; // Placeholder, replace if you have a real token contract
+    const MEGAPYTHON_CONTRACT = '0xF4C6cC08F7Bba6867119f2E8f9556961a76F7098';
     const RARIBLE_API_BASE = 'https://api.rarible.org/v0.1';
 
     let provider;
@@ -218,7 +216,6 @@
     let allNFTs = [];
 
     const walletConnectBtn = document.getElementById('walletConnectBtn');
-    const walletConnectContainer = document.getElementById('walletConnectContainer');
     const pythonContainer = document.getElementById('pythonContainer');
     const allNftContainer = document.getElementById('allNftContainer');
     const tokensContainer = document.getElementById('tokensContainer');
@@ -226,7 +223,6 @@
     const pythonCountElement = document.getElementById('pythonCount');
     const otherNftCountElement = document.getElementById('otherNftCount');
     const tokenCountElement = document.getElementById('tokenCount');
-    const walletInfoElement = document.getElementById('walletInfo');
     const nftCountDisplay = document.getElementById('nftCountDisplay');
     const nftLoading = document.getElementById('nftLoading');
     const assetSearch = document.getElementById('assetSearch');
@@ -244,9 +240,8 @@
         userAddress = accounts[0];
         const shortenedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
         
-        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span>`;
+        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
         walletConnectBtn.classList.add('connected-wallet');
-        walletInfoElement.textContent = shortenedAddress;
         
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (chainId !== MEGAETH_CHAIN_ID) {
@@ -257,11 +252,11 @@
               try {
                 await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [MEGAETH_NETWORK] });
               } catch (addError) {
-                alert('Failed to add MegaETH network. Please add it manually in MetaMask.');
+                alert('Failed to add Mega Testnet. Please add it manually in MetaMask.');
                 return;
               }
             } else {
-              alert('Please switch to MegaETH Testnet in MetaMask.');
+              alert('Please switch to Mega Testnet in MetaMask.');
               return;
             }
           }
@@ -269,6 +264,7 @@
         
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner();
+        localStorage.setItem('connectedWallet', userAddress);
         loadAssets();
       } catch (error) {
         console.error('Error connecting wallet:', error);
@@ -292,7 +288,7 @@
 
     async function loadMegaPythons() {
       try {
-        const response = await fetch(`${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}&collection=${MEGAPYTHON_CONTRACT}`);
+        const response = await fetch(`${RARIBLE_API_BASE}/items/byOwner?owner=ETHEREUM:${userAddress}&collection=ETHEREUM:${MEGAPYTHON_CONTRACT}`);
         if (!response.ok) throw new Error('Rarible API error');
         const data = await response.json();
         pythonContainer.innerHTML = '';
@@ -341,7 +337,7 @@
         const ethBalance = ethers.utils.formatEther(balance);
         
         const tokens = [
-          { name: 'Ether', symbol: 'ETH', balance: parseFloat(ethBalance).toFixed(4), value: `$${(parseFloat(ethBalance) * 1800).toFixed(2)}`, price: '$1800.00' },
+          { name: 'MegaETH', symbol: 'MegaETH', balance: parseFloat(ethBalance).toFixed(4), value: `$${(parseFloat(ethBalance) * 1800).toFixed(2)}`, price: '$1800.00' },
         ];
         
         tokensContainer.innerHTML = '';
@@ -384,9 +380,9 @@
     }
 
     function updatePortfolioSummary() {
-      const megaPythonCount = parseInt(pythonCountElement.textContent);
-      const otherNftCount = parseInt(otherNftCountElement.textContent);
-      const tokenCount = parseInt(tokenCountElement.textContent);
+      const megaPythonCount = parseInt(pythonCountElement.textContent) || 0;
+      const otherNftCount = parseInt(otherNftCountElement.textContent) || 0;
+      const tokenCount = parseInt(tokenCountElement.textContent) || 0;
       const totalValue = (megaPythonCount * 0.5) + (otherNftCount * 0.2) + (tokenCount * 10);
       totalValueElement.textContent = `$${totalValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
     }
@@ -474,7 +470,21 @@
       });
     });
 
-    walletConnectBtn.addEventListener('click', connectWallet);
+    walletConnectBtn.addEventListener('click', async () => {
+      if (walletConnectBtn.classList.contains('connected-wallet')) {
+        localStorage.removeItem('connectedWallet');
+        walletConnectBtn.innerHTML = 'Connect Wallet';
+        walletConnectBtn.classList.remove('connected-wallet');
+        userAddress = null;
+        pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view your MegaPython NFTs</div>';
+        allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view all your NFTs</div>';
+        tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">Connect your wallet to view token balances</td></tr>';
+        updatePortfolioSummary();
+        initChart();
+        return;
+      }
+      await connectWallet();
+    });
 
     window.addEventListener('load', async function() {
       if (typeof window.ethereum !== 'undefined') {
@@ -482,14 +492,13 @@
         if (connectedAddress) {
           userAddress = connectedAddress;
           const shortenedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
-          walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span>`;
+          walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
           walletConnectBtn.classList.add('connected-wallet');
-          walletInfoElement.textContent = shortenedAddress;
           provider = new ethers.providers.Web3Provider(window.ethereum);
           signer = provider.getSigner();
           const chainId = await window.ethereum.request({ method: 'eth_chainId' });
           if (chainId !== MEGAETH_CHAIN_ID) {
-            alert('Please switch to MegaETH Testnet to view your assets');
+            alert('Please switch to Mega Testnet to view your assets');
           } else {
             loadAssets();
           }
@@ -498,30 +507,31 @@
     });
 
     if (typeof window.ethereum !== 'undefined') {
-      window.ethereum.on('accountsChanged', (accounts) => {
+      window.ethereum.on('accountsChanged', async (accounts) => {
         if (accounts.length === 0) {
           walletConnectBtn.innerHTML = 'Connect Wallet';
           walletConnectBtn.classList.remove('connected-wallet');
-          walletInfoElement.textContent = 'Not connected';
           userAddress = null;
           pythonContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view your MegaPython NFTs</div>';
           allNftContainer.innerHTML = '<div class="text-center py-12 text-gray-400">Connect your wallet to view all your NFTs</div>';
           tokensContainer.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">Connect your wallet to view token balances</td></tr>';
+          updatePortfolioSummary();
+          initChart();
         } else {
           userAddress = accounts[0];
           const shortenedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
-          walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span>`;
+          walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
           walletConnectBtn.classList.add('connected-wallet');
-          walletInfoElement.textContent = shortenedAddress;
-          loadAssets();
+          localStorage.setItem('connectedWallet', userAddress);
+          await loadAssets();
         }
       });
       
-      window.ethereum.on('chainChanged', (chainId) => {
+      window.ethereum.on('chainChanged', async (chainId) => {
         if (chainId === MEGAETH_CHAIN_ID && userAddress) {
-          loadAssets();
+          await loadAssets();
         } else {
-          alert('Please switch to MegaETH Testnet to view your assets');
+          alert('Please switch to Mega Testnet to view your assets');
         }
       });
     }
