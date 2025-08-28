@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MegaPython Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a220a;
+      color: #e2e8f0;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 40%);
+    }
+    
+    .pixel-font {
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .jungle-glow {
+      text-shadow: 0 0 10px rgba(74, 158, 74, 0.7);
+    }
+    
+    .pixel-card {
+      background: #1e3e1e;
+      border: 4px solid #4a9e4a;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .pixel-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 25px rgba(74, 158, 74, 0.8);
+    }
+    
+    .wallet-connect-btn {
+      background: #3b82f6;
+      color: white;
+      border: 2px solid #1e40af;
+      box-shadow: 0 4px 0 #1e40af;
+      transition: all 0.1s ease;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    
+    .wallet-connect-btn:hover {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #1e40af;
+      background: #2563eb;
+    }
+    
+    .connected-wallet {
+      background: #3a7d3a;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .nft-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .portfolio-card {
+      background: linear-gradient(135deg, #1e3e1e 0%, #2a4a2a 100%);
+      border: 4px solid #4a9e4a;
+      padding: 20px;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Navigation Header -->
+  <header class="p-4 flex justify-between items-center">
+    <div class="text-2xl pixel-font text-green-500 jungle-glow">MegaPython Dashboard</div>
+    <nav class="flex gap-4">
+      <a href="/" class="text-green-400 hover:text-green-300">Home</a>
+      <a href="/rarity.html" class="text-green-400 hover:text-green-300">Rarity Checker</a>
+      <div id="walletConnectContainer">
+        <button id="walletConnectBtn" class="wallet-connect-btn">Connect Wallet</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-4">
+    <!-- Portfolio Overview -->
+    <section class="portfolio-card pixel-card mb-8">
+      <h2 class="text-2xl pixel-font text-green-400 mb-4">Portfolio Overview</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 bg-green-900/30 rounded-lg">
+          <h3 class="text-green-300">Total Value</h3>
+          <p class="text-2xl font-bold" id="totalValue">$0.00</p>
+        </div>
+        <div class="p-4 bg-green-900/30 rounded-lg">
+          <h3 class="text-green-300">MegaPythons</h3>
+          <p class="text-2xl font-bold" id="pythonCount">0</p>
+        </div>
+        <div class="p-4 bg-green-900/30 rounded-lg">
+          <h3 class="text-green-300">Wallet</h3>
+          <p class="text-sm" id="walletInfo">Not connected</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NFT Collection -->
+    <section class="pixel-card">
+      <h2 class="text-2xl pixel-font text-green-400 mb-4">Your MegaPython Collection</h2>
+      <div id="nftContainer" class="nft-grid">
+        <div class="text-center py-12 text-gray-400">
+          <p>Connect your wallet to view your MegaPython NFTs</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Marketplace Links -->
+    <section class="pixel-card mt-8">
+      <h2 class="text-2xl pixel-font text-green-400 mb-4">Marketplace Tools</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" 
+           class="p-4 bg-green-900/30 rounded-lg hover:bg-green-800/50 transition-colors">
+          <h3 class="text-green-300">View on Rarible</h3>
+          <p class="text-sm text-gray-400">See your collection on marketplace</p>
+        </a>
+        <a href="/rarity.html" 
+           class="p-4 bg-green-900/30 rounded-lg hover:bg-green-800/50 transition-colors">
+          <h3 class="text-green-300">Check Rarity</h3>
+          <p class="text-sm text-gray-400">Analyze your Python's rarity</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Wallet connection functionality
+    const walletConnectBtn = document.getElementById('walletConnectBtn');
+    const walletConnectContainer = document.getElementById('walletConnectContainer');
+    const nftContainer = document.getElementById('nftContainer');
+    const totalValueElement = document.getElementById('totalValue');
+    const pythonCountElement = document.getElementById('pythonCount');
+    const walletInfoElement = document.getElementById('walletInfo');
+
+    // Sample NFT data (in a real app, this would come from the blockchain)
+    const sampleNFTs = [
+      { id: 1, name: "MegaPython #1", image: "https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm", value: "0.5 ETH" },
+      { id: 2, name: "MegaPython #2", image: "https://ipfs.io/ipfs/bafkreigilizwe5aow4cj7pknk54ykwbgtcrqqp53xbaye6c7jzugsvjbmu", value: "0.7 ETH" },
+      { id: 3, name: "MegaPython #3", image: "https://ipfs.io/ipfs/bafkreicfbtyh7p4njqbzideujs3z4pwr4zkyg7vxaxgv7sogdrojojgdr4", value: "0.3 ETH" }
+    ];
+
+    // Connect Wallet Function
+    async function connectWallet() {
+      try {
+        // Check if MetaMask is installed
+        if (typeof window.ethereum !== 'undefined') {
+          // Request account access
+          const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+          });
+          
+          const address = accounts[0];
+          const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+          
+          // Update UI
+          walletConnectBtn.innerHTML = `
+            <span>${shortenedAddress}</span>
+          `;
+          walletConnectBtn.classList.add('connected-wallet');
+          
+          walletInfoElement.textContent = shortenedAddress;
+          
+          // Load NFT data (in a real app, this would fetch from blockchain)
+          loadNFTs();
+          
+        } else {
+          alert('Please install MetaMask to use this feature!');
+        }
+      } catch (error) {
+        console.error('Error connecting wallet:', error);
+        alert('Failed to connect wallet. Please try again.');
+      }
+    }
+
+    // Load NFTs Function
+    function loadNFTs() {
+      // Clear loading message
+      nftContainer.innerHTML = '';
+      
+      // Calculate total value
+      let totalValue = 0;
+      
+      // Display each NFT
+      sampleNFTs.forEach(nft => {
+        const nftElement = document.createElement('div');
+        nftElement.className = 'pixel-card p-4 flex flex-col items-center';
+        nftElement.innerHTML = `
+          <div class="w-40 h-40 bg-black mb-3 flex items-center justify-center">
+            <img src="${nft.image}" class="w-full h-full object-contain" alt="${nft.name}">
+          </div>
+          <div class="text-md font-semibold text-green-300 text-center">${nft.name}</div>
+          <div class="text-sm text-gray-400 mt-1">${nft.value}</div>
+        `;
+        nftContainer.appendChild(nftElement);
+        
+        // Add to total value (convert ETH to number)
+        totalValue += parseFloat(nft.value);
+      });
+      
+      // Update portfolio stats
+      pythonCountElement.textContent = sampleNFTs.length;
+      totalValueElement.textContent = `$${(totalValue * 1800).toFixed(2)}`; // Assuming 1 ETH = $1800
+    }
+
+    // Event listeners
+    walletConnectBtn.addEventListener('click', connectWallet);
+
+    // Initialize with sample data for demo purposes
+    // In a real application, you would only load data after wallet connection
+    // loadNFTs();
+  </script>
+</body>
+</html>
