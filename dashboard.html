@@ -8,53 +8,80 @@
   <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
-  <!-- OpenGraph & Twitter Preview -->
+  <!-- OpenGraph & Twitter -->
   <meta property="og:title" content="MegaPython — Dashboard">
   <meta property="og:description" content="Track your MegaPython NFTs, tokens, and portfolio on MegaETH Testnet.">
-  <meta property="og:image" content="https://yourdomain.com/logo.png">
-  <meta property="og:url" content="https://yourdomain.com/dashboard.html">
+  <meta property="og:image" content="https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm">
+  <meta property="og:url" content="https://megapython.testnet.nfts2.me/dashboard.html">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="MegaPython — Dashboard">
   <meta name="twitter:description" content="NFT dashboard for MegaPython holders.">
-  <meta name="twitter:image" content="https://yourdomain.com/logo.png">
-
-  <style>
-    /* keep your CSS the same */
-  </style>
+  <meta name="twitter:image" content="https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm">
 </head>
-<body class="min-h-screen">
-  <!-- keep body layout the same -->
+<body class="min-h-screen bg-green-950 text-gray-200">
+  <div class="max-w-6xl mx-auto p-6">
+    <header class="flex justify-between items-center mb-12">
+      <h1 class="text-3xl pixel-font text-green-500">MegaPython Dashboard</h1>
+      <nav class="flex gap-4 items-center">
+        <a href="/" class="text-green-300 hover:text-green-500">Home</a>
+        <a href="/rarity.html" class="text-green-300 hover:text-green-500">Rarity</a>
+        <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 text-black rounded-lg font-bold">Connect Wallet</button>
+      </nav>
+    </header>
+
+    <section class="mb-12">
+      <h2 class="text-2xl text-green-400 mb-4">Portfolio Overview</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="p-4 bg-green-900 text-center"><p>Total Value</p><p id="totalValue" class="text-xl font-bold">$0.00</p></div>
+        <div class="p-4 bg-green-900 text-center"><p>MegaPythons</p><p id="pythonCount" class="text-xl font-bold">0</p></div>
+        <div class="p-4 bg-green-900 text-center"><p>Other NFTs</p><p id="otherNftCount" class="text-xl font-bold">0</p></div>
+        <div class="p-4 bg-green-900 text-center"><p>Tokens</p><p id="tokenCount" class="text-xl font-bold">0</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl text-green-400 mb-4">Portfolio Breakdown</h2>
+      <canvas id="portfolioChart" style="max-height:300px;"></canvas>
+    </section>
+  </div>
 
   <script>
-    const MEGAETH_CHAIN_ID = '0x18d2';
-    const MEGAETH_RPC_URL = 'https://testnet.megaeth.network';
-    const MEGAPYTHON_CONTRACT = '0xf4c6cc08f7bba6867119f2e8f9556961a76f7098';
+    const walletBtn = document.getElementById("walletConnectBtn");
+    const pythonCountElement = document.getElementById("pythonCount");
+    const otherNftCountElement = document.getElementById("otherNftCount");
+    const tokenCountElement = document.getElementById("tokenCount");
+    const totalValueElement = document.getElementById("totalValue");
 
-    // FIXED: NFT_COLLECTIONS last entry corrected
-    const NFT_COLLECTIONS = [
-      { name: "MegaPython", address: "0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" },
-      { name: "Fafelnacci", address: "0x72b084e518a0c39d791171133c9bf4ea85996594" },
-      { name: "Lil Mega Bunz", address: "0x56156a7a7f31e5ef191ae6ee564442cb7fed0ac8" },
-      { name: "1 Million Bread", address: "0x6a0d1c1b5deeb24ca0c452b19b5051f2ae0e7b23" },
-      { name: "Mega Rebel Mutant", address: "0xcd942dc421dca9096a2775f161103bb799a691be" },
-      { name: "Mega Rebel Pika", address: "0xa3bf0fa4a0c4763cf2b71d32e2c09914aa686ae0" },
-      { name: "Mega Rebel Doll", address: "0x9c4e45e819e32e9276c448cad892fa9c783d1099" },
-      { name: "Mega Rebel Botz", address: "0x2a0c39b24379d61821d63119b36ecbe9906b772d" },
-      { name: "Mega Rebel Jelly", address: "0xf4565cb3709c3c39895324688474aa27c33b0e60" },
-      { name: "Way My Dogs At", address: "0xb796c8fd06f9a89d4cad03cc538a936a865cbeb0" },
-      { name: "MegaBunnyVerse Preview", address: "0xf68cd4084b787be2d7d5f8007f8019117ed94736" },
-      { name: "MegaBunnyVerse Preview-2", address: "0x72cd59c3e011f2a860e57a52d5263f0b57422a5e" },
-      { name: "Puffles MegaETH Pass", address: "0xc5622a9fb4a8330bd2d42c057b7448be96122e77" },
-      { name: "Nacci's Member Card", address: "0xf1f50d5a9a629bf663d7c90a83070a36b367c3a1" },
-      { name: "Legend Of Breadio", address: "0xd45ad5678fd51d3d6b4ce55c720817d9896bb269" },
-      { name: "Remiko Testnet", address: "0x85ed4e4c8a50a4aae200ae040a17a6e490aae5ef" },
-      { name: "Nacci Glitchiness", address: "0x4ec7ed0b288f20e4ca278bc1f8dcd9ef61363533" },
-      { name: "Nacci's Creativiness", address: "0xbb06e179db81111f0a9cae1606b342355ee59af2" },
-      { name: "Nacci's Cheetah", address: "0xaf538816f2b21e5728e61e59675d3154157385eb" },
-      { name: "Nacci's Busyness", address: "0x037673f253edae7a2551375281007f7f97d27a05" } // fixed
-    ];
+    let portfolioChart;
 
-    // keep the rest of your dashboard.js logic the same (wallet connect, fetchNFTs, etc.)
+    walletBtn.addEventListener("click", () => {
+      // Mock data for demo
+      pythonCountElement.textContent = "2";
+      otherNftCountElement.textContent = "5";
+      tokenCountElement.textContent = "3";
+      totalValueElement.textContent = "$1234.56";
+      drawChart();
+    });
+
+    function drawChart() {
+      const ctx = document.getElementById("portfolioChart").getContext("2d");
+      if (portfolioChart) portfolioChart.destroy();
+      portfolioChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["MegaPythons", "Other NFTs", "Tokens"],
+          datasets: [{
+            data: [
+              parseInt(pythonCountElement.textContent),
+              parseInt(otherNftCountElement.textContent),
+              parseInt(tokenCountElement.textContent)
+            ],
+            backgroundColor: ["#4a9e4a", "#3a7d3a", "#2a4a2a"]
+          }]
+        },
+        options: { plugins: { legend: { position: "bottom" } } }
+      });
+    }
   </script>
 </body>
 </html>
