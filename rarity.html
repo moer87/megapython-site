@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>MegaPython — Rarity Checker</title>
   
-  <!-- Open Graph Meta Tags -->
+  <!-- Open Graph Meta Tags for Link Previews -->
   <meta property="og:title" content="MegaPython - Rarity Checker" />
   <meta property="og:description" content="Discover the rarity of your MegaPython NFT on the MegaETH Testnet. Enter a token ID to see unique traits and scores!" />
   <meta property="og:image" content="https://via.placeholder.com/1200x630/4a9e4a/000000?text=MegaPython+Preview" />
@@ -161,7 +161,7 @@
   </div>
 
   <script>
-    // Layer data with placeholder image URLs
+    // Layer data with placeholder image URLs (replace with actual URLs)
     const LAYERS_DATA = {
       "Background": [
         { "name": "1", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-1" },
@@ -215,11 +215,11 @@
       "Eyes": [
         { "name": "Blue Eye", "rarity": 75, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Blue+Eye" },
         { "name": "Blue Party Goggle", "rarity": 21, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Blue+Party+Goggle" },
-        { "name": "Brown Dark Adaptor Goggle", "rarity": 18, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Brown+Dark+Adaptor+Goggle" },
-        { "name": "Dark Mambas Goggle", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Dark+Mambas+Goggle" },
+        { "name": "Brown Dark Adaptor Goggle", "rarity": 18, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Brown+Dark+Adaptor" },
+        { "name": "Dark Mambas Goggle", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Dark+Mambas" },
         { "name": "Green Eye", "rarity": 73, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Green+Eye" },
         { "name": "Mambas Goggle", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Mambas+Goggle" },
-        { "name": "Orange Dark Adaptor Goggle", "rarity": 15, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Orange+Dark+Adaptor+Goggle" },
+        { "name": "Orange Dark Adaptor Goggle", "rarity": 15, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Orange+Dark+Adaptor" },
         { "name": "Orange Eye", "rarity": 69, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Orange+Eye" },
         { "name": "Purple Party Goggle", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Purple+Party+Goggle" },
         { "name": "Reading Glasses", "rarity": 3, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Reading+Glasses" },
@@ -241,10 +241,10 @@
         { "name": "Tongue", "rarity": 49, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Tongue" }
       ],
       "Mustache": [
-        { "name": "Blue Mustache", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Blue+Mustache" },
-        { "name": "Grey Mustache", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Grey+Mustache" },
-        { "name": "Purple Mustache", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Purple+Mustache" },
-        { "name": "Yellow Mustache", "rarity": 11, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Yellow+Mustache" }
+        { "name": "Blue Mustache", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Blue" },
+        { "name": "Grey Mustache", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Grey" },
+        { "name": "Purple Mustache", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Purple" },
+        { "name": "Yellow Mustache", "rarity": 11, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Yellow" }
       ],
       "Neck": [
         { "name": "Blue Neckerchief", "rarity": 14, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Blue+Neckerchief" },
@@ -300,6 +300,7 @@
     const traitsEl = document.getElementById('traits');
     const rarityEl = document.getElementById('rarityScore');
     const resultEl = document.getElementById('result');
+    const walletConnectBtn = document.getElementById('walletConnectBtn');
 
     function getRarityCategory(score) {
       if (score >= 90) return "mythic";
@@ -352,7 +353,7 @@
             <img src="${t.preview}" 
                  class="absolute top-0 left-0 w-full h-full object-contain" 
                  alt="${t.trait_type} ${t.value}"
-                 onerror="this.src='https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Image+Not+Found'">
+                 onerror="this.src='https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Error'">
           `).join('')}
         </div>
         <p class="text-gray-400 mb-4">${description}</p>
@@ -427,11 +428,20 @@
     }
 
     function initWalletConnect() {
-      const walletConnectBtn = document.getElementById('walletConnectBtn');
+      if (typeof window.ethereum === 'undefined') {
+        walletConnectBtn.innerHTML = 'Install MetaMask';
+        walletConnectBtn.classList.add('bg-red-500', 'hover:bg-red-400');
+        walletConnectBtn.addEventListener('click', () => {
+          window.open('https://metamask.io/download/', '_blank');
+        });
+        return;
+      }
       
       const connectedAddress = localStorage.getItem('connectedWallet');
       if (connectedAddress) {
-        updateWalletButton(connectedAddress);
+        const shortenedAddress = `${connectedAddress.substring(0, 6)}...${connectedAddress.substring(connectedAddress.length - 4)}`;
+        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
+        walletConnectBtn.classList.add('connected-wallet');
       }
       
       walletConnectBtn.addEventListener('click', async () => {
@@ -439,37 +449,26 @@
           localStorage.removeItem('connectedWallet');
           walletConnectBtn.innerHTML = 'Connect Wallet';
           walletConnectBtn.classList.remove('connected-wallet');
+          walletConnectBtn.classList.add('bg-green-500', 'hover:bg-green-400');
           return;
         }
         
         try {
-          if (typeof window.ethereum === 'undefined') {
-            alert('Please install MetaMask to connect your wallet');
-            walletConnectBtn.innerHTML = 'Install MetaMask';
-            walletConnectBtn.classList.add('bg-red-500', 'hover:bg-red-400');
-            walletConnectBtn.onclick = () => window.open('https://metamask.io/download/', '_blank');
-            return;
-          }
-          
           const accounts = await window.ethereum.request({
             method: 'eth_requestAccounts'
           });
           
           const address = accounts[0];
           localStorage.setItem('connectedWallet', address);
-          updateWalletButton(address);
+          const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+          walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
+          walletConnectBtn.classList.add('connected-wallet');
+          walletConnectBtn.classList.remove('bg-red-500', 'hover:bg-red-400');
         } catch (error) {
           console.error('Error connecting to MetaMask:', error);
           alert('Failed to connect wallet. Please try again.');
         }
       });
-      
-      function updateWalletButton(address) {
-        const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
-        walletConnectBtn.classList.add('connected-wallet');
-        walletConnectBtn.classList.remove('bg-red-500', 'hover:bg-red-400');
-      }
     }
 
     window.addEventListener('load', initWalletConnect);
