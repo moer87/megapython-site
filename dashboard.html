@@ -11,7 +11,7 @@
   <meta property="og:type" content="website"/>
   <title>MegaPython — Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -285,6 +285,7 @@
         walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
         walletConnectBtn.classList.add('connected-wallet');
         
+        // Initialize ethers provider
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner();
         
@@ -561,6 +562,7 @@
         walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
         walletConnectBtn.classList.add('connected-wallet');
         
+        // Initialize ethers provider
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner();
         
