@@ -104,18 +104,74 @@
     
     .rarity-badge {
       display: inline-block;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 0.8rem;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 0.9rem;
       margin-top: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     
-    .common { background: #4a5568; color: white; }
-    .uncommon { background: #38a169; color: white; }
-    .rare { background: #3182ce; color: white; }
-    .epic { background: #805ad5; color: white; }
-    .legendary { background: #d69e2e; color: black; }
-    .mythic { background: #e53e3e; color: white; }
+    .common { 
+      background: #4a5568; 
+      color: white; 
+      box-shadow: 0 0 10px rgba(74, 85, 104, 0.5);
+    }
+    .uncommon { 
+      background: #38a169; 
+      color: white; 
+      box-shadow: 0 0 10px rgba(56, 161, 105, 0.5);
+    }
+    .rare { 
+      background: #3182ce; 
+      color: white; 
+      box-shadow: 0 0 10px rgba(49, 130, 206, 0.5);
+    }
+    .epic { 
+      background: #805ad5; 
+      color: white; 
+      box-shadow: 0 0 10px rgba(128, 90, 213, 0.5);
+    }
+    .legendary { 
+      background: #d69e2e; 
+      color: black; 
+      box-shadow: 0 0 10px rgba(214, 158, 46, 0.5);
+    }
+    .mythic { 
+      background: #e53e3e; 
+      color: white; 
+      box-shadow: 0 0 10px rgba(229, 62, 62, 0.5);
+    }
+    
+    .trait-card {
+      background: rgba(42, 74, 42, 0.7);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .trait-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(74, 158, 74, 0.3);
+    }
+    
+    .nft-preview {
+      width: 200px;
+      height: 200px;
+      border: 4px solid #4a9e4a;
+      border-radius: 12px;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    
+    .nft-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -150,109 +206,51 @@
   </div>
 
 <script>
-// Array of 20 fun quotes based on rarity
-const RARITY_QUOTES = [
-  {
-    text: "This Python is still learning to slither! Common but full of potential.",
-    rarity: "common",
-    scoreRange: [0, 10]
-  },
-  {
-    text: "A fresh hatchling in the MegaETH jungle! Common but eager to grow.",
-    rarity: "common",
-    scoreRange: [0, 10]
-  },
-  {
-    text: "Blending in with the leaves - this Python knows how to stay hidden!",
-    rarity: "common", 
-    scoreRange: [0, 10]
-  },
-  {
-    text: "Just another scale in the jungle - but every Python has its day!",
-    rarity: "common",
-    scoreRange: [0, 10]
-  },
-  {
-    text: "This Python has uncommon patterns starting to emerge!",
-    rarity: "uncommon",
-    scoreRange: [11, 20]
-  },
-  {
-    text: "A Python with distinctive markings - uncommon and noteworthy!",
-    rarity: "uncommon",
-    scoreRange: [11, 20]
-  },
-  {
-    text: "This serpent has been exploring beyond the nest! Uncommon sights seen.",
-    rarity: "uncommon",
-    scoreRange: [11, 20]
-  },
-  {
-    text: "Rare patterns emerge on this Python's scales! A special find in the jungle.",
-    rarity: "rare",
-    scoreRange: [21, 35]
-  },
-  {
-    text: "This Python has consumed rare digital berries from the MegaETH forest!",
-    rarity: "rare", 
-    scoreRange: [21, 35]
-  },
-  {
-    text: "A rare sighting! This Python has unique markings that stand out.",
-    rarity: "rare",
-    scoreRange: [21, 35]
-  },
-  {
-    text: "EPIC! This Python has legends whispered about it in the digital jungle!",
-    rarity: "epic",
-    scoreRange: [36, 50]
-  },
-  {
-    text: "An epic Python with scales that shimmer with blockchain energy!",
-    rarity: "epic",
-    scoreRange: [36, 50]
-  },
-  {
-    text: "This Python has explored the deepest parts of the MegaETH jungle! Epic adventures.",
-    rarity: "epic",
-    scoreRange: [36, 50]
-  },
-  {
-    text: "LEGENDARY! This Python's scales tell stories of the ancient crypto forests!",
-    rarity: "legendary",
-    scoreRange: [51, 70]
-  },
-  {
-    text: "A legendary Python that has witnessed the dawn of the MegaETH testnet!",
-    rarity: "legendary", 
-    scoreRange: [51, 70]
-  },
-  {
-    text: "This Python is spoken of in hushed tones around jungle campfires! Legendary status.",
-    rarity: "legendary",
-    scoreRange: [51, 70]
-  },
-  {
-    text: "MYTHIC! This Python is said to have been coded by the blockchain gods themselves!",
-    rarity: "mythic",
-    scoreRange: [71, 90]
-  },
-  {
-    text: "A mythic Python from the earliest days of the Reptiles Universe!",
-    rarity: "mythic",
-    scoreRange: [71, 90]
-  },
-  {
-    text: "This Python's patterns contain secret messages from the creators of MegaETH!",
-    rarity: "mythic",
-    scoreRange: [71, 90]
-  },
-  {
-    text: "BEYOND MYTHIC! This Python transcends rarity categories! A once-in-a-lifetime find!",
-    rarity: "mythic",
-    scoreRange: [91, 100]
-  }
-];
+// Array of rarity quotes
+const RARITY_QUOTES = {
+  common: [
+    "Just another pixel in the jungle.",
+    "Common, but still crawling through MegaETH vines.",
+    "Even the smallest snakes leave tracks in the mud.",
+    "MegaPython says: not rare, but still wild.",
+    "The jungle is full of commons… blend in or stand out?"
+  ],
+  uncommon: [
+    "Rare scales shimmer under the pixel sun.",
+    "You found a python that doesn't hiss often.",
+    "In the MegaETH jungle, rare is the new normal.",
+    "Rare pixels bite harder than you think.",
+    "This rarity slithers quietly but strikes fast."
+  ],
+  rare: [
+    "Super rare! The jungle whispers your name.",
+    "Not every explorer survives this deep into the vines.",
+    "Pixels sharpen into fangs at this level.",
+    "The python coils tighter — you're holding power.",
+    "Super rare… jungle legends are written about these."
+  ],
+  epic: [
+    "Epic! This Python has legends whispered about it in the digital jungle!",
+    "An epic Python with scales that shimmer with blockchain energy!",
+    "This Python has explored the deepest parts of the MegaETH jungle! Epic adventures.",
+    "Epic patterns emerge on this Python's scales! A special find in the jungle.",
+    "This Python has consumed epic digital berries from the MegaETH forest!"
+  ],
+  legendary: [
+    "Legendary! Only a few dare to hunt this beast.",
+    "The MegaPython king emerges from the digital canopy.",
+    "Your pixels glow with untold jungle energy.",
+    "The rarest serpent — worshipped in the MegaETH temples.",
+    "You found the legend… now the legend finds you."
+  ],
+  mythic: [
+    "MYTHIC! This Python is said to have been coded by the blockchain gods themselves!",
+    "A mythic Python from the earliest days of the Reptiles Universe!",
+    "This Python's patterns contain secret messages from the creators of MegaETH!",
+    "BEYOND MYTHIC! This Python transcends rarity categories! A once-in-a-lifetime find!",
+    "Mythic scales that shimmer with the essence of the blockchain itself!"
+  ]
+};
 
 const METADATA_BASE = "https://bafybeigwnix66wpuvvnau6q5a7zknpqvg2umgobq237vehrujszdswfqkq.ipfs.w3s.link/";
 const btn = document.getElementById('btnCheck');
@@ -299,55 +297,62 @@ function showError(msg) {
   resultEl.classList.remove('hidden');
 }
 
-function getRarityQuote(score) {
-  // Normalize score to 0-100 range if needed
-  const normalizedScore = Math.min(100, Math.max(0, score));
-  
-  // Find the appropriate quote based on score range
-  for (const quote of RARITY_QUOTES) {
-    if (normalizedScore >= quote.scoreRange[0] && normalizedScore <= quote.scoreRange[1]) {
-      return quote;
-    }
-  }
-  
-  // Default quote if none matched
-  return RARITY_QUOTES[0];
+function getRarityCategory(score) {
+  if (score >= 90) return "mythic";
+  if (score >= 75) return "legendary";
+  if (score >= 60) return "epic";
+  if (score >= 40) return "rare";
+  if (score >= 20) return "uncommon";
+  return "common";
+}
+
+function getRarityQuote(category) {
+  const quotes = RARITY_QUOTES[category];
+  return quotes[Math.floor(Math.random() * quotes.length)];
 }
 
 function showMetadata(meta, rarityData) {
   preview.innerHTML = "";
   
-  // Create name element
-  const name = document.createElement('div');
-  name.className = 'text-2xl font-bold mb-2 text-emerald-300 pixel-font';
-  name.textContent = meta.name || `MegaPython #${tokenInput.value}`;
-  preview.appendChild(name);
+  // Create image preview
+  const imageUrl = ipfsToHttp(meta.image);
+  const previewHtml = `
+    <div class="nft-preview mb-4">
+      <img src="${imageUrl}" alt="${meta.name}" onerror="this.src='/placeholder-nft.png'">
+    </div>
+    <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${meta.name || `MegaPython #${tokenInput.value}`}</div>
+  `;
+  preview.innerHTML = previewHtml;
 
   // Calculate rarity score
   let score = 0;
-  const attrs = meta.attributes || meta.traits || [];
+  const attrs = meta.attributes || [];
   
   if (rarityData) {
     for (const a of attrs) {
-      const t = a.trait_type || a.type || 'Trait';
-      const v = a.value || a;
+      const t = a.trait_type;
+      const v = a.value;
       
       if (rarityData.attributes && rarityData.attributes[t] && rarityData.attributes[t][v]) {
         const count = rarityData.attributes[t][v];
         score += 1 / (count / (rarityData.totalSupply || 1));
       }
     }
+  } else {
+    // Fallback scoring if no rarity data
+    score = Math.min(100, Math.max(0, attrs.length * 15 + Math.random() * 20));
   }
   
-  // Get appropriate quote
-  const quote = getRarityQuote(score);
+  // Get rarity category and quote
+  const category = getRarityCategory(score);
+  const quote = getRarityQuote(category);
   
   // Display quote
   const quoteBox = document.createElement('div');
   quoteBox.className = 'quote-box text-center';
   quoteBox.innerHTML = `
-    <p class="text-lg italic text-green-200 mb-4">${quote.text}</p>
-    <div class="rarity-badge ${quote.rarity} pixel-font">${quote.rarity.toUpperCase()}</div>
+    <p class="text-lg italic text-green-200 mb-4">${quote}</p>
+    <div class="rarity-badge ${category} pixel-font">${category.toUpperCase()}</div>
   `;
   preview.appendChild(quoteBox);
 
@@ -361,8 +366,8 @@ function showMetadata(meta, rarityData) {
       const traitCard = document.createElement('div');
       traitCard.className = 'trait-card';
       traitCard.innerHTML = `
-        <div class="font-semibold text-emerald-300 mb-1 pixel-font" style="font-size: 0.7rem;">${a.trait_type || a.type || 'Trait'}</div>
-        <div class="text-lg font-medium">${a.value || a}</div>
+        <div class="font-semibold text-emerald-300 mb-1 pixel-font" style="font-size: 0.7rem;">${a.trait_type || 'Trait'}</div>
+        <div class="text-lg font-medium">${a.value}</div>
       `;
       traitsEl.appendChild(traitCard);
     });
