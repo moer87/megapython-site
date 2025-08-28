@@ -4,41 +4,132 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>MegaPython — Rarity Checker</title>
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="MegaPython - Rarity Checker" />
+  <meta property="og:description" content="Discover the rarity of your MegaPython NFT on the MegaETH Testnet. Enter a token ID to see unique traits and scores!" />
+  <meta property="og:image" content="https://via.placeholder.com/1200x630/4a9e4a/000000?text=MegaPython+Preview" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="MegaPython NFT Preview" />
+  <meta property="og:url" content="https://megapython.testnet.nfts2.me/rarity.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MegaPython" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MegaPython - Rarity Checker" />
+  <meta name="twitter:description" content="Discover the rarity of your MegaPython NFT on the MegaETH Testnet. Enter a token ID to see unique traits and scores!" />
+  <meta name="twitter:image" content="https://via.placeholder.com/1200x630/4a9e4a/000000?text=MegaPython+Preview" />
+  <meta name="twitter:site" content="@megapythons" />
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
-
-  <!-- OpenGraph & Twitter Preview -->
-  <meta property="og:title" content="MegaPython — Rarity Checker">
-  <meta property="og:description" content="Check the rarity and traits of your MegaPython NFT on MegaETH Testnet.">
-  <meta property="og:image" content="https://ipfs.io/ipfs/bafkreifyak53gwnlujurbx5rglsnypk6ilju6rakjdqi23jrslgxoalhqi">
-  <meta property="og:url" content="https://megapython.testnet.nfts2.me/rarity.html">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MegaPython — Rarity Checker">
-  <meta name="twitter:description" content="Check rarity, traits and quotes of your MegaPython NFT.">
-  <meta name="twitter:image" content="https://ipfs.io/ipfs/bafkreifyak53gwnlujurbx5rglsnypk6ilju6rakjdqi23jrslgxoalhqi">
-
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a220a; color: #e2e8f0; }
-    .pixel-font { font-family: 'Press Start 2P', cursive; }
-    .jungle-glow { text-shadow: 0 0 10px rgba(74, 158, 74, 0.7); }
-    .pixel-card { background: #1e3e1e; border: 4px solid #4a9e4a; box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5); }
-    .rarity-badge { background: #4a9e4a; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; }
-    .trait-card { background: rgba(42, 74, 42, 0.7); padding: 8px; border-radius: 4px; }
-    .connected-wallet { background: #a3e635; color: #0f172a; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; }
-    .social-link { color: #a3e635; transition: color 0.3s; }
-    .social-link:hover { color: #4ade80; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a220a;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 40%);
+    }
+    
+    .pixel-font {
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .jungle-glow {
+      text-shadow: 0 0 10px rgba(74, 158, 74, 0.7);
+    }
+    
+    .pixel-card {
+      background: #1e3e1e;
+      border: 4px solid #4a9e4a;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .pixel-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 25px rgba(74, 158, 74, 0.8);
+    }
+    
+    .jungle-leaf {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 5,35 15,35 20,35 C25,35 35,35 35,25 35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      z-index: 0;
+      opacity: 0.3;
+    }
+    
+    .rarity-badge {
+      background: #4a9e4a;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+    
+    .trait-card {
+      background: rgba(42, 74, 42, 0.7);
+      padding: 8px;
+      border-radius: 4px;
+    }
+    
+    .connected-wallet {
+      background: #a3e635;
+      color: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px;
+    }
+    
+    .social-link {
+      color: #a3e635;
+      transition: color 0.3s;
+    }
+    
+    .social-link:hover {
+      color: #4ade80;
+    }
+    
+    .nft-preview img {
+      z-index: auto;
+    }
+    .nft-preview img:nth-child(1) { z-index: 1; } /* Background */
+    .nft-preview img:nth-child(2) { z-index: 2; } /* Body */
+    .nft-preview img:nth-child(3) { z-index: 3; } /* Eyes */
+    .nft-preview img:nth-child(4) { z-index: 4; } /* Minion */
+    .nft-preview img:nth-child(5) { z-index: 5; } /* Mouth */
+    .nft-preview img:nth-child(6) { z-index: 6; } /* Mustache */
+    .nft-preview img:nth-child(7) { z-index: 7; } /* Neck */
   </style>
 </head>
 <body class="min-h-screen">
+  <!-- Jungle leaves decoration -->
+  <div class="jungle-leaf" style="top: 10%; left: 5%;"></div>
+  <div class="jungle-leaf" style="top: 15%; right: 7%; transform: rotate(45deg);"></div>
+  <div class="jungle-leaf" style="top: 40%; left: 8%; transform: rotate(80deg);"></div>
+  <div class="jungle-leaf" style="bottom: 20%; right: 10%; transform: rotate(120deg);"></div>
+  <div class="jungle-leaf" style="bottom: 30%; left: 12%; transform: rotate(160deg);"></div>
+
   <div class="relative z-10 max-w-4xl mx-auto p-6">
     <header class="flex justify-between items-center mb-12">
       <h1 class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython</h1>
       <nav class="flex gap-4 items-center">
-        <a href="/" class="text-green-300 hover:text-green-500">Home</a>
-        <a href="/dashboard.html" class="text-green-300 hover:text-green-500">Dashboard</a>
-        <a href="/megagenerate.html" class="text-green-300 hover:text-green-500">MegaGenerate</a>
-        <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold">Connect Wallet</button>
+        <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
+        <a href="/dashboard.html" class="text-green-300 hover:text-green-500 transition-colors">Dashboard</a>
+        <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
+        <div id="walletConnectContainer">
+          <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold transition-colors">Connect Wallet</button>
+        </div>
       </nav>
     </header>
 
@@ -48,8 +139,8 @@
     </section>
 
     <div class="flex gap-2 justify-center mb-8">
-      <input id="tokenId" type="number" min="1" max="2222" placeholder="Token ID (e.g. 42)" class="px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 w-48" />
-      <button id="btnCheck" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black rounded-lg font-bold">Check Rarity</button>
+      <input id="tokenId" type="number" min="1" max="2222" placeholder="Token ID (e.g. 42)" class="px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 w-48" />
+      <button id="btnCheck" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black rounded-lg font-bold transition-colors">Check Rarity</button>
     </div>
 
     <div id="result" class="pixel-card p-6 space-y-6 hidden">
@@ -57,9 +148,152 @@
       <div id="traits" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
       <div id="rarityScore" class="text-center p-3 bg-slate-900/50 rounded-lg"></div>
     </div>
+
+    <footer class="text-center text-gray-500 mt-12">
+      <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
+      <div class="flex justify-center gap-8">
+        <a href="https://x.com/megapythons" class="social-link pixel-font">X</a>
+        <a href="https://megapython.testnet.nfts2.me/" class="social-link pixel-font">Mint</a>
+        <a href="https://linktr.ee/megaPython" class="social-link pixel-font">Linktree</a>
+        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
+      </div>
+    </footer>
   </div>
 
   <script>
+    // Layer data with placeholder image URLs
+    const LAYERS_DATA = {
+      "Background": [
+        { "name": "1", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-1" },
+        { "name": "2", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-2" },
+        { "name": "3", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-3" },
+        { "name": "4", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-4" },
+        { "name": "5", "rarity": 36, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-5" },
+        { "name": "6", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-6" },
+        { "name": "7", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-7" },
+        { "name": "8", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-8" },
+        { "name": "9", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-9" },
+        { "name": "10", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-10" },
+        { "name": "11", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-11" },
+        { "name": "12", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-12" },
+        { "name": "13", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-13" },
+        { "name": "14", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-14" },
+        { "name": "15", "rarity": 60, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-15" },
+        { "name": "16", "rarity": 65, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-16" },
+        { "name": "17", "rarity": 28, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-17" },
+        { "name": "18", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-18" },
+        { "name": "19", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-19" },
+        { "name": "20", "rarity": 21, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-20" },
+        { "name": "21", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-21" },
+        { "name": "22", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-22" },
+        { "name": "23", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-23" },
+        { "name": "24", "rarity": 7, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-24" },
+        { "name": "25", "rarity": 5, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Background-25" }
+      ],
+      "Body": [
+        { "name": "1", "rarity": 28, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-1" },
+        { "name": "2", "rarity": 38, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-2" },
+        { "name": "3", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-3" },
+        { "name": "4", "rarity": 2, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-4" },
+        { "name": "5", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-5" },
+        { "name": "6", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-6" },
+        { "name": "7", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-7" },
+        { "name": "8", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-8" },
+        { "name": "9", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-9" },
+        { "name": "10", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-10" },
+        { "name": "11", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-11" },
+        { "name": "12", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-12" },
+        { "name": "13", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-13" },
+        { "name": "14", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-14" },
+        { "name": "15", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-15" },
+        { "name": "16", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-16" },
+        { "name": "17", "rarity": 14, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-17" },
+        { "name": "18", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-18" },
+        { "name": "19", "rarity": 21, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-19" },
+        { "name": "20", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Body-20" }
+      ],
+      "Eyes": [
+        { "name": "Blue Eye", "rarity": 75, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Blue+Eye" },
+        { "name": "Blue Party Goggle", "rarity": 21, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Blue+Party+Goggle" },
+        { "name": "Brown Dark Adaptor Goggle", "rarity": 18, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Brown+Dark+Adaptor+Goggle" },
+        { "name": "Dark Mambas Goggle", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Dark+Mambas+Goggle" },
+        { "name": "Green Eye", "rarity": 73, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Green+Eye" },
+        { "name": "Mambas Goggle", "rarity": 17, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Mambas+Goggle" },
+        { "name": "Orange Dark Adaptor Goggle", "rarity": 15, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Orange+Dark+Adaptor+Goggle" },
+        { "name": "Orange Eye", "rarity": 69, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Orange+Eye" },
+        { "name": "Purple Party Goggle", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Purple+Party+Goggle" },
+        { "name": "Reading Glasses", "rarity": 3, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Reading+Glasses" },
+        { "name": "Red Eye", "rarity": 56, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Eyes-Red+Eye" }
+      ],
+      "Minion": [
+        { "name": "Cow", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Cow" },
+        { "name": "Magic Mushrooms", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Magic+Mushrooms" },
+        { "name": "Monkey", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Monkey" },
+        { "name": "Mushrooms", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Mushrooms" },
+        { "name": "Pig", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Pig" },
+        { "name": "Pink Cow", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Minion-Pink+Cow" }
+      ],
+      "Mouth": [
+        { "name": "Blue Gum", "rarity": 3, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Blue+Gum" },
+        { "name": "Cigarette", "rarity": 20, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Cigarette" },
+        { "name": "Purple Gum", "rarity": 6, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Purple+Gum" },
+        { "name": "Splif", "rarity": 1, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Splif" },
+        { "name": "Tongue", "rarity": 49, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mouth-Tongue" }
+      ],
+      "Mustache": [
+        { "name": "Blue Mustache", "rarity": 19, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Blue+Mustache" },
+        { "name": "Grey Mustache", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Grey+Mustache" },
+        { "name": "Purple Mustache", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Purple+Mustache" },
+        { "name": "Yellow Mustache", "rarity": 11, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Mustache-Yellow+Mustache" }
+      ],
+      "Neck": [
+        { "name": "Blue Neckerchief", "rarity": 14, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Blue+Neckerchief" },
+        { "name": "Dark Collar", "rarity": 14, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Dark+Collar" },
+        { "name": "Green Neckerchief", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Green+Neckerchief" },
+        { "name": "Red Collar", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Red+Collar" },
+        { "name": "Red Neckerchief", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Red+Neckerchief" },
+        { "name": "Yellow Neckerchief", "rarity": 50, "preview": "https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Neck-Yellow+Neckerchief" }
+      ]
+    };
+
+    const RARITY_QUOTES = {
+      common: [
+        "Just another pixel in the jungle.",
+        "Common, but still crawling through MegaETH vines.",
+        "Even the smallest snakes leave tracks in the mud.",
+        "MegaPython says: not rare, but still wild.",
+        "The jungle is full of commons… blend in or stand out?"
+      ],
+      rare: [
+        "Rare scales shimmer under the pixel sun.",
+        "You found a python that doesn't hiss often.",
+        "In the MegaETH jungle, rare is the new normal.",
+        "Rare pixels bite harder than you think.",
+        "This rarity slithers quietly but strikes fast."
+      ],
+      super_rare: [
+        "Super rare! The jungle whispers your name.",
+        "Not every explorer survives this deep into the vines.",
+        "Pixels sharpen into fangs at this level.",
+        "The python coils tighter — you're holding power.",
+        "Super rare… jungle legends are written about these."
+      ],
+      legendary: [
+        "Legendary! Only a few dare to hunt this beast.",
+        "The MegaPython king emerges from the digital canopy.",
+        "Your pixels glow with untold jungle energy.",
+        "The rarest serpent — worshipped in the MegaETH temples.",
+        "You found the legend… now the legend finds you."
+      ],
+      mythic: [
+        "MYTHIC! This Python is said to have been coded by the blockchain gods themselves!",
+        "A mythic Python from the earliest days of the Reptiles Universe!",
+        "This Python's patterns contain secret messages from the creators of MegaETH!",
+        "BEYOND MYTHIC! This Python transcends rarity categories! A once-in-a-lifetime find!",
+        "Mythic scales that shimmer with the essence of the blockchain itself!"
+      ]
+    };
+
     const btn = document.getElementById('btnCheck');
     const tokenInput = document.getElementById('tokenId');
     const preview = document.getElementById('preview');
@@ -67,44 +301,178 @@
     const rarityEl = document.getElementById('rarityScore');
     const resultEl = document.getElementById('result');
 
-    // Example rarity categories
     function getRarityCategory(score) {
-      if (score >= 90) return "MYTHIC";
-      if (score >= 75) return "LEGENDARY";
-      if (score >= 60) return "SUPER RARE";
-      if (score >= 40) return "RARE";
-      return "COMMON";
+      if (score >= 90) return "mythic";
+      if (score >= 75) return "legendary";
+      if (score >= 60) return "super_rare";
+      if (score >= 40) return "rare";
+      return "common";
+    }
+
+    function getRarityQuote(category) {
+      const quotes = RARITY_QUOTES[category];
+      return quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    function generateMockTraits(tokenId) {
+      const traits = [];
+      let totalRarity = 0;
+      
+      for (const [traitType, options] of Object.entries(LAYERS_DATA)) {
+        const index = tokenId % options.length;
+        const option = options[index];
+        
+        traits.push({
+          trait_type: traitType,
+          value: option.name,
+          rarity: option.rarity,
+          preview: option.preview
+        });
+        
+        totalRarity += option.rarity;
+      }
+      
+      return { traits, totalRarity };
     }
 
     function showMetadata(tokenId) {
-      const score = Math.floor(Math.random() * 100);
-      const category = getRarityCategory(score);
-
-      const imageUrl = `https://ipfs.io/ipfs/bafkreifyak53gwnlujurbx5rglsnypk6ilju6rakjdqi23jrslgxoalhqi/${tokenId}.png`;
-
-      preview.innerHTML = `
-        <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">MegaPython #${tokenId}</div>
-        <div class="nft-preview mb-4">
-          <img src="${imageUrl}" class="w-64 h-64 object-contain mx-auto rounded-lg" onerror="this.src='/placeholder-nft.png'">
+      preview.innerHTML = "";
+      
+      const { traits, totalRarity } = generateMockTraits(tokenId);
+      const avgRarity = totalRarity / traits.length;
+      const score = Math.min(100, Math.floor(avgRarity * 1.2));
+      
+      const name = `MegaPython #${tokenId}`;
+      const description = 'A unique MegaPython NFT with special traits.';
+      
+      const previewHtml = `
+        <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${name}</div>
+        <div class="nft-preview mb-4 relative w-64 h-64 mx-auto">
+          ${traits.map(t => `
+            <img src="${t.preview}" 
+                 class="absolute top-0 left-0 w-full h-full object-contain" 
+                 alt="${t.trait_type} ${t.value}"
+                 onerror="this.src='https://via.placeholder.com/1200x1200/4a9e4a/000000?text=Image+Not+Found'">
+          `).join('')}
         </div>
-        <p class="text-gray-400 mb-4">A unique MegaPython NFT.</p>
-        <div class="rarity-badge pixel-font">${category}</div>
+        <p class="text-gray-400 mb-4">${description}</p>
       `;
+      preview.innerHTML = previewHtml;
 
-      traitsEl.innerHTML = `<div class="text-gray-400 text-center">Traits generated (mock)</div>`;
-      rarityEl.innerHTML = `<div class="text-emerald-400 font-bold">Rarity Score: ${score}</div>`;
+      const category = getRarityCategory(score);
+      const quote = getRarityQuote(category);
+      
+      const quoteBox = document.createElement('div');
+      quoteBox.className = 'quote-box text-center';
+      quoteBox.innerHTML = `
+        <p class="text-lg italic text-green-200 mb-4">${quote}</p>
+        <div class="rarity-badge ${category} pixel-font">${category.toUpperCase().replace('_', ' ')}</div>
+      `;
+      preview.appendChild(quoteBox);
+
+      traitsEl.innerHTML = "";
+      if (traits.length === 0) {
+        traitsEl.innerHTML = '<div class="col-span-3 text-gray-400 text-center p-4 bg-slate-900/50 rounded-lg">No attributes found in metadata.</div>';
+      } else {
+        traits.forEach(t => {
+          const traitCard = document.createElement('div');
+          traitCard.className = 'trait-card';
+          traitCard.innerHTML = `
+            <div class="font-semibold text-emerald-300 mb-1 pixel-font" style="font-size: 0.7rem;">${t.trait_type}</div>
+            <div class="text-lg font-medium">${t.value}</div>
+            <div class="text-sm text-gray-400">Rarity: ${t.rarity}%</div>
+          `;
+          traitsEl.appendChild(traitCard);
+        });
+      }
+      
+      rarityEl.innerHTML = `
+        <div class="inline-flex items-center bg-slate-900 px-4 py-2 rounded-full border border-emerald-500/30">
+          <span class="text-emerald-400 font-bold mr-2">Rarity Score:</span> 
+          <span class="text-white">${score}</span>
+        </div>
+        <p class="text-gray-400 mt-2 text-sm">Rarity based on trait scarcity</p>
+      `;
     }
 
-    btn.addEventListener('click', () => {
-      const id = Number(tokenInput.value);
-      if (!id || id < 1 || id > 2222) {
-        preview.innerHTML = `<div class="text-red-400">Invalid Token ID</div>`;
-        resultEl.classList.remove('hidden');
-        return;
+    btn.addEventListener('click', async () => {
+      const id = tokenInput.value.trim();
+      if (!id || isNaN(id) || Number(id) < 1 || Number(id) > 2222) { 
+        showError('Please enter a valid token ID between 1 and 2222'); 
+        return; 
       }
+      
+      const idn = Number(id);
+      preview.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div><p class="mt-3 text-gray-400">Generating rarity...</p></div>';
+      traitsEl.innerHTML = '';
+      rarityEl.textContent = '';
       resultEl.classList.remove('hidden');
-      showMetadata(id);
+
+      setTimeout(() => {
+        showMetadata(idn);
+      }, 1000);
     });
+
+    tokenInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        btn.click();
+      }
+    });
+
+    function showError(msg) {
+      preview.innerHTML = `<div class="p-4 bg-red-900/30 border border-red-700/50 rounded-lg text-red-300">${msg}</div>`;
+      traitsEl.innerHTML = "";
+      rarityEl.textContent = "";
+      resultEl.classList.remove('hidden');
+    }
+
+    function initWalletConnect() {
+      const walletConnectBtn = document.getElementById('walletConnectBtn');
+      
+      const connectedAddress = localStorage.getItem('connectedWallet');
+      if (connectedAddress) {
+        updateWalletButton(connectedAddress);
+      }
+      
+      walletConnectBtn.addEventListener('click', async () => {
+        if (walletConnectBtn.classList.contains('connected-wallet')) {
+          localStorage.removeItem('connectedWallet');
+          walletConnectBtn.innerHTML = 'Connect Wallet';
+          walletConnectBtn.classList.remove('connected-wallet');
+          return;
+        }
+        
+        try {
+          if (typeof window.ethereum === 'undefined') {
+            alert('Please install MetaMask to connect your wallet');
+            walletConnectBtn.innerHTML = 'Install MetaMask';
+            walletConnectBtn.classList.add('bg-red-500', 'hover:bg-red-400');
+            walletConnectBtn.onclick = () => window.open('https://metamask.io/download/', '_blank');
+            return;
+          }
+          
+          const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+          });
+          
+          const address = accounts[0];
+          localStorage.setItem('connectedWallet', address);
+          updateWalletButton(address);
+        } catch (error) {
+          console.error('Error connecting to MetaMask:', error);
+          alert('Failed to connect wallet. Please try again.');
+        }
+      });
+      
+      function updateWalletButton(address) {
+        const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
+        walletConnectBtn.classList.add('connected-wallet');
+        walletConnectBtn.classList.remove('bg-red-500', 'hover:bg-red-400');
+      }
+    }
+
+    window.addEventListener('load', initWalletConnect);
   </script>
 </body>
 </html>
