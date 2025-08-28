@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MegaPython Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
     
@@ -78,6 +79,52 @@
       padding: 20px;
       border-radius: 12px;
     }
+    
+    .tab-button {
+      background: #2a4a2a;
+      color: #a7f3a7;
+      padding: 10px 20px;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .tab-button.active {
+      background: #4a9e4a;
+      color: white;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .asset-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    
+    .asset-table th, .asset-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #2a4a2a;
+    }
+    
+    .asset-table th {
+      color: #4a9e4a;
+    }
+    
+    .collection-badge {
+      background: #3a7d3a;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -97,7 +144,7 @@
     <!-- Portfolio Overview -->
     <section class="portfolio-card pixel-card mb-8">
       <h2 class="text-2xl pixel-font text-green-400 mb-4">Portfolio Overview</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="p-4 bg-green-900/30 rounded-lg">
           <h3 class="text-green-300">Total Value</h3>
           <p class="text-2xl font-bold" id="totalValue">$0.00</p>
@@ -107,21 +154,72 @@
           <p class="text-2xl font-bold" id="pythonCount">0</p>
         </div>
         <div class="p-4 bg-green-900/30 rounded-lg">
+          <h3 class="text-green-300">Other NFTs</h3>
+          <p class="text-2xl font-bold" id="otherNftCount">0</p>
+        </div>
+        <div class="p-4 bg-green-900/30 rounded-lg">
           <h3 class="text-green-300">Wallet</h3>
           <p class="text-sm" id="walletInfo">Not connected</p>
         </div>
       </div>
-    </section>
-
-    <!-- NFT Collection -->
-    <section class="pixel-card">
-      <h2 class="text-2xl pixel-font text-green-400 mb-4">Your MegaPython Collection</h2>
-      <div id="nftContainer" class="nft-grid">
-        <div class="text-center py-12 text-gray-400">
-          <p>Connect your wallet to view your MegaPython NFTs</p>
-        </div>
+      
+      <div class="mt-6">
+        <canvas id="portfolioChart" height="100"></canvas>
       </div>
     </section>
+
+    <!-- Tabs for different asset types -->
+    <div class="flex gap-2 mb-4">
+      <button class="tab-button active" data-tab="megapythons">MegaPythons</button>
+      <button class="tab-button" data-tab="nfts">All NFTs</button>
+      <button class="tab-button" data-tab="tokens">Tokens & Crypto</button>
+    </div>
+
+    <!-- MegaPythons Tab -->
+    <div class="tab-content active" id="megapythons-tab">
+      <section class="pixel-card">
+        <h2 class="text-2xl pixel-font text-green-400 mb-4">Your MegaPython Collection</h2>
+        <div id="pythonContainer" class="nft-grid">
+          <div class="text-center py-12 text-gray-400">
+            <p>Connect your wallet to view your MegaPython NFTs</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- All NFTs Tab -->
+    <div class="tab-content" id="nfts-tab">
+      <section class="pixel-card">
+        <h2 class="text-2xl pixel-font text-green-400 mb-4">All Your NFTs</h2>
+        <div id="allNftContainer" class="nft-grid">
+          <div class="text-center py-12 text-gray-400">
+            <p>Connect your wallet to view all your NFTs</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Tokens Tab -->
+    <div class="tab-content" id="tokens-tab">
+      <section class="pixel-card">
+        <h2 class="text-2xl pixel-font text-green-400 mb-4">Tokens & Crypto Assets</h2>
+        <table class="asset-table">
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Balance</th>
+              <th>Value</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody id="tokensContainer">
+            <tr>
+              <td colspan="4" class="text-center py-8 text-gray-400">Connect your wallet to view token balances</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
 
     <!-- Marketplace Links -->
     <section class="pixel-card mt-8">
@@ -145,16 +243,29 @@
     // Wallet connection functionality
     const walletConnectBtn = document.getElementById('walletConnectBtn');
     const walletConnectContainer = document.getElementById('walletConnectContainer');
-    const nftContainer = document.getElementById('nftContainer');
+    const pythonContainer = document.getElementById('pythonContainer');
+    const allNftContainer = document.getElementById('allNftContainer');
+    const tokensContainer = document.getElementById('tokensContainer');
     const totalValueElement = document.getElementById('totalValue');
     const pythonCountElement = document.getElementById('pythonCount');
+    const otherNftCountElement = document.getElementById('otherNftCount');
     const walletInfoElement = document.getElementById('walletInfo');
+    
+    let portfolioChart = null;
 
-    // Sample NFT data (in a real app, this would come from the blockchain)
+    // Sample data for demonstration
     const sampleNFTs = [
-      { id: 1, name: "MegaPython #1", image: "https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm", value: "0.5 ETH" },
-      { id: 2, name: "MegaPython #2", image: "https://ipfs.io/ipfs/bafkreigilizwe5aow4cj7pknk54ykwbgtcrqqp53xbaye6c7jzugsvjbmu", value: "0.7 ETH" },
-      { id: 3, name: "MegaPython #3", image: "https://ipfs.io/ipfs/bafkreicfbtyh7p4njqbzideujs3z4pwr4zkyg7vxaxgv7sogdrojojgdr4", value: "0.3 ETH" }
+      { id: 1, name: "MegaPython #1", image: "https://ipfs.io/ipfs/bafkreidmlzvhoo26vpqbyxxbxma5sebxaihk4m24ymxz2oea7a3odcmdgm", value: "0.5 ETH", collection: "MegaPython" },
+      { id: 2, name: "MegaPython #2", image: "https://ipfs.io/ipfs/bafkreigilizwe5aow4cj7pknk54ykwbgtcrqqp53xbaye6c7jzugsvjbmu", value: "0.7 ETH", collection: "MegaPython" },
+      { id: 3, name: "MegaPython #3", image: "https://ipfs.io/ipfs/bafkreicfbtyh7p4njqbzideujs3z4pwr4zkyg7vxaxgv7sogdrojojgdr4", value: "0.3 ETH", collection: "MegaPython" },
+      { id: 4, name: "JungleFrog #42", image: "https://ipfs.io/ipfs/bafkreifyak53gwnlujurbx5rglsnypk6ilju6rakjdqi23jrslgxoalhqi", value: "0.2 ETH", collection: "JungleFrogs" },
+      { id: 5, name: "MetaLizard #123", image: "https://ipfs.io/ipfs/bafkreidykh3x4nwupemwanoa4wbxedvwspsctveksdyhjbnnbwt7hcjhx4", value: "0.4 ETH", collection: "MetaLizards" }
+    ];
+
+    const sampleTokens = [
+      { name: "MegaETH", symbol: "MEGA", balance: "42.75", value: "$1,283.25", price: "$30.00" },
+      { name: "Ethereum", symbol: "ETH", balance: "1.25", value: "$2,250.00", price: "$1,800.00" },
+      { name: "USD Coin", symbol: "USDC", balance: "500.00", value: "$500.00", price: "$1.00" }
     ];
 
     // Connect Wallet Function
@@ -178,8 +289,8 @@
           
           walletInfoElement.textContent = shortenedAddress;
           
-          // Load NFT data (in a real app, this would fetch from blockchain)
-          loadNFTs();
+          // Load all asset data
+          loadAssets();
           
         } else {
           alert('Please install MetaMask to use this feature!');
@@ -190,13 +301,45 @@
       }
     }
 
-    // Load NFTs Function
-    function loadNFTs() {
-      // Clear loading message
-      nftContainer.innerHTML = '';
+    // Load all assets
+    function loadAssets() {
+      loadMegaPythons();
+      loadAllNFTs();
+      loadTokens();
+      updatePortfolioSummary();
+      initChart();
+    }
+
+    // Load MegaPythons
+    function loadMegaPythons() {
+      // Filter only MegaPython NFTs
+      const megaPythons = sampleNFTs.filter(nft => nft.collection === "MegaPython");
       
-      // Calculate total value
-      let totalValue = 0;
+      // Clear loading message
+      pythonContainer.innerHTML = '';
+      
+      // Display each MegaPython
+      megaPythons.forEach(nft => {
+        const nftElement = document.createElement('div');
+        nftElement.className = 'pixel-card p-4 flex flex-col items-center';
+        nftElement.innerHTML = `
+          <div class="w-40 h-40 bg-black mb-3 flex items-center justify-center">
+            <img src="${nft.image}" class="w-full h-full object-contain" alt="${nft.name}">
+          </div>
+          <div class="text-md font-semibold text-green-300 text-center">${nft.name}</div>
+          <div class="text-sm text-gray-400 mt-1">${nft.value}</div>
+        `;
+        pythonContainer.appendChild(nftElement);
+      });
+      
+      // Update count
+      pythonCountElement.textContent = megaPythons.length;
+    }
+
+    // Load all NFTs
+    function loadAllNFTs() {
+      // Clear loading message
+      allNftContainer.innerHTML = '';
       
       // Display each NFT
       sampleNFTs.forEach(nft => {
@@ -208,17 +351,129 @@
           </div>
           <div class="text-md font-semibold text-green-300 text-center">${nft.name}</div>
           <div class="text-sm text-gray-400 mt-1">${nft.value}</div>
+          <div class="collection-badge mt-2">${nft.collection}</div>
         `;
-        nftContainer.appendChild(nftElement);
-        
-        // Add to total value (convert ETH to number)
-        totalValue += parseFloat(nft.value);
+        allNftContainer.appendChild(nftElement);
       });
       
-      // Update portfolio stats
-      pythonCountElement.textContent = sampleNFTs.length;
-      totalValueElement.textContent = `$${(totalValue * 1800).toFixed(2)}`; // Assuming 1 ETH = $1800
+      // Update count (excluding MegaPythons)
+      const otherNFTs = sampleNFTs.filter(nft => nft.collection !== "MegaPython");
+      otherNftCountElement.textContent = otherNFTs.length;
     }
+
+    // Load tokens
+    function loadTokens() {
+      // Clear loading message
+      tokensContainer.innerHTML = '';
+      
+      // Display each token
+      sampleTokens.forEach(token => {
+        const tokenRow = document.createElement('tr');
+        tokenRow.className = 'hover:bg-green-900/20';
+        tokenRow.innerHTML = `
+          <td class="py-3">
+            <div class="font-semibold">${token.name}</div>
+            <div class="text-sm text-gray-400">${token.symbol}</div>
+          </td>
+          <td>${token.balance}</td>
+          <td class="font-semibold">${token.value}</td>
+          <td>${token.price}</td>
+        `;
+        tokensContainer.appendChild(tokenRow);
+      });
+    }
+
+    // Update portfolio summary
+    function updatePortfolioSummary() {
+      // Calculate total value from NFTs
+      let nftValue = 0;
+      sampleNFTs.forEach(nft => {
+        nftValue += parseFloat(nft.value);
+      });
+      
+      // Calculate total value from tokens (remove $ and commas)
+      let tokenValue = 0;
+      sampleTokens.forEach(token => {
+        const value = parseFloat(token.value.replace('$', '').replace(',', ''));
+        tokenValue += value;
+      });
+      
+      // Calculate total value
+      const totalValue = nftValue * 1800 + tokenValue; // Assuming 1 ETH = $1800
+      
+      // Update total value display
+      totalValueElement.textContent = `$${totalValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+    }
+
+    // Initialize portfolio chart
+    function initChart() {
+      const ctx = document.getElementById('portfolioChart').getContext('2d');
+      
+      // Destroy previous chart if it exists
+      if (portfolioChart) {
+        portfolioChart.destroy();
+      }
+      
+      // Calculate values for chart
+      const megaPythonValue = sampleNFTs
+        .filter(nft => nft.collection === "MegaPython")
+        .reduce((sum, nft) => sum + parseFloat(nft.value) * 1800, 0);
+        
+      const otherNFTValue = sampleNFTs
+        .filter(nft => nft.collection !== "MegaPython")
+        .reduce((sum, nft) => sum + parseFloat(nft.value) * 1800, 0);
+        
+      const tokenValue = sampleTokens.reduce((sum, token) => {
+        return sum + parseFloat(token.value.replace('$', '').replace(',', ''));
+      }, 0);
+      
+      // Create new chart
+      portfolioChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['MegaPythons', 'Other NFTs', 'Tokens'],
+          datasets: [{
+            data: [megaPythonValue, otherNFTValue, tokenValue],
+            backgroundColor: [
+              '#4a9e4a',
+              '#3a7d3a',
+              '#2a4a2a'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#e2e8f0',
+                font: {
+                  size: 12
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Tab functionality
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons and content
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        // Show corresponding content
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(`${tabId}-tab`).classList.add('active');
+      });
+    });
 
     // Event listeners
     walletConnectBtn.addEventListener('click', connectWallet);
@@ -231,7 +486,7 @@
         walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span>`;
         walletConnectBtn.classList.add('connected-wallet');
         walletInfoElement.textContent = shortenedAddress;
-        loadNFTs();
+        loadAssets();
       }
     });
   </script>
