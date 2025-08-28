@@ -90,7 +90,6 @@
       <h1 class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython</h1>
       <nav class="flex gap-4 items-center">
         <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
-        <a href="/dashboard.html" class="text-green-300 hover:text-green-500 transition-colors">Dashboard</a>
         <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
         <div id="walletConnectContainer">
           <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold transition-colors">Connect Wallet</button>
@@ -126,9 +125,6 @@
   </div>
 
   <script>
-    // IPFS base URL for images
-    const IPFS_BASE_URL = 'https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/';
-
     // Mock data based on layers.json
     const LAYERS_DATA = {
       "Background": [
@@ -290,18 +286,10 @@
         const index = tokenId % options.length;
         const option = options[index];
         
-        // Construct image path
-        let imagePath = `${IPFS_BASE_URL}${traitType}/${option.name}.png`;
-        // Handle special cases for Eyes, Minion, Mouth, Mustache, Neck where names may include spaces
-        if (["Eyes", "Minion", "Mouth", "Mustache", "Neck"].includes(traitType)) {
-          imagePath = `${IPFS_BASE_URL}${traitType}/${option.name.replace(/ /g, '_')}.png`;
-        }
-        
         traits.push({
           trait_type: traitType,
           value: option.name,
-          rarity: option.rarity,
-          image: imagePath
+          rarity: option.rarity
         });
         
         totalRarity += option.rarity;
@@ -320,14 +308,9 @@
       const name = `MegaPython #${tokenId}`;
       const description = 'A unique MegaPython NFT with special traits.';
       
-      // Create a composite image by stacking layers
+      // Create preview without images
       const previewHtml = `
         <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${name}</div>
-        <div class="nft-preview mb-4 relative w-64 h-64 mx-auto">
-          ${traits.map(t => `
-            <img src="${t.image}" alt="${t.value}" class="absolute w-64 h-64 object-contain rounded-lg" onerror="this.src='/placeholder-nft.png'">
-          `).join('')}
-        </div>
         <p class="text-gray-400 mb-4">${description}</p>
       `;
       preview.innerHTML = previewHtml;
