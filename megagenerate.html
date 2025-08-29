@@ -111,6 +111,7 @@
       <nav class="flex gap-4 items-center">
         <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
         <a href="/rarity.html" class="text-green-300 hover:text-green-500 transition-colors">Rarity Checker</a>
+        <a href="/canvas.html" class="text-green-300 hover:text-green-500 transition-colors">Canvas</a>
       </nav>
     </header>
 
@@ -176,13 +177,13 @@
     </section>
 
     <footer class="text-center text-gray-500 mt-12">
-      <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
-      <div class="flex justify-center gap-8">
+      <div class="flex justify-center gap-8 mb-6">
         <a href="https://x.com/megapythons" class="social-link pixel-font">X</a>
         <a href="https://megapython.testnet.nfts2.me/" class="social-link pixel-font">Mint</a>
         <a href="https://linktr.ee/megaPython" class="social-link pixel-font">Linktree</a>
         <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
       </div>
+      <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
     </footer>
   </div>
 
@@ -267,7 +268,7 @@
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#e2e8f0';
-        ctx.font = '16px "Press Start 2P"';
+        ctx.font = '12px "Press Start 2P"';  // Smaller font size
         ctx.textAlign = 'center';
         ctx.fillText('Select body and eyes to generate', canvas.width / 2, canvas.height / 2);
         return;
