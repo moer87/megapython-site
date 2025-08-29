@@ -120,6 +120,12 @@
       border-radius: 8px;
       padding: 1.5rem;
       margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .news-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
     
     .news-date {
@@ -136,6 +142,20 @@
     
     .news-content {
       color: #e2e8f0;
+      margin-bottom: 1rem;
+    }
+    
+    .news-link {
+      color: #4ade80;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.3s;
+    }
+    
+    .news-link:hover {
+      color: #a3e635;
     }
   </style>
 </head>
@@ -206,26 +226,44 @@
       </div>
     </section>
 
-    <!-- News Section -->
+    <!-- Updated News Section -->
     <section class="news-section">
       <h2 class="text-3xl pixel-font text-green-400 mb-6 text-center jungle-glow">Latest News</h2>
       
       <div class="news-card">
-        <div class="news-date">March 15, 2025</div>
-        <h3 class="news-title">MegaPython Collection Launch</h3>
-        <p class="news-content">Our full collection of 2,222 unique MegaPythons is now available for minting on the MegaETH blockchain!</p>
+        <div class="news-date">Posted on X on Aug 27</div>
+        <h3 class="news-title">500 Mints Milestone Giveaway</h3>
+        <p class="news-content">Giveaway once we hit 500 mints! 🐍👀 5 MegaETH (testnet), 2 MegaPythons, and other prizes to 10 lucky holders!</p>
+        <a href="https://x.com/megapythons/status/1960662625999536508" target="_blank" class="news-link">
+          View on X
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
       </div>
       
       <div class="news-card">
-        <div class="news-date">March 10, 2025</div>
-        <h3 class="news-title">New Traits Added</h3>
-        <p class="news-content">We've added 5 new exclusive traits to the MegaPython collection. Check them out in our MegaGenerate tool!</p>
+        <div class="news-date">Posted on X on Aug 19</div>
+        <h3 class="news-title">MegaPython First Community Giveaway</h3>
+        <p class="news-content">Our first community giveaway with 1 MegaETH, and NFTs from MegaEth Dogs, Barry, MegaBunny, Breadguy, and MegaPython!</p>
+        <a href="https://x.com/megapythons/status/1956332931896537349" target="_blank" class="news-link">
+          View on X
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
       </div>
       
       <div class="news-card">
-        <div class="news-date">March 5, 2025</div>
-        <h3 class="news-title">Community Contest Announced</h3>
-        <p class="news-content">Join our first community contest! Create the most unique MegaPython combination and win exclusive prizes.</p>
+        <div class="news-date">Today</div>
+        <h3 class="news-title">Beta Website Live!</h3>
+        <p class="news-content">Our Beta website is live! Check MegaPython Rarity, Generate Free PFP, Test Canvas, and more features coming!</p>
+        <a href="https://x.com/megapythons/status/1961396765719933149" target="_blank" class="news-link">
+          View on X
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
       </div>
     </section>
 
