@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MegaPython — Home</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
     
@@ -92,15 +91,6 @@
       background: #a3e635;
     }
     
-    .connected-wallet {
-      background: #a3e635;
-      color: #0f172a;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 12px;
-    }
-    
     .jungle-leaf {
       position: absolute;
       width: 40px;
@@ -135,9 +125,6 @@
       <nav class="flex gap-4 items-center">
         <a href="/rarity.html" class="text-green-300 hover:text-green-500 transition-colors">Rarity Checker</a>
         <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
-        <div id="walletConnectContainer">
-          <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold transition-colors">Connect Wallet</button>
-        </div>
       </nav>
     </header>
 
@@ -242,7 +229,6 @@
       });
       
       initSlider();
-      initWalletConnect();
     });
 
     function initSlider() {
@@ -267,7 +253,7 @@
       }
 
       function startAutoSlide() {
-        autoSlideInterval = setInterval(() => {
+        autoSlideInterval = setInterval(() {
           currentSlide = (currentSlide + 1) % dots.length;
           goToSlide(currentSlide);
         }, 6000);
@@ -276,50 +262,6 @@
       startAutoSlide();
       sliderContainer.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
       sliderContainer.addEventListener('mouseleave', startAutoSlide);
-    }
-
-    function initWalletConnect() {
-      const walletConnectBtn = document.getElementById('walletConnectBtn');
-      const walletConnectContainer = document.getElementById('walletConnectContainer');
-      
-      const connectedAddress = localStorage.getItem('connectedWallet');
-      if (connectedAddress) {
-        updateWalletButton(connectedAddress);
-      }
-      
-      walletConnectBtn.addEventListener('click', async () => {
-        if (walletConnectBtn.classList.contains('connected-wallet')) {
-          localStorage.removeItem('connectedWallet');
-          walletConnectBtn.innerHTML = 'Connect Wallet';
-          walletConnectBtn.classList.remove('connected-wallet');
-          return;
-        }
-        
-        try {
-          if (typeof window.ethereum === 'undefined') {
-            alert('Please install MetaMask to connect your wallet');
-            return;
-          }
-          
-          const accounts = await window.ethereum.request({
-            method: 'eth_requestAccounts'
-          });
-          
-          const address = accounts[0];
-          localStorage.setItem('connectedWallet', address);
-          updateWalletButton(address);
-          console.log('Connected with address:', address);
-        } catch (error) {
-          console.error('Error connecting to MetaMask:', error);
-          alert('Failed to connect wallet. Please try again.');
-        }
-      });
-      
-      function updateWalletButton(address) {
-        const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
-        walletConnectBtn.classList.add('connected-wallet');
-      }
     }
   </script>
 </body>
