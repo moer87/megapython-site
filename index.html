@@ -125,6 +125,7 @@
       <nav class="flex gap-4 items-center">
         <a href="/rarity.html" class="text-green-300 hover:text-green-500 transition-colors">Rarity Checker</a>
         <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
+        <a href="/canvas.html" class="text-green-300 hover:text-green-500 transition-colors">Canvas</a>
       </nav>
     </header>
 
@@ -253,14 +254,14 @@
       }
 
       function startAutoSlide() {
-        autoSlideInterval = setInterval(() {
+        autoSlideInterval = setInterval(() => {
           currentSlide = (currentSlide + 1) % dots.length;
           goToSlide(currentSlide);
         }, 6000);
       }
 
       startAutoSlide();
-      sliderContainer.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+      sliderContainer.addEventListener('mouseenter', () => clearInterval(autoSlideInterval);
       sliderContainer.addEventListener('mouseleave', startAutoSlide);
     }
   </script>
