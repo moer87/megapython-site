@@ -11,7 +11,6 @@
   <meta property="og:type" content="website"/>
   <title>MegaPython — Rarity Checker</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
     body {
@@ -60,14 +59,6 @@
       padding: 8px;
       border-radius: 4px;
     }
-    .connected-wallet {
-      background: #a3e635;
-      color: #0f172a;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 12px;
-    }
     .social-link {
       color: #a3e635;
       transition: color 0.3s;
@@ -91,9 +82,6 @@
       <nav class="flex gap-4 items-center">
         <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
         <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
-        <div id="walletConnectContainer">
-          <button id="walletConnectBtn" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold transition-colors">Connect Wallet</button>
-        </div>
       </nav>
     </header>
 
@@ -382,49 +370,9 @@
       resultEl.classList.remove('hidden');
     }
 
-    function initWalletConnect() {
-      const walletConnectBtn = document.getElementById('walletConnectBtn');
-      
-      const connectedAddress = localStorage.getItem('connectedWallet');
-      if (connectedAddress) {
-        updateWalletButton(connectedAddress);
-      }
-      
-      walletConnectBtn.addEventListener('click', async () => {
-        if (walletConnectBtn.classList.contains('connected-wallet')) {
-          localStorage.removeItem('connectedWallet');
-          walletConnectBtn.innerHTML = 'Connect Wallet';
-          walletConnectBtn.classList.remove('connected-wallet');
-          return;
-        }
-        
-        try {
-          if (!window.ethereum) {
-            alert('MetaMask not detected. Please install MetaMask to connect your wallet.');
-            return;
-          }
-          
-          const accounts = await window.ethereum.request({
-            method: 'eth_requestAccounts'
-          });
-          
-          const address = accounts[0];
-          localStorage.setItem('connectedWallet', address);
-          updateWalletButton(address);
-        } catch (error) {
-          console.error('Error connecting to MetaMask:', error);
-          alert('Failed to connect wallet: ' + error.message);
-        }
-      });
-      
-      function updateWalletButton(address) {
-        const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-        walletConnectBtn.innerHTML = `<span>${shortenedAddress}</span> <span>Disconnect</span>`;
-        walletConnectBtn.classList.add('connected-wallet');
-      }
-    }
-
-    window.addEventListener('load', initWalletConnect);
+    window.addEventListener('load', function() {
+      // No wallet initialization needed
+    });
   </script>
 </body>
 </html>
