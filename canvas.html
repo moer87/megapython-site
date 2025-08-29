@@ -3,25 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MegaPython — Public Pathed Canvas</title>
+  <title>MegaPython — Collaborative Canvas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
     
-    :root {
-      --bg: #0a220a; 
-      --fg: #e2e8f0; 
-      --muted: #4a9e4a; 
-      --panel: #1e3e1e; 
-      --accent: #58ffa8;
-      --border: #4a9e4a;
-    }
-    
     body {
-      margin: 0; 
-      background: var(--bg); 
-      color: var(--fg); 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a220a;
+      color: #e2e8f0;
       overflow-x: hidden;
       background-image: 
         radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
@@ -73,180 +63,6 @@
       opacity: 0.3;
     }
     
-    header {
-      padding: 12px 16px; 
-      border-bottom: 1px solid var(--border); 
-      background: var(--panel);
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      flex-wrap: wrap;
-    }
-    
-    header h1 { 
-      margin: 0; 
-      font-size: 1.5rem; 
-      color: #4a9e4a;
-      text-shadow: 0 0 10px rgba(74, 158, 74, 0.7);
-    }
-    
-    .tag { 
-      color: var(--muted); 
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.7rem;
-    }
-    
-    main { 
-      display: flex; 
-      min-height: calc(100vh - 120px);
-    }
-    
-    aside {
-      width: 300px; 
-      max-width: 100%; 
-      border-right: 1px solid var(--border); 
-      background: var(--panel); 
-      padding: 16px; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 16px;
-    }
-    
-    .group { 
-      border: 2px solid var(--border); 
-      border-radius: 12px; 
-      padding: 12px; 
-      background: rgba(42, 74, 42, 0.7);
-    }
-    
-    .group h3 { 
-      margin: 0 0 12px; 
-      font-size: 0.9rem; 
-      color: #a3e635;
-      font-family: 'Press Start 2P', cursive;
-    }
-    
-    .row { 
-      display: flex; 
-      gap: 8px; 
-      flex-wrap: wrap; 
-      align-items: center; 
-      margin-bottom: 8px;
-    }
-    
-    .btn {
-      background: #1e3e1e; 
-      border: 2px solid var(--border); 
-      color: var(--fg);
-      padding: 8px 12px; 
-      border-radius: 8px; 
-      cursor: pointer; 
-      user-select: none;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.7rem;
-    }
-    
-    .btn:hover { 
-      border-color: #3a7d3a; 
-      background: #2a4a2a;
-    }
-    
-    .btn:active { 
-      transform: translateY(1px); 
-    }
-    
-    .btn.small { 
-      padding: 6px 10px; 
-      font-size: 0.6rem; 
-    }
-    
-    .btn.primary { 
-      border-color: #2e3f36; 
-      background: #4a9e4a;
-      color: #0f172a;
-    }
-    
-    .btn.warn { 
-      border-color: #3f2e2e; 
-      background: #9e4a4a;
-      color: #0f172a;
-    }
-    
-    .label { 
-      color: #a3e635; 
-      font-size: 0.7rem;
-      font-family: 'Press Start 2P', cursive;
-    }
-    
-    input[type="number"] { 
-      width: 80px; 
-      padding: 6px 8px; 
-      background: #1e3e1e; 
-      color: var(--fg); 
-      border: 2px solid var(--border); 
-      border-radius: 6px; 
-      font-family: 'Press Start 2P', cursive;
-    }
-    
-    input[type="color"] { 
-      width: 34px; 
-      height: 34px; 
-      padding: 0; 
-      border: 2px solid var(--border); 
-      background: #1e3e1e; 
-      border-radius: 6px; 
-    }
-    
-    .palette { 
-      display: flex; 
-      flex-wrap: wrap; 
-      gap: 8px; 
-      margin-bottom: 12px;
-    }
-    
-    .swatch {
-      width: 28px; 
-      height: 28px; 
-      border-radius: 6px; 
-      border: 2px solid #00000022; 
-      cursor: pointer;
-      outline: 2px solid transparent;
-    }
-    
-    .swatch.sel { 
-      outline: 2px solid var(--accent); 
-    }
-    
-    /* Canvas wrap enables pan/zoom */
-    .stage-wrap {
-      position: relative; 
-      flex: 1; 
-      overflow: hidden; 
-      background: #0a220a;
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-    }
-    
-    canvas#grid {
-      image-rendering: pixelated;
-      background: #1e3e1e; 
-      border: 4px solid var(--border); 
-      border-radius: 12px;
-      touch-action: none;
-      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
-    }
-    
-    footer.note {
-      padding: 12px 16px; 
-      color: #4a9e4a; 
-      font-size: 0.8rem; 
-      border-top: 1px solid var(--border); 
-      background: var(--panel);
-      text-align: center;
-      font-family: 'Press Start 2P', cursive;
-    }
-    
     .social-link {
       color: #a3e635;
       transition: color 0.3s;
@@ -254,6 +70,85 @@
     
     .social-link:hover {
       color: #4ade80;
+    }
+    
+    .canvas-container {
+      position: relative;
+      overflow: auto;
+      max-width: 100%;
+      margin: 0 auto;
+      border: 4px solid #4a9e4a;
+      border-radius: 12px;
+      background: #1e3e1e;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
+    }
+    
+    #pixelCanvas {
+      image-rendering: pixelated;
+      display: block;
+      margin: 0 auto;
+    }
+    
+    .color-swatch {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #0f2a0f;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .color-swatch:hover {
+      transform: scale(1.1);
+    }
+    
+    .color-swatch.selected {
+      border: 2px solid #a3e635;
+      box-shadow: 0 0 8px #a3e635;
+    }
+    
+    .cooldown-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 34, 10, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a3e635;
+      font-size: 1.5rem;
+      z-index: 10;
+      border-radius: 8px;
+    }
+    
+    .user-count {
+      background: #4a9e4a;
+      color: #0f172a;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .archive-item {
+      background: rgba(42, 74, 42, 0.7);
+      border-radius: 8px;
+      padding: 0.5rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    
+    .archive-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
@@ -265,368 +160,292 @@
   <div class="jungle-leaf" style="bottom: 20%; right: 10%; transform: rotate(120deg);"></div>
   <div class="jungle-leaf" style="bottom: 30%; left: 12%; transform: rotate(160deg);"></div>
 
-  <header class="flex justify-between items-center">
-    <h1 class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython</h1>
-    <nav class="flex gap-4 items-center">
-      <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
-      <a href="/rarity.html" class="text-green-300 hover:text-green-500 transition-colors">Rarity Checker</a>
-      <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
-    </nav>
-  </header>
+  <div class="relative z-10 max-w-6xl mx-auto p-6">
+    <header class="flex justify-between items-center mb-12">
+      <h1 class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython</h1>
+      <nav class="flex gap-4 items-center">
+        <a href="/" class="text-green-300 hover:text-green-500 transition-colors">Home</a>
+        <a href="/rarity.html" class="text-green-300 hover:text-green-500 transition-colors">Rarity Checker</a>
+        <a href="/megagenerate.html" class="text-green-300 hover:text-green-500 transition-colors">MegaGenerate</a>
+      </nav>
+    </header>
 
-  <main>
-    <aside>
-      <div class="group">
-        <h3>Tools</h3>
-        <div class="row">
-          <button id="tool-paint" class="btn small primary">Paint (B)</button>
-          <button id="tool-erase" class="btn small">Erase (E)</button>
-          <button id="tool-pick"  class="btn small">Eyedropper (I)</button>
+    <section class="text-center mb-12">
+      <h2 class="text-4xl pixel-font text-green-400 mb-4 jungle-glow">Collaborative Pixel Canvas</h2>
+      <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+        Place a pixel every 5 seconds and create art together with the MegaPython community! The canvas resets every week, and previous artwork is archived.
+      </p>
+    </section>
+
+    <div class="pixel-card p-6 mb-8">
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex items-center gap-4">
+          <span class="text-green-300 pixel-font">Online: </span>
+          <span class="user-count pixel-font" id="userCount">0</span>
         </div>
-        <div class="row">
-          <button id="undo" class="btn small">Undo (Ctrl/⌘+Z)</button>
-          <button id="redo" class="btn small">Redo (Ctrl/⌘+Y)</button>
+        <div class="flex items-center gap-4">
+          <span class="text-green-300 pixel-font">Time until reset: </span>
+          <span class="user-count pixel-font" id="resetTimer">7 days</span>
         </div>
       </div>
 
-      <div class="group">
-        <h3>Palette</h3>
-        <div id="palette" class="palette"></div>
-        <div class="row">
-          <span class="label">Custom</span>
-          <input id="customColor" type="color" value="#58ffa8"/>
-          <button id="addColor" class="btn small">Add</button>
+      <div class="canvas-container mb-6">
+        <canvas id="pixelCanvas" width="64" height="64"></canvas>
+        <div class="cooldown-overlay hidden" id="cooldownOverlay">
+          <div class="text-center">
+            <div class="pixel-font mb-2" id="cooldownTimer">5s</div>
+            <div class="text-sm">Until next pixel</div>
+          </div>
         </div>
       </div>
 
-      <div class="group">
-        <h3>Canvas</h3>
-        <div class="row">
-          <span class="label">Grid W×H</span>
-          <input id="w" type="number" min="8" max="512" value="100"/>
-          <input id="h" type="number" min="8" max="512" value="100"/>
-          <button id="resize" class="btn small">Resize</button>
-        </div>
-        <div class="row">
-          <span class="label">Zoom</span>
-          <button id="zoomOut" class="btn small">−</button>
-          <button id="zoomIn"  class="btn small">+</button>
-          <button id="zoomReset" class="btn small">Reset</button>
-        </div>
-        <div class="row">
-          <button id="save" class="btn small">Save to Browser</button>
-          <button id="load" class="btn small">Load</button>
-          <button id="export" class="btn small">Export PNG</button>
-        </div>
-        <div class="row">
-          <button id="clear" class="btn small warn">Reset Canvas</button>
+      <div class="mb-6">
+        <h3 class="text-xl pixel-font text-green-400 mb-4 text-center">Color Palette</h3>
+        <div class="flex flex-wrap justify-center gap-2">
+          <div class="color-swatch selected" style="background-color: #1e3e1e;" data-color="#1e3e1e"></div>
+          <div class="color-swatch" style="background-color: #4a9e4a;" data-color="#4a9e4a"></div>
+          <div class="color-swatch" style="background-color: #0f2a0f;" data-color="#0f2a0f"></div>
+          <div class="color-swatch" style="background-color: #58ffa8;" data-color="#58ffa8"></div>
+          <div class="color-swatch" style="background-color: #3a7d3a;" data-color="#3a7d3a"></div>
+          <div class="color-swatch" style="background-color: #2a4a2a;" data-color="#2a4a2a"></div>
+          <div class="color-swatch" style="background-color: #a3e635;" data-color="#a3e635"></div>
+          <div class="color-swatch" style="background-color: #4ade80;" data-color="#4ade80"></div>
+          <div class="color-swatch" style="background-color: #22c55e;" data-color="#22c55e"></div>
+          <div class="color-swatch" style="background-color: #16a34a;" data-color="#16a34a"></div>
+          <div class="color-swatch" style="background-color: #15803d;" data-color="#15803d"></div>
+          <div class="color-swatch" style="background-color: #166534;" data-color="#166534"></div>
+          <div class="color-swatch" style="background-color: #14532d;" data-color="#14532d"></div>
+          <div class="color-swatch" style="background-color: #064e3b;" data-color="#064e3b"></div>
+          <div class="color-swatch" style="background-color: #000000;" data-color="#000000"></div>
+          <div class="color-swatch" style="background-color: #ffffff;" data-color="#ffffff"></div>
+          <div class="color-swatch" style="background-color: #ff0000;" data-color="#ff0000"></div>
+          <div class="color-swatch" style="background-color: #00ff00;" data-color="#00ff00"></div>
+          <div class="color-swatch" style="background-color: #0000ff;" data-color="#0000ff"></div>
+          <div class="color-swatch" style="background-color: #ffff00;" data-color="#ffff00"></div>
+          <div class="color-swatch" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+          <div class="color-swatch" style="background-color: #00ffff;" data-color="#00ffff"></div>
         </div>
       </div>
 
-      <div class="group">
-        <h3>Shortcuts</h3>
-        <div class="label">
-          Paint (B) • Erase (E) • Eyedropper (I) • Drag to pan • Wheel to zoom
-        </div>
+      <div class="text-center">
+        <button id="downloadBtn" class="pixel-button px-6 py-3 font-bold pixel-font mb-4">Download Current Canvas</button>
+        <p class="text-gray-400 text-sm">Right-click on the canvas and "Save Image" for a quick download</p>
       </div>
-    </aside>
-
-    <div class="stage-wrap">
-      <canvas id="grid" width="100" height="100"></canvas>
     </div>
-  </main>
 
-  <footer class="text-center text-gray-500">
-    <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
-    <div class="flex justify-center gap-8">
-      <a href="https://x.com/megapythons" class="social-link pixel-font">X</a>
-      <a href="https://megapython.testnet.nfts2.me/" class="social-link pixel-font">Mint</a>
-      <a href="https://linktr.ee/megaPython" class="social-link pixel-font">Linktree</a>
-      <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
-    </div>
-  </footer>
+    <section class="pixel-card p-6 mb-12">
+      <h2 class="text-3xl pixel-font text-green-400 mb-6 text-center jungle-glow">Previous Art Archives</h2>
+      <div class="archive-grid" id="archiveGrid">
+        <div class="archive-item">
+          <div class="text-gray-400 text-sm mb-2">Week 32, 2025</div>
+          <img src="https://via.placeholder.com/150/1e3e1e/4a9e4a?text=No+Archives+Yet" alt="Archive placeholder" class="rounded mb-2 mx-auto">
+          <button class="pixel-button px-3 py-1 text-xs">Download</button>
+        </div>
+      </div>
+    </section>
 
-<script>
-/* ====== Config ====== */
-const STORAGE_KEY = 'megapython_canvas_v1';
-const STORAGE_META = 'megapython_canvas_meta_v1';
-const DEFAULT_BG = '#1e3e1e';
-const DEFAULT_PALETTE = [
-  '#1e3e1e','#4a9e4a','#0f2a0f','#58ffa8','#3a7d3a','#2a4a2a','#a3e635',
-  '#4ade80','#22c55e','#16a34a','#15803d','#166534','#14532d','#064e3b'
-];
+    <footer class="text-center text-gray-500 mt-12">
+      <div class="flex justify-center gap-8 mb-6">
+        <a href="https://x.com/megapythons" class="social-link pixel-font">X</a>
+        <a href="https://megapython.testnet.nfts2.me/" class="social-link pixel-font">Mint</a>
+        <a href="https://linktr.ee/megaPython" class="social-link pixel-font">Linktree</a>
+        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
+      </div>
+      <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
+    </footer>
+  </div>
 
-/* ====== State ====== */
-let tool = 'paint'; // 'paint' | 'erase' | 'pick'
-let zoom = 6;       // CSS pixels per canvas pixel (visual scale)
-let minZoom = 2, maxZoom = 40;
-let gridW = 100, gridH = 100;
-let isPanning = false;
-let lastPan = {x:0, y:0};
-let pan = {x:0, y:0};
-let curColor = DEFAULT_PALETTE[3];
-let palette = [...DEFAULT_PALETTE];
+  <script>
+    // Configuration
+    const PIXEL_SIZE = 10; // Size of each pixel on screen
+    const CANVAS_WIDTH = 64; // Number of pixels wide
+    const CANVAS_HEIGHT = 64; // Number of pixels tall
+    const COOLDOWN_TIME = 5000; // 5 seconds cooldown between placing pixels
 
-const canvas = document.getElementById('grid');
-const ctx = canvas.getContext('2d', { willReadFrequently: true });
-const stage = document.querySelector('.stage-wrap');
+    // Elements
+    const canvas = document.getElementById('pixelCanvas');
+    const ctx = canvas.getContext('2d');
+    const cooldownOverlay = document.getElementById('cooldownOverlay');
+    const cooldownTimer = document.getElementById('cooldownTimer');
+    const userCount = document.getElementById('userCount');
+    const resetTimer = document.getElementById('resetTimer');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const colorSwatches = document.querySelectorAll('.color-swatch');
+    
+    // State
+    let selectedColor = '#1e3e1e';
+    let cooldownActive = false;
+    let cooldownEndTime = 0;
+    let pixels = {};
+    let usersOnline = 0;
 
-canvas.style.width  = (gridW * zoom) + 'px';
-canvas.style.height = (gridH * zoom) + 'px';
-canvas.style.transform = `translate(${pan.x}px, ${pan.y}px)`;
+    // Set canvas size based on pixel dimensions
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+    canvas.style.width = `${CANVAS_WIDTH * PIXEL_SIZE}px`;
+    canvas.style.height = `${CANVAS_HEIGHT * PIXEL_SIZE}px`;
 
-// Pixel buffer as palette indices (Uint16 to be safe for larger palettes)
-let buf = new Uint16Array(gridW * gridH).fill(0); // 0 = first palette color
+    // Initialize canvas with background color
+    function initializeCanvas() {
+      ctx.fillStyle = '#1e3e1e';
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      
+      // Load saved pixels from localStorage
+      const savedPixels = localStorage.getItem('megapython_canvas');
+      if (savedPixels) {
+        pixels = JSON.parse(savedPixels);
+        renderPixels();
+      }
+      
+      // Load user count (simulated)
+      usersOnline = Math.floor(Math.random() * 50) + 10;
+      userCount.textContent = usersOnline;
+      
+      // Set up weekly reset timer (simulated)
+      updateResetTimer();
+    }
 
-/* ====== UI Wiring ====== */
-const $ = (id)=>document.getElementById(id);
-function setTool(t){
-  tool = t;
-  ['tool-paint','tool-erase','tool-pick'].forEach(id => $(id).classList.remove('primary'));
-  if(t==='paint') $('tool-paint').classList.add('primary');
-  if(t==='erase') $('tool-erase').classList.add('primary');
-  if(t==='pick')  $('tool-pick').classList.add('primary');
-}
-$('tool-paint').onclick = ()=>setTool('paint');
-$('tool-erase').onclick = ()=>setTool('erase');
-$('tool-pick').onclick  = ()=>setTool('pick');
-
-$('zoomIn').onclick = ()=>setZoom(zoom+1);
-$('zoomOut').onclick= ()=>setZoom(zoom-1);
-$('zoomReset').onclick= ()=>{ zoom=6; applyZoom(); };
-
-$('resize').onclick = ()=>{
-  const w = Math.max(8, Math.min(512, parseInt($('w').value||gridW)));
-  const h = Math.max(8, Math.min(512, parseInt($('h').value||gridH)));
-  resizeCanvas(w,h,true);
-};
-
-$('save').onclick = saveToLocal;
-$('load').onclick = loadFromLocal;
-$('export').onclick = exportPNG;
-$('clear').onclick = ()=>{
-  pushHistory();
-  buf.fill(0);
-  drawAll();
-};
-
-/* Palette builder */
-const palDiv = $('palette');
-function rebuildPalette(){
-  palDiv.innerHTML = '';
-  palette.forEach((hex, i)=>{
-    const sw = document.createElement('div');
-    sw.className = 'swatch'+(hex===curColor?' sel':'');
-    sw.style.background = hex;
-    sw.title = hex + (i===0?' (bg)':'');
-    sw.onclick = ()=>{
-      curColor = hex;
-      document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('sel'));
-      sw.classList.add('sel');
-      setTool('paint');
-    };
-    palDiv.appendChild(sw);
-  });
-}
-rebuildPalette();
-
-$('addColor').onclick = ()=>{
-  const hex = $('customColor').value;
-  if(!/^#([0-9a-f]{6}|[0-9a-f]{3})$/i.test(hex)) return;
-  if(!palette.includes(hex)) palette.push(hex);
-  curColor = hex;
-  rebuildPalette();
-};
-
-/* ====== History (Undo/Redo) ====== */
-let undoStack = [];
-let redoStack = [];
-function pushHistory(){
-  undoStack.push(buf.slice());
-  if(undoStack.length>50) undoStack.shift();
-  redoStack.length = 0;
-}
-$('undo').onclick = ()=>{
-  if(!undoStack.length) return;
-  redoStack.push(buf.slice());
-  buf = undoStack.pop();
-  drawAll();
-};
-$('redo').onclick = ()=>{
-  if(!redoStack.length) return;
-  undoStack.push(buf.slice());
-  buf = redoStack.pop();
-  drawAll();
-};
-
-/* ====== Helpers ====== */
-function idx(x,y){ return y*gridW + x; }
-function paletteIndexOf(hex){ return Math.max(0, palette.indexOf(hex)); }
-function colorOfIndex(i){ return palette[i] ?? palette[0]; }
-
-function applyZoom(){
-  zoom = Math.max(minZoom, Math.min(maxZoom, zoom|0));
-  canvas.style.width  = (gridW * zoom) + 'px';
-  canvas.style.height = (gridH * zoom) + 'px';
-}
-function setZoom(z){ zoom = z; applyZoom(); }
-
-/* ====== Resize ====== */
-function resizeCanvas(w,h, keep=false){
-  pushHistory();
-  const newBuf = new Uint16Array(w*h).fill(0);
-  if(keep){
-    const cx = Math.min(w, gridW);
-    const cy = Math.min(h, gridH);
-    for(let y=0;y<cy;y++){
-      for(let x=0;x<cx;x++){
-        newBuf[y*w + x] = buf[idx(x,y)];
+    // Render all pixels on the canvas
+    function renderPixels() {
+      for (const [key, color] of Object.entries(pixels)) {
+        const [x, y] = key.split(',').map(Number);
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, 1, 1);
       }
     }
-  }
-  gridW = w; gridH = h;
-  buf = newBuf;
-  canvas.width = gridW;
-  canvas.height = gridH;
-  $('w').value = gridW; $('h').value = gridH;
-  applyZoom();
-  drawAll();
-}
 
-/* ====== Draw ====== */
-function drawAll(){
-  // paint every pixel – integer-aligned to avoid anti-aliasing (MDN)
-  // ref: image-rendering & pixel manipulation best practices
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let y=0;y<gridH;y++){
-    for(let x=0;x<gridW;x++){
-      ctx.fillStyle = colorOfIndex(buf[idx(x,y)]);
-      ctx.fillRect(x, y, 1, 1);
+    // Place a pixel at the specified coordinates
+    function placePixel(x, y) {
+      if (cooldownActive) return;
+      
+      // Convert mouse coordinates to canvas coordinates
+      const rect = canvas.getBoundingClientRect();
+      const pixelX = Math.floor((x - rect.left) / PIXEL_SIZE);
+      const pixelY = Math.floor((y - rect.top) / PIXEL_SIZE);
+      
+      // Ensure coordinates are within bounds
+      if (pixelX < 0 || pixelX >= CANVAS_WIDTH || pixelY < 0 || pixelY >= CANVAS_HEIGHT) return;
+      
+      // Update the pixel
+      pixels[`${pixelX},${pixelY}`] = selectedColor;
+      ctx.fillStyle = selectedColor;
+      ctx.fillRect(pixelX, pixelY, 1, 1);
+      
+      // Save to localStorage
+      localStorage.setItem('megapython_canvas', JSON.stringify(pixels));
+      
+      // Start cooldown
+      startCooldown();
+      
+      // Simulate other users placing pixels
+      simulateOtherUsers();
     }
-  }
-}
 
-/* ====== Pointer Painting ====== */
-let painting = false;
-function canvasXY(evt){
-  const rect = canvas.getBoundingClientRect();
-  const x = Math.floor((evt.clientX - rect.left - pan.x)/zoom);
-  const y = Math.floor((evt.clientY - rect.top  - pan.y)/zoom);
-  return {x,y};
-}
-canvas.addEventListener('pointerdown', (e)=>{
-  canvas.setPointerCapture(e.pointerId);
-  const {x,y} = canvasXY(e);
-  // Pan with middle button or space+drag
-  if(e.button===1 || (e.buttons===1 && (e.ctrlKey||e.metaKey||e.shiftKey))){
-    isPanning = true;
-    lastPan = {x:e.clientX - pan.x, y:e.clientY - pan.y};
-    return;
-  }
-  if(x<0||y<0||x>=gridW||y>=gridH) return;
-  pushHistory();
-  if(tool==='paint'){
-    buf[idx(x,y)] = paletteIndexOf(curColor);
-  } else if(tool==='erase'){
-    buf[idx(x,y)] = 0; // background index
-  } else if(tool==='pick'){
-    curColor = colorOfIndex(buf[idx(x,y)]);
-    rebuildPalette();
-    setTool('paint');
-  }
-  painting = true;
-  drawAll();
-});
-canvas.addEventListener('pointermove', (e)=>{
-  if(isPanning){
-    pan.x = e.clientX - lastPan.x;
-    pan.y = e.clientY - lastPan.y;
-    canvas.style.transform = `translate(${pan.x}px, ${pan.y}px)`;
-    return;
-  }
-  if(!painting) return;
-  const {x,y} = canvasXY(e);
-  if(x<0||y<0||x>=gridW||y>=gridH) return;
-  if(tool==='paint'){
-    buf[idx(x,y)] = paletteIndexOf(curColor);
-  } else if(tool==='erase'){
-    buf[idx(x,y)] = 0;
-  }
-  drawAll();
-});
-canvas.addEventListener('pointerup', ()=>{
-  painting = false;
-  isPanning = false;
-});
-canvas.addEventListener('wheel', (e)=>{
-  e.preventDefault();
-  setZoom(zoom + (e.deltaY>0 ? -1 : 1));
-}, {passive:false});
-
-/* ====== Keyboard ====== */
-window.addEventListener('keydown', (e)=>{
-  if(e.key==='b' || e.key==='B') setTool('paint');
-  if(e.key==='e' || e.key==='E') setTool('erase');
-  if(e.key==='i' || e.key==='I') setTool('pick');
-  if((e.ctrlKey||e.metaKey) && !e.shiftKey && e.key.toLowerCase()==='z') { e.preventDefault(); $('undo').click(); }
-  if((e.ctrlKey||e.metaKey) && (e.key.toLowerCase()==='y' || (e.shiftKey && e.key.toLowerCase()==='z'))) { e.preventDefault(); $('redo').click(); }
-});
-
-/* ====== Save / Load / Export ====== */
-function saveToLocal(){
-  const meta = { w:gridW, h:gridH, palette, bg:DEFAULT_BG, ts:Date.now() };
-  localStorage.setItem(STORAGE_META, JSON.stringify(meta));
-  // store as base64 string to reduce size a bit
-  const bytes = new Uint8Array(buf.buffer);
-  let bin = ''; for(let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
-  const b64 = btoa(bin);
-  localStorage.setItem(STORAGE_KEY, b64);
-  alert('Saved to your browser.');
-}
-function loadFromLocal(){
-  const metaStr = localStorage.getItem(STORAGE_META);
-  const dataStr = localStorage.getItem(STORAGE_KEY);
-  if(!metaStr || !dataStr){ alert('No saved canvas found.'); return; }
-  const meta = JSON.parse(metaStr);
-  palette = meta.palette || DEFAULT_PALETTE.slice();
-  rebuildPalette();
-
-  // restore buffer
-  const bin = atob(dataStr);
-  const arr = new Uint8Array(bin.length);
-  for(let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
-  gridW = meta.w; gridH = meta.h;
-  buf = new Uint16Array(arr.buffer);
-  canvas.width = gridW; canvas.height = gridH;
-  $('w').value = gridW; $('h').value = gridH;
-  applyZoom();
-  drawAll();
-  alert('Loaded from your browser.');
-}
-function exportPNG(){
-  // Upscale export by zoom factor for a nice image
-  const scale = Math.max(1, Math.floor(1024 / Math.max(gridW, gridH)));
-  const out = document.createElement('canvas');
-  out.width = gridW * scale; out.height = gridH * scale;
-  const octx = out.getContext('2d');
-  octx.imageSmoothingEnabled = false;
-  octx.fillStyle = DEFAULT_BG; octx.fillRect(0,0,out.width,out.height);
-  // draw pixels scaled
-  for(let y=0;y<gridH;y++){
-    for(let x=0;x<gridW;x++){
-      octx.fillStyle = colorOfIndex(buf[idx(x,y)]);
-      octx.fillRect(x*scale, y*scale, scale, scale);
+    // Start the cooldown period
+    function startCooldown() {
+      cooldownActive = true;
+      cooldownEndTime = Date.now() + COOLDOWN_TIME;
+      cooldownOverlay.classList.remove('hidden');
+      
+      // Update cooldown timer
+      const interval = setInterval(() => {
+        const timeLeft = cooldownEndTime - Date.now();
+        
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          cooldownOverlay.classList.add('hidden');
+          cooldownActive = false;
+          return;
+        }
+        
+        cooldownTimer.textContent = `${Math.ceil(timeLeft / 1000)}s`;
+      }, 100);
     }
-  }
-  const url = out.toDataURL('image/png');
-  const a = document.createElement('a');
-  a.href = url; a.download = `MegaPython_Canvas_${gridW}x${gridH}.png`;
-  a.click();
-}
 
-/* ====== Init ====== */
-drawAll();
-setTool('paint');
-</script>
+    // Simulate other users placing pixels (for demo purposes)
+    function simulateOtherUsers() {
+      // Only simulate if we have users online
+      if (usersOnline > 0) {
+        // Random number of actions based on user count
+        const actions = Math.min(usersOnline, Math.floor(Math.random() * 5) + 1);
+        
+        for (let i = 0; i < actions; i++) {
+          setTimeout(() => {
+            const x = Math.floor(Math.random() * CANVAS_WIDTH);
+            const y = Math.floor(Math.random() * CANVAS_HEIGHT);
+            
+            // Select a random color from the palette
+            const randomColor = colorSwatches[Math.floor(Math.random() * colorSwatches.length)].dataset.color;
+            
+            // Update the pixel
+            pixels[`${x},${y}`] = randomColor;
+            ctx.fillStyle = randomColor;
+            ctx.fillRect(x, y, 1, 1);
+            
+            // Save to localStorage
+            localStorage.setItem('megapython_canvas', JSON.stringify(pixels));
+          }, Math.random() * 2000); // Random delay up to 2 seconds
+        }
+      }
+    }
+
+    // Update the reset timer display
+    function updateResetTimer() {
+      // For demo purposes, we'll set a random time between 2-7 days
+      const days = Math.floor(Math.random() * 6) + 2;
+      const hours = Math.floor(Math.random() * 24);
+      const minutes = Math.floor(Math.random() * 60);
+      
+      resetTimer.textContent = `${days}d ${hours}h ${minutes}m`;
+    }
+
+    // Download the current canvas as an image
+    function downloadCanvas() {
+      const link = document.createElement('a');
+      link.download = `megapython-canvas-${new Date().toISOString().slice(0, 10)}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Event listeners
+    canvas.addEventListener('click', (e) => {
+      placePixel(e.clientX, e.clientY);
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (cooldownActive) return;
+      
+      // Show preview of where pixel would be placed
+      const rect = canvas.getBoundingClientRect();
+      const pixelX = Math.floor((e.clientX - rect.left) / PIXEL_SIZE);
+      const pixelY = Math.floor((e.clientY - rect.top) / PIXEL_SIZE);
+      
+      if (pixelX >= 0 && pixelX < CANVAS_WIDTH && pixelY >= 0 && pixelY < CANVAS_HEIGHT) {
+        canvas.style.cursor = 'pointer';
+      } else {
+        canvas.style.cursor = 'default';
+      }
+    });
+
+    colorSwatches.forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        document.querySelector('.color-swatch.selected')?.classList.remove('selected');
+        swatch.classList.add('selected');
+        selectedColor = swatch.dataset.color;
+      });
+    });
+
+    downloadBtn.addEventListener('click', downloadCanvas);
+
+    // Initialize the canvas
+    initializeCanvas();
+
+    // Simulate user count changes
+    setInterval(() => {
+      const change = Math.floor(Math.random() * 5) - 2; // -2 to +2
+      usersOnline = Math.max(5, usersOnline + change);
+      userCount.textContent = usersOnline;
+    }, 10000);
+  </script>
 </body>
 </html>
