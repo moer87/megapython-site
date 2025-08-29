@@ -95,7 +95,7 @@
       position: absolute;
       width: 40px;
       height: 40px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 C5,35 15,35 20,35 C25,35 35,35 35,25 C35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 5,35 15,35 20,35 C25,35 35,35 35,25 35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       z-index: 0;
       opacity: 0.3;
@@ -108,6 +108,34 @@
     
     .social-link:hover {
       color: #4ade80;
+    }
+    
+    .news-section {
+      margin: 3rem 0;
+    }
+    
+    .news-card {
+      background: rgba(30, 62, 30, 0.8);
+      border: 2px solid #4a9e4a;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .news-date {
+      color: #a3e635;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .news-title {
+      color: #fff;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .news-content {
+      color: #e2e8f0;
     }
   </style>
 </head>
@@ -178,14 +206,37 @@
       </div>
     </section>
 
-    <footer class="text-center text-gray-500">
-      <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
-      <div class="flex justify-center gap-8">
+    <!-- News Section -->
+    <section class="news-section">
+      <h2 class="text-3xl pixel-font text-green-400 mb-6 text-center jungle-glow">Latest News</h2>
+      
+      <div class="news-card">
+        <div class="news-date">March 15, 2025</div>
+        <h3 class="news-title">MegaPython Collection Launch</h3>
+        <p class="news-content">Our full collection of 2,222 unique MegaPythons is now available for minting on the MegaETH blockchain!</p>
+      </div>
+      
+      <div class="news-card">
+        <div class="news-date">March 10, 2025</div>
+        <h3 class="news-title">New Traits Added</h3>
+        <p class="news-content">We've added 5 new exclusive traits to the MegaPython collection. Check them out in our MegaGenerate tool!</p>
+      </div>
+      
+      <div class="news-card">
+        <div class="news-date">March 5, 2025</div>
+        <h3 class="news-title">Community Contest Announced</h3>
+        <p class="news-content">Join our first community contest! Create the most unique MegaPython combination and win exclusive prizes.</p>
+      </div>
+    </section>
+
+    <footer class="text-center text-gray-500 mt-12">
+      <div class="flex justify-center gap-8 mb-6">
         <a href="https://x.com/megapythons" class="social-link pixel-font">X</a>
         <a href="https://megapython.testnet.nfts2.me/" class="social-link pixel-font">Mint</a>
         <a href="https://linktr.ee/megaPython" class="social-link pixel-font">Linktree</a>
         <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
       </div>
+      <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
     </footer>
   </div>
 
