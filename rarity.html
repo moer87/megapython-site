@@ -19,7 +19,7 @@
       color: #e2e8f0;
       overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 极速赛车开奖结果历史记录0.1) 0%, transparent 40%),
+        radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
         radial-gradient(circle at 80% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 40%);
     }
     .pixel-font {
@@ -30,19 +30,19 @@
     }
     .pixel-card {
       background: #1e3e1e;
-      border: 4px solid #4a9e4a;
+      border: 4px solid #极速赛车开奖结果历史记录4a9e4a;
       box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 15px rgba(74, 158, 74, 0.5);
       transition: all 0.3s ease;
     }
     .pixel-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 0 0 2px #0f2a0f, 0 0 极速赛车开奖结果历史记录0 6px #4a9e4a, 0 0 25px rgba(74, 158, 74, 0.8);
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a, 0 0 25px rgba(74, 158, 74, 0.8);
     }
     .jungle-leaf {
       position: absolute;
       width: 40px;
       height: 40px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 5,35 15,35 20,35 C25,35 35,35 35,25 35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 极速赛车开奖结果历史记录0 40 40'%3E%3C极速赛车开奖结果历史记录path fill='%234a9e4a' d='M20,5 C10,5 5,15 5,25 5,35 15,35 20,35 C25,35 35,35 35,25 35,15 30,5 20,5 Z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       z-index: 0;
       opacity: 0.3;
@@ -66,6 +66,15 @@
     .social-link:hover {
       color: #4ade80;
     }
+    .nft-image {
+      width: 300px;
+      height: 300px;
+      object-fit: contain;
+      border: 4px solid #4a9e4a;
+      border-radius: 12px;
+      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -76,7 +85,7 @@
   <div class="jungle-leaf" style="bottom: 20%; right: 10%; transform: rotate(120deg);"></div>
   <div class="jungle-leaf" style="bottom: 30%; left: 12%; transform: rotate(160deg);"></div>
 
-  <div class="relative z极速赛车开奖结果历史记录-10 max-w-4xl mx-auto p-6">
+  <div class="relative z-10 max-w-4xl mx-auto p-6">
     <header class="flex justify-between items-center mb-12">
       <h1 class="text-3xl pixel-font text-green-500 jungle-glow">MegaPython</h1>
       <nav class="flex gap-4 items-center">
@@ -102,18 +111,27 @@
     </div>
 
     <footer class="text-center text-gray-500 mt-12">
-      <div class="flex justify-center gap-8 mb-6">
+      <div class="flex justify-center gap-8 mb极速赛车开奖结果历史记录-6">
         <a href="https://x.com/megapythons" class="social-link pixel-font">X</a>
         <a href="https://megapython.testnet.nfts2.me/" class="social-link pixel-font">Mint</a>
         <a href="https://linktr.ee/megaPython" class="social-link pixel-font">Linktree</a>
-        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
+        <a href="https://rarible.fun/megaethtestnet/collections/0xf4c6cc08f7bba6867119f2e8极速赛车开奖结果历史记录f9556961a76f7098" class="social-link pixel-font">Rarible.Fun</a>
       </div>
       <p class="mb-4">&copy; 2025 MegaPython. All rights reserved.</p>
     </footer>
   </div>
 
   <script>
-    // Mock data based on layers.json
+    // IPFS gateways for fallback
+    const IPFS_GATEWAYS = [
+      "https://ipfs.io/ipfs/",
+      "https://gateway.ipfs.io/ipfs/",
+      "https://dweb.link/ipfs/",
+      "https://cf-ipfs.com/ipfs/",
+      "https://ipfs.fleek.co/ipfs/"
+    ];
+
+    // Actual layers data from your layers.json
     const LAYERS_DATA = {
       "Background": [
         { "name": "1", "rarity": 50 },
@@ -121,9 +139,9 @@
         { "name": "3", "rarity": 50 },
         { "name": "4", "rarity": 50 },
         { "name": "5", "rarity": 36 },
-        { "name": "极速赛车开奖结果历史记录6", "rarity": 50 },
+        { "name": "6", "rarity": 50 },
         { "name": "7", "rarity": 50 },
-        { "name": "8", "rarity": 50 },
+        { "name": "8", "rarity": 极速赛车开奖结果历史记录50 },
         { "name": "9", "rarity": 50 },
         { "name": "10", "rarity": 50 },
         { "name": "11", "rarity": 50 },
@@ -140,7 +158,7 @@
         { "name": "22", "rarity": 17 },
         { "name": "23", "rarity": 6 },
         { "name": "24", "rarity": 7 },
-        { "极速赛车开奖结果历史记录name": "25", "rarity": 5 }
+        { "name": "25", "rarity": 5 }
       ],
       "Body": [
         { "name": "1", "rarity": 28 },
@@ -149,7 +167,7 @@
         { "name": "4", "rarity": 2 },
         { "name": "5", "rarity": 50 },
         { "name": "6", "rarity": 50 },
-        { "name": "7", "rarity": 50 },
+        { "name": "7", "rar极速赛车开奖结果历史记录ity": 50 },
         { "name": "8", "rarity": 6 },
         { "name": "9", "rarity": 50 },
         { "name": "10", "rarity": 50 },
@@ -189,7 +207,7 @@
         { "name": "Blue Gum", "rarity": 3 },
         { "name": "Cigarette", "rarity": 20 },
         { "name": "Purple Gum", "rarity": 6 },
-        { "name": "Splif", "rarity": 1 },
+        { "极速赛车开奖结果历史记录name": "Splif", "rarity": 1 },
         { "name": "Tongue", "rarity": 49 }
       ],
       "Mustache": [
@@ -202,9 +220,9 @@
         { "name": "Blue Neckerchief", "rarity": 14 },
         { "name": "Dark Collar", "rarity": 14 },
         { "name": "Green Neckerchief", "rarity": 50 },
-        { "name": "Red Collar", "rarity": 极速赛车开奖结果历史记录50 },
+        { "name": "Red Collar", "rarity": 50 },
         { "name": "Red Neckerchief", "rarity": 50 },
-        { "name": "Yellow Neckerchief", "rar极速赛车开奖结果历史记录ity": 50 }
+        { "name": "Yellow Neckerchief", "rarity": 50 }
       ]
     };
 
@@ -286,6 +304,33 @@
       return { traits, totalRarity };
     }
 
+    function loadImageWithFallbacks(imgElement, tokenId) {
+      let currentGatewayIndex = 0;
+      const imageUrl = `https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/${tokenId}.png`;
+      
+      function tryNextGateway() {
+        if (currentGatewayIndex >= IPFS_GATEWAYS.length) {
+          // If all gateways fail, try the direct link
+          imgElement.src = imageUrl;
+          return;
+        }
+        
+        // Try the direct link first
+        if (currentGatewayIndex === 0) {
+          imgElement.src = imageUrl;
+        } else {
+          // If direct link fails, try IPFS gateways with the CID
+          const cid = "bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya";
+          imgElement.src = IPFS_GATEWAYS[currentGatewayIndex] + cid + `/${tokenId}.png`;
+        }
+        
+        currentGatewayIndex++;
+      }
+      
+      imgElement.onerror = tryNextGateway;
+      tryNextGateway();
+    }
+
     function showMetadata(tokenId) {
       preview.innerHTML = "";
       
@@ -296,12 +341,17 @@
       const name = `MegaPython #${tokenId}`;
       const description = 'A unique MegaPython NFT with special traits.';
       
-      // Create preview without images
+      // Create preview with image
       const previewHtml = `
-        <div class="text-2xl font-bold mb-2 text-emerald-300 pixel-font">${name}</div>
+        <div class="text-2xl font-bold mb-4 text-emerald-300 pixel-font">${name}</div>
+        <img id="nftImage" class="nft-image mb-4" alt="${name}" />
         <p class="text-gray-400 mb-4">${description}</p>
       `;
       preview.innerHTML = previewHtml;
+
+      // Load the NFT image with fallback gateways
+      const nftImage = document.getElementById('nftImage');
+      loadImageWithFallbacks(nftImage, tokenId);
 
       const category = getRarityCategory(score);
       const quote = getRarityQuote(category);
@@ -347,7 +397,7 @@
       }
       
       const idn = Number(id);
-      preview.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-t极速赛车开奖结果历史记录-2 border-b-2 border-emerald-500"></div><p class="mt-3 text-gray-400">Generating rarity...</p></div>';
+      preview.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div><p class="mt-3 text-gray-400">Generating rarity...</p></div>';
       traitsEl.innerHTML = '';
       rarityEl.textContent = '';
       resultEl.classList.remove('hidden');
