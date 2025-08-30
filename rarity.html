@@ -24,6 +24,7 @@
     }
     .pixel-font {
       font-family: 'Press Start 2P', cursive;
+      font-size: 0.9rem;
     }
     .jungle-glow {
       text-shadow: 0 0 10px rgba(74, 158, 74, 0.7);
@@ -48,16 +49,22 @@
       opacity: 0.3;
     }
     .rarity-badge {
-      background: #4a9e4a;
       color: white;
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      display: inline-block;
+      margin-bottom: 15px;
     }
     .trait-card {
       background: rgba(42, 74, 42, 0.7);
-      padding: 8px;
+      padding: 12px;
       border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .trait-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     .social-link {
       color: #a3e635;
@@ -66,20 +73,23 @@
     .social-link:hover {
       color: #4ade80;
     }
-    .nft-image {
-      width: 300px;
-      height: 300px;
-      object-fit: contain;
-      border: 4px solid #4a9e4a;
-      border-radius: 12px;
-      box-shadow: 0 0 0 2px #0f2a0f, 0 0 0 6px #4a9e4a;
-      margin: 0 auto;
-    }
     .common { background-color: #4a9e4a; }
     .rare { background-color: #3b82f6; }
     .super_rare { background-color: #a855f7; }
     .legendary { background-color: #f59e0b; }
     .mythic { background-color: #ef4444; }
+    .quote-box {
+      background: rgba(42, 74, 42, 0.5);
+      border-left: 4px solid #4a9e4a;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .snake-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      display: block;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -127,15 +137,6 @@
   </div>
 
   <script>
-    // IPFS gateways for fallback
-    const IPFS_GATEWAYS = [
-      "https://ipfs.io/ipfs/",
-      "https://gateway.ipfs.io/ipfs/",
-      "https://dweb.link/ipfs/",
-      "https://cf-ipfs.com/ipfs/",
-      "https://ipfs.fleek.co/ipfs/"
-    ];
-
     // Actual layers data from your layers.json
     const LAYERS_DATA = {
       "Background": [
@@ -325,41 +326,6 @@
       return { traits, totalRarity };
     }
 
-    function loadImageWithFallbacks(imgElement, tokenId) {
-      let currentGatewayIndex = 0;
-      const imageUrl = `https://bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya.ipfs.w3s.link/${tokenId}.png`;
-      
-      function tryNextGateway() {
-        if (currentGatewayIndex >= IPFS_GATEWAYS.length) {
-          // If all gateways fail, remove the image and show placeholder
-          imgElement.parentNode.removeChild(imgElement);
-          const placeholder = document.createElement('div');
-          placeholder.className = 'nft-image bg-gray-800 flex items-center justify-center text-gray-500';
-          placeholder.innerHTML = 'Image not available';
-          preview.insertBefore(placeholder, preview.childNodes[1]);
-          return;
-        }
-        
-        // Try the direct link first
-        if (currentGatewayIndex === 0) {
-          imgElement.src = imageUrl;
-        } else {
-          // If direct link fails, try IPFS gateways with the CID
-          const cid = "bafybeihz6y5i7tsiotl7oxgrclt33zmuxs6xn6sbhrnflkoowa7xk4wzya";
-          imgElement.src = IPFS_GATEWAYS[currentGatewayIndex] + cid + `/${tokenId}.png`;
-        }
-        
-        currentGatewayIndex++;
-      }
-      
-      imgElement.onerror = tryNextGateway;
-      imgElement.onload = function() {
-        // Image loaded successfully
-        console.log("Image loaded successfully");
-      };
-      tryNextGateway();
-    }
-
     function showMetadata(tokenId) {
       preview.innerHTML = "";
       
@@ -370,17 +336,13 @@
       const name = `MegaPython #${tokenId}`;
       const description = 'A unique MegaPython NFT with special traits.';
       
-      // Create preview with image
+      // Create preview without image
       const previewHtml = `
         <div class="text-2xl font-bold mb-4 text-emerald-300 pixel-font">${name}</div>
-        <img id="nftImage" class="nft-image mb-4" alt="${name}" />
+        <span class="snake-icon">🐍</span>
         <p class="text-gray-400 mb-4">${description}</p>
       `;
       preview.innerHTML = previewHtml;
-
-      // Load the NFT image with fallback gateways
-      const nftImage = document.getElementById('nftImage');
-      loadImageWithFallbacks(nftImage, tokenId);
 
       const category = getRarityCategory(score);
       const quote = getRarityQuote(category);
@@ -389,7 +351,7 @@
       quoteBox.className = 'quote-box text-center';
       quoteBox.innerHTML = `
         <p class="text-lg italic text-green-200 mb-4">${quote}</p>
-        <div class="rarity-badge ${category} pixel-font inline-block">${category.toUpperCase().replace('_', ' ')}</div>
+        <div class="rarity-badge ${category} pixel-font">${category.toUpperCase().replace('_', ' ')}</div>
       `;
       preview.appendChild(quoteBox);
 
